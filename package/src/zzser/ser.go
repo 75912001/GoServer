@@ -30,7 +30,7 @@ type ON_CLI_GET_PACKET_LEN func(peerConn *PeerConn, packetLength int) int
 //返回ERROR_DISCONNECT_PEER断开客户端
 type ON_CLI_PACKET func(peerConn *PeerConn, packetLength int) int
 
-//服务
+//己方作为服务
 type Server struct {
 	FileIni           zzini.ZZIni //ini配置文件
 	Ip                string
@@ -74,8 +74,8 @@ func (p *Server) LoadConfig() (err error) {
 //运行
 func (p *Server) Run() (err error) {
 	p.IsRun = true
-	var str_addr = p.Ip + ":" + strconv.Itoa(int(p.Port))
-	tcpAddr, err := net.ResolveTCPAddr("tcp", str_addr)
+	var addr = p.Ip + ":" + strconv.Itoa(int(p.Port))
+	tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
 	if nil != err {
 		// handle error
 		fmt.Println("######net.ResolveTCPAddr err:", err)
