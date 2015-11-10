@@ -3,11 +3,9 @@ package zzser
 import (
 	"fmt"
 	"net"
-	"runtime"
 	"strconv"
 	"time"
 	"zzcommon"
-	"zzini"
 )
 
 //初始化服务器
@@ -32,12 +30,6 @@ type ON_CLI_PACKET func(peerConn *PeerConn, packetLength int) int
 
 //己方作为服务
 type Server struct {
-	FileIni              zzini.ZZIni //ini配置文件
-	Ip                   string
-	Port                 uint16
-	PacketLengthMax      int  //设置包最大
-	Delay                bool //tcp中是否延迟,默认为true
-	GoProcessMax         int  //并行执行的数量
 	IsRun                bool //是否运行
 	OnInit               ON_INIT
 	OnFini               ON_FINI
@@ -53,26 +45,10 @@ type PeerConn struct {
 	recvBuf []byte
 }
 
-//加载配置文件
-func (p *Server) LoadConfig() (err error) {
-	err = p.FileIni.Load()
-	if nil != err {
-		return err
-	}
-
-	p.Ip = p.FileIni.Get("server", "ip", "")
-	p.Port = zzcommon.StringToUint16(p.FileIni.Get("server", "port", "0"))
-	p.PacketLengthMax = zzcommon.StringToInt(p.FileIni.Get("common", "packet_length_max", "81920"))
-	str_num_cpu := strconv.Itoa(runtime.NumCPU())
-	p.GoProcessMax = zzcommon.StringToInt(p.FileIni.Get("common", "go_process_max", str_num_cpu))
-	runtime.GOMAXPROCS(p.GoProcessMax)
-	return err
-}
-
 //运行
-func (p *Server) Run() (err error) {
+func (p *Server) Run(ip string, port uint16, packetLengthMax int, delay bool) (err error) {
 	p.IsRun = true
-	var addr = p.Ip + ":" + strconv.Itoa(int(p.Port))
+	var addr = ip + ":" + strconv.Itoa(int(port))
 	tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
 	if nil != err {
 		fmt.Println("######net.ResolveTCPAddr err:", err)
@@ -90,7 +66,7 @@ func (p *Server) Run() (err error) {
 	p.OnInit()
 	defer p.OnFini()
 
-	go handleAccept(listen, p)
+	go handleAccept(listen, p, packetLengthMax, delay)
 
 	for p.IsRun {
 		time.Sleep(10 * time.Second)
@@ -99,7 +75,7 @@ func (p *Server) Run() (err error) {
 	return err
 }
 
-func handleAccept(listen *net.TCPListener, server *Server) {
+func handleAccept(listen *net.TCPListener, server *Server, packetLengthMax int, delay bool) {
 	for {
 		conn, err := listen.AcceptTCP()
 		if nil != err {
@@ -107,14 +83,14 @@ func handleAccept(listen *net.TCPListener, server *Server) {
 			return
 		}
 
-		conn.SetNoDelay(!server.Delay)
-		conn.SetReadBuffer(server.PacketLengthMax)
-		conn.SetWriteBuffer(server.PacketLengthMax)
-		go handleConnection(server, conn)
+		conn.SetNoDelay(delay)
+		conn.SetReadBuffer(packetLengthMax)
+		conn.SetWriteBuffer(packetLengthMax)
+		go handleConnection(server, conn, packetLengthMax)
 	}
 }
 
-func handleConnection(server *Server, conn *net.TCPConn) {
+func handleConnection(server *Server, conn *net.TCPConn, packetLengthMax int) {
 	var peerIp = conn.RemoteAddr().String()
 	fmt.Println("connection from:", peerIp)
 
@@ -127,7 +103,7 @@ func handleConnection(server *Server, conn *net.TCPConn) {
 	defer server.OnCliConnClosed(&peerConn)
 
 	//优化[消耗内存过大]
-	peerConn.recvBuf = make([]byte, server.PacketLengthMax)
+	peerConn.recvBuf = make([]byte, packetLengthMax)
 
 	var readIndex int
 	for {

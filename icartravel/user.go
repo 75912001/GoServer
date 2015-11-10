@@ -1,70 +1,61 @@
-// mygo project main.go
-package main
+package ict
 
 import (
-	"fmt"
-	"net"
-	//"time"
-	//	"zzcommon"
-	//"strconv"
-	//"sync"
-	//"zzcli"
-	//"zzser"
-	//	"common_msg"
-	//	"game_msg"
 	"bytes"
 	"encoding/binary"
+	"fmt"
+	"net"
 	"proto"
 )
 
-var G_user_mgr User_mgr_t
+var GUserMgr UserMgr
 
-type User_t struct {
+type User struct {
 	Conn    *net.TCPConn
 	Account string
-	Uid     uint32
+	Uid     USER_ID
 }
 
-func (user *User_t) Send(cmd_id uint32, req proto.Message) (ret int, err error) {
-
-	req_buf, err := proto.Marshal(req)
-	if err != nil {
+//todo
+func (p *User) Send(cmdId CMD_ID, req proto.Message) (ret int, err error) {
+	reqBuf, err := proto.Marshal(req)
+	if nil != err {
 		fmt.Printf("######proto.Marshal err:", err)
 		return ret, err
 	}
-	var req_buf_len = len(req_buf)
+	var reqBufLen = len(reqBuf)
 	var send_buf_all_len uint32
-	send_buf_all_len = uint32(req_buf_len + 8)
+	send_buf_all_len = uint32(reqBufLen + 8)
 
 	head_buf := new(bytes.Buffer)
 	var data = []interface{}{
 		send_buf_all_len,
-		cmd_id,
+		cmdId,
 	}
 	for _, v := range data {
 		err := binary.Write(head_buf, binary.LittleEndian, v)
-		if err != nil {
+		if nil != err {
 			fmt.Println("binary.Write failed:", err)
 		}
 	}
 
 	//todo
-	ret, err = user.Conn.Write(head_buf.Bytes())
-	ret, err = user.Conn.Write(req_buf)
-	if err != nil {
+	ret, err = p.Conn.Write(head_buf.Bytes())
+	ret, err = p.Conn.Write(reqBuf)
+	if nil != err {
 		fmt.Printf("######user.Conn.Write err:", err)
 		return ret, err
 	}
-	fmt.Println("Send body len:", req_buf_len)
+	fmt.Println("Send body len:", reqBufLen)
 	return ret, err
 }
 
-type USER_MAP map[*net.TCPConn]User_t
+type USER_MAP map[*net.TCPConn]User
 
-type User_mgr_t struct {
-	User_map USER_MAP
+type UserMgr struct {
+	UserMap USER_MAP
 }
 
-func (user_mgr *User_mgr_t) Init() {
-	user_mgr.User_map = make(USER_MAP)
+func (user_mgr *UserMgr) Init() {
+	user_mgr.UserMap = make(USER_MAP)
 }

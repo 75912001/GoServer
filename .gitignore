@@ -6,3 +6,9 @@ package/pkg/darwin_amd64/zzini.a
 package/pkg/darwin_amd64/zzser.a
 icartravel/bench.ini
 icartravel/icartravel.exe
+package/pkg/windows_amd64/zztimer.a
+package/pkg/windows_amd64/zzser.a
+package/pkg/windows_amd64/zzini.a
+package/pkg/windows_amd64/zzcommon.a
+package_protobuf/pkg/windows_amd64/proto.a
+package/pkg/windows_amd64/zzcli.a
