@@ -93,7 +93,7 @@ func (p *Server) Run() (err error) {
 	go handleAccept(listen, p)
 
 	for p.IsRun {
-		time.Sleep(1000000000)
+		time.Sleep(1 * time.Second)
 		fmt.Println("runing...")
 	}
 	return err

@@ -186,11 +186,11 @@ func main() {
 	}
 
 	//做为客户端
-	zzcli_client := new(zzcli.Client_t)
-	zzcli_client.On_ser_conn = on_ser_conn
-	zzcli_client.On_ser_conn_closed = on_ser_conn_closed
-	zzcli_client.On_ser_get_pkg_len = on_ser_get_pkg_len
-	zzcli_client.On_ser_pkg = on_ser_pkg
+	zzcli_client := new(zzcli.Client)
+	zzcli_client.OnSerConn = on_ser_conn
+	zzcli_client.OnSerConnClosed = on_ser_conn_closed
+	zzcli_client.OnSerGetPacketLen = on_ser_get_pkg_len
+	zzcli_client.OnSerPacket = on_ser_pkg
 
 	game_server_ip := zzser_server.FileIni.Get("game_server", "ip", "999")
 	_port, _ := (strconv.ParseUint(zzser_server.FileIni.Get("game_server", "port", "0"), 10, 16))
@@ -204,7 +204,7 @@ func main() {
 		for i := 1; i <= 10000; i++ {
 			var user User_t
 			user.Account = "mm" + strconv.Itoa(i)
-			conn, _, err := zzcli_client.Connect(game_server_ip, game_server_port)
+			conn, err := zzcli_client.Connect(game_server_ip, game_server_port)
 			if nil != err {
 				fmt.Println("######zzcli_client.Connect err:", err)
 			} else {
@@ -222,7 +222,7 @@ func main() {
 				}
 
 				G_user_mgr.User_map[conn] = user
-				go zzcli_client.Client_recv(conn, zzser_server.PacketLengthMax)
+				go zzcli_client.ClientRecv(conn, zzser_server.PacketLengthMax)
 			}
 			if 0 == i%1000 {
 				fmt.Println(i)

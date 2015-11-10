@@ -24,10 +24,10 @@ type ON_SER_PACKET func(peerConn *zzser.PeerConn, packetLength int) int
 
 //己方作为客户端
 type Client struct {
-	OnSerConn        ON_SER_CONN
-	OnSerConnClosed ON_SER_CONN_CLOSED
+	OnSerConn         ON_SER_CONN
+	OnSerConnClosed   ON_SER_CONN_CLOSED
 	OnSerGetPacketLen ON_SER_GET_PACKET_LEN
-	OnSerPacket         ON_SER_PACKET
+	OnSerPacket       ON_SER_PACKET
 }
 
 //连接
@@ -44,9 +44,6 @@ func (p *Client) Connect(ip string, port uint16) (conn *net.TCPConn, err error) 
 		fmt.Println("######net.Dial err:", err, addr)
 		return conn, err
 	}
-	//conn.SetNoDelay(!server.Delay)
-	//conn.SetReadBuffer(server.PacketLengthMax)
-	//conn.SetWriteBuffer(server.PacketLengthMax)
 	return conn, err
 }
 
