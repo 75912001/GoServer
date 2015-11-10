@@ -1,10 +1,7 @@
-// mygo project main.go
 package main
 
 import (
 	"fmt"
-	//	"game_msg"
-	//	"proto"
 	"strconv"
 	"sync"
 	"time"
@@ -13,55 +10,55 @@ import (
 	"zztimer"
 )
 
-var G_lock = &sync.Mutex{}
+var globalLock = &sync.Mutex{}
 
-func on_init() (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
+func onInit() (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 
-	fmt.Println("on_init")
+	fmt.Println("onInit")
 	return 0
 }
 
-func on_fini() (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
+func onFini() (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 
-	fmt.Println("on_fini")
+	fmt.Println("onFini")
 	return 0
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //客户端相关的回调函数
-func on_cli_conn(peer_conn *zzser.PeerConn) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
+func onCliConn(peerConn *zzser.PeerConn) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 
-	fmt.Println("on_cli_conn")
+	fmt.Println("onCliConn")
 	return 0
 }
 
-func on_cli_conn_closed(peer_conn *zzser.PeerConn) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
+func onCliConnClosed(peerConn *zzser.PeerConn) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 
-	fmt.Println("on_cli_conn_closed")
+	fmt.Println("onCliConnClosed")
 	return 0
 }
 
-func on_cli_get_pkg_len(peer_conn *zzser.PeerConn, pkg_len int) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
+func onCliGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 
-	//	fmt.Println("on_get_pkg_len")
+	//	fmt.Println("onCliGetPacketLen")
 	return 5
-	return pkg_len
+	return packetLength
 	return 0
 }
 
-func on_cli_pkg(peer_conn *zzser.PeerConn, pkg_len int) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
+func onCliPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 
 	//	fmt.Println("on_cli_conn")
 	//	peer_conn.conn.Write("123")
@@ -73,43 +70,41 @@ func on_cli_pkg(peer_conn *zzser.PeerConn, pkg_len int) (ret int) {
 //服务器相关回调函数
 
 //服务器连接成功
-func on_ser_conn(peer_conn *zzser.PeerConn) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
+func onSerConn(peerConn *zzser.PeerConn) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 
-	//	fmt.Println("on_ser_conn")
+	//	fmt.Println("onSerConn")
 	return 0
 }
 
 //服务端连接关闭
-func on_ser_conn_closed(peer_conn *zzser.PeerConn) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
-	//	fmt.Println("on_ser_conn_closed")
+func onSerConnClosed(peerConn *zzser.PeerConn) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
+
+	fmt.Println("onSerConnClosed")
 	return 0
 }
 
 //获取消息的长度,0表示消息还未接受完成,
 //ERROR_DISCONNECT_PEER表示长度有误,服务端断开
-func on_ser_get_pkg_len(peer_conn *zzser.PeerConn, pkg_len int) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
-	fmt.Println("on_ser_get_pkg_len")
+func onSerGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
+
+	fmt.Println("onSerGetPacketLen")
 	return 0
 }
 
 //服务端消息
 //返回ERROR_DISCONNECT_PEER断开服务端
-func on_ser_pkg(peer_conn *zzser.PeerConn, pkg_len int) (ret int) {
-	G_lock.Lock()
-	defer G_lock.Unlock()
-	fmt.Println("on_ser_pkg")
+func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
+
+	fmt.Println("onSerPacket")
 	return 0
-}
-
-func f1() {
-	fmt.Println("f1 done !")
-
 }
 
 func main() {
@@ -154,46 +149,42 @@ func main() {
 	//测试HTTP SERVER
 
 	//////////////////////////////////////////////////////////////////
-	//	time.AfterFunc(1*time.Second, f1)
-	var time_val uint32
-	time_val = 1
-	zztimer.Second(time_val, f1)
+	//定时器
+	zztimer.Second(1, timerSecondTest)
 
+	//////////////////////////////////////////////////////////////////
 	//做为服务端
-	var zzser_server zzser.Server
-	zzser_server.FileIni.Path = "./bench.ini"
+	var zzserServer zzser.Server
+	zzserServer.FileIni.Path = "./bench.ini"
 
-	zzser_server.Delay = true
+	zzserServer.Delay = true
 	//设置回调函数
-	zzser_server.OnInit = on_init
-	zzser_server.OnFini = on_fini
-	zzser_server.OnCliConnClosed = on_cli_conn_closed
-	zzser_server.OnCliConn = on_cli_conn
-	zzser_server.OnCliGetPacketLength = on_cli_get_pkg_len
-	zzser_server.OnCliPacket = on_cli_pkg
+	zzserServer.OnInit = onInit
+	zzserServer.OnFini = onFini
+	zzserServer.OnCliConnClosed = onCliConnClosed
+	zzserServer.OnCliConn = onCliConn
+	zzserServer.OnCliGetPacketLength = onCliGetPacketLen
+	zzserServer.OnCliPacket = onCliPacket
 
-	zzser_server.LoadConfig()
-	go zzser_server.Run()
-	var jj uint32
+	zzserServer.LoadConfig()
+
+	go zzserServer.Run()
 	for {
-		time.Sleep(1000000000 * 10)
-		G_lock.Lock()
-		G_lock.Unlock()
-		jj++
-		if 0 == jj%100000000 {
-			//			fmt.Println(jj)
-		}
+		time.Sleep(10 * time.Second)
+		globalLock.Lock()
+		globalLock.Unlock()
 	}
 
+	//////////////////////////////////////////////////////////////////
 	//做为客户端
-	zzcli_client := new(zzcli.Client)
-	zzcli_client.OnSerConn = on_ser_conn
-	zzcli_client.OnSerConnClosed = on_ser_conn_closed
-	zzcli_client.OnSerGetPacketLen = on_ser_get_pkg_len
-	zzcli_client.OnSerPacket = on_ser_pkg
+	var zzcliClient zzcli.Client
+	zzcliClient.OnSerConn = onSerConn
+	zzcliClient.OnSerConnClosed = onSerConnClosed
+	zzcliClient.OnSerGetPacketLen = onSerGetPacketLen
+	zzcliClient.OnSerPacket = onSerPacket
 
-	game_server_ip := zzser_server.FileIni.Get("game_server", "ip", "999")
-	_port, _ := (strconv.ParseUint(zzser_server.FileIni.Get("game_server", "port", "0"), 10, 16))
+	game_server_ip := zzserServer.FileIni.Get("game_server", "ip", "999")
+	_port, _ := (strconv.ParseUint(zzserServer.FileIni.Get("game_server", "port", "0"), 10, 16))
 	game_server_port := uint16(_port)
 
 	G_user_mgr.Init()
@@ -204,7 +195,7 @@ func main() {
 		for i := 1; i <= 10000; i++ {
 			var user User_t
 			user.Account = "mm" + strconv.Itoa(i)
-			conn, err := zzcli_client.Connect(game_server_ip, game_server_port)
+			conn, err := zzcliClient.Connect(game_server_ip, game_server_port)
 			if nil != err {
 				fmt.Println("######zzcli_client.Connect err:", err)
 			} else {
@@ -222,7 +213,7 @@ func main() {
 				}
 
 				G_user_mgr.User_map[conn] = user
-				go zzcli_client.ClientRecv(conn, zzser_server.PacketLengthMax)
+				go zzcliClient.ClientRecv(conn, zzserServer.PacketLengthMax)
 			}
 			if 0 == i%1000 {
 				fmt.Println(i)
@@ -252,4 +243,10 @@ func main() {
 		//		fmt.Println("===", i)
 		//		fmt.Println("end")
 	}
+}
+
+//定时器,秒,测试
+func timerSecondTest() {
+	fmt.Println("timerSecondTest...")
+	zztimer.Second(1, timerSecondTest)
 }
