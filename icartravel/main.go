@@ -10,6 +10,7 @@ import (
 	"time"
 	"zzcli"
 	"zzser"
+	"zztimer"
 )
 
 var G_lock = &sync.Mutex{}
@@ -107,8 +108,8 @@ func on_ser_pkg(peer_conn *zzser.PeerConn, pkg_len int) (ret int) {
 }
 
 func f1() {
-	//	fmt.Println("f1 done !")
-	time.AfterFunc(1*time.Second, f1)
+	fmt.Println("f1 done !")
+
 }
 
 func main() {
@@ -153,7 +154,10 @@ func main() {
 	//测试HTTP SERVER
 
 	//////////////////////////////////////////////////////////////////
-	time.AfterFunc(1*time.Second, f1)
+	//	time.AfterFunc(1*time.Second, f1)
+	var time_val uint32
+	time_val = 1
+	zztimer.Second(time_val, f1)
 
 	//做为服务端
 	var zzser_server zzser.Server

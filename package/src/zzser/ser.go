@@ -32,27 +32,25 @@ type ON_CLI_PACKET func(peerConn *PeerConn, packetLength int) int
 
 //己方作为服务
 type Server struct {
-	FileIni           zzini.ZZIni //ini配置文件
-	Ip                string
-	Port              uint16
-	PacketLengthMax   int  //设置包最大
-	Delay             bool //tcp中是否延迟,默认为true
-	GoProcessMax      int  //并行执行的数量
-	IsRun             bool //是否运行
-	OnInit            ON_INIT
-	OnFini            ON_FINI
-	OnCliConnClosed   ON_CLI_CONN_CLOSED
-	OnCliConn         ON_CLI_CONN
+	FileIni              zzini.ZZIni //ini配置文件
+	Ip                   string
+	Port                 uint16
+	PacketLengthMax      int  //设置包最大
+	Delay                bool //tcp中是否延迟,默认为true
+	GoProcessMax         int  //并行执行的数量
+	IsRun                bool //是否运行
+	OnInit               ON_INIT
+	OnFini               ON_FINI
+	OnCliConnClosed      ON_CLI_CONN_CLOSED
+	OnCliConn            ON_CLI_CONN
 	OnCliGetPacketLength ON_CLI_GET_PACKET_LEN
-	OnCliPacket       ON_CLI_PACKET
+	OnCliPacket          ON_CLI_PACKET
 }
 
 //对端连接信息
 type PeerConn struct {
-	Conn         *net.TCPConn //连接
-	chanReadBuf  chan int     //读通道todo
-	chanWriteBuf chan int     //写通道todo
-	recvBuf      []byte
+	Conn    *net.TCPConn //连接
+	recvBuf []byte
 }
 
 //加载配置文件
@@ -77,15 +75,13 @@ func (p *Server) Run() (err error) {
 	var addr = p.Ip + ":" + strconv.Itoa(int(p.Port))
 	tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
 	if nil != err {
-		// handle error
 		fmt.Println("######net.ResolveTCPAddr err:", err)
 		return err
 	}
-	//todo 优化[设置地址复用]
-	//todo 优化[设置监听的缓冲数量]
+	//优化[设置地址复用]
+	//优化[设置监听的缓冲数量]
 	listen, err := net.ListenTCP("tcp", tcpAddr)
 	if nil != err {
-		// handle error
 		fmt.Println("######net.Listen err:", err)
 		return err
 	}
@@ -107,7 +103,6 @@ func handleAccept(listen *net.TCPListener, server *Server) {
 	for {
 		conn, err := listen.AcceptTCP()
 		if nil != err {
-			// handle error
 			fmt.Println("######listen.Accept err:", err)
 			return
 		}
@@ -115,33 +110,11 @@ func handleAccept(listen *net.TCPListener, server *Server) {
 		conn.SetNoDelay(!server.Delay)
 		conn.SetReadBuffer(server.PacketLengthMax)
 		conn.SetWriteBuffer(server.PacketLengthMax)
-
-		chanDisconnect := make(chan int, 0)
-		go handleConnection(server, conn, chanDisconnect)
-		go handleWrite(server, conn, chanDisconnect)
+		go handleConnection(server, conn)
 	}
 }
 
-func handleWrite(server *Server, conn *net.TCPConn, chanDisconnect chan int) {
-	//todo
-	for {
-		select {
-		case <-chanDisconnect:
-			fmt.Println("chan_disconnect")
-			return
-		default:
-			time.Sleep(1000000000) //1秒钟
-			//			fmt.Println("default")
-		}
-		//fmt.Println("for select")
-		//todo 使用阻塞,却没有办法及时的发送消息
-		//i := <-chanDisconnect
-		//fmt.Println(i)
-	}
-	/////////
-
-}
-func handleConnection(server *Server, conn *net.TCPConn, chanDisconnect chan int) {
+func handleConnection(server *Server, conn *net.TCPConn) {
 	var peerIp = conn.RemoteAddr().String()
 	fmt.Println("connection from:", peerIp)
 
@@ -150,15 +123,10 @@ func handleConnection(server *Server, conn *net.TCPConn, chanDisconnect chan int
 
 	defer conn.Close()
 
-	defer func(chanDisconnect chan int) {//todo
-		fmt.Println("chanDisconnect")
-		chanDisconnect <- 1
-	}(chanDisconnect)
-
 	server.OnCliConn(&peerConn)
 	defer server.OnCliConnClosed(&peerConn)
 
-	//todo 优化[消耗内存过大]
+	//优化[消耗内存过大]
 	peerConn.recvBuf = make([]byte, server.PacketLengthMax)
 
 	var readIndex int
