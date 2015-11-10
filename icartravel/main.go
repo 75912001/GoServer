@@ -1,6 +1,7 @@
 package ict
 
 import (
+	"net/http"
 	"fmt"
 	"strconv"
 	"sync"
@@ -155,7 +156,15 @@ func main() {
 	//////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////
-	//测试HTTP SERVER
+	//作为HTTP SERVER
+	httpServerIp := benchFile.FileIni.Get("http_server", "ip", "999")
+	httpServerPort := zzcommon.StringToUint16(benchFile.FileIni.Get("http_server", "port", "0"))
+	var addr = httpServerIp + ":" + strconv.Itoa(int(httpServerPort))
+	http.Handle("/foo", fooHandler)
+	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+	})
+	http.ListenAndServe(addr, nil)
 
 	//////////////////////////////////////////////////////////////////
 	//做为服务端

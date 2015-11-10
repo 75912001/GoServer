@@ -1,6 +1,10 @@
 [server]
 ip=192.168.8.101
-port=9988
+port=11000
+
+[http_server]
+ip=192.168.8.101
+port=18000
 
 [common]
 #set cpu max, def:cpu number
