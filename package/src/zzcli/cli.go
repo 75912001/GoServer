@@ -68,19 +68,19 @@ func (p *Client) ClientRecv(conn *net.TCPConn, recvBufMax int) {
 		}
 
 		readIndex += readNum
-		ok_len := p.OnSerGetPacketLen(&peerConn, readIndex)
-		if ok_len == zzcommon.ERROR_DISCONNECT_PEER {
-			fmt.Println("######On_ser_get_pkg_len:", zzcommon.ERROR_DISCONNECT_PEER)
+		packetLength := p.OnSerGetPacketLen(&peerConn, readIndex)
+		if zzcommon.ERROR_DISCONNECT_PEER == packetLength {
+			fmt.Println("######OnSerGetPacketLen:", zzcommon.ERROR_DISCONNECT_PEER)
 			break
 		}
-		if ok_len > 0 { //有完整的包
-			ret := p.OnSerPacket(&peerConn, ok_len)
-			if ret == zzcommon.ERROR_DISCONNECT_PEER {
-				fmt.Println("######On_ser_pkg:", zzcommon.ERROR_DISCONNECT_PEER)
+		if packetLength > 0 { //有完整的包
+			ret := p.OnSerPacket(&peerConn, packetLength)
+			if zzcommon.ERROR_DISCONNECT_PEER == ret {
+				fmt.Println("######OnSerPacket:", zzcommon.ERROR_DISCONNECT_PEER)
 				break
 			}
-			recvBuf = recvBuf[readIndex-ok_len : readIndex]
-			readIndex = readIndex - ok_len
+			recvBuf = recvBuf[readIndex-packetLength : readIndex]
+			readIndex = readIndex - packetLength
 		}
 	}
 	recvBuf = nil
