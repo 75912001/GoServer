@@ -12,6 +12,7 @@ import (
 	"zzcommon"
 	"zzser"
 	"zztimer"
+	"zzhttp"
 )
 
 var gLock = &sync.Mutex{}
@@ -111,33 +112,33 @@ func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 	return 0
 }
 
-// hello world, the web server
-func helloServerTest(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "hello, world!\n")
-	fmt.Println("helloServerTest...")
+// hello, the web server
+func httpHandlerHello(w http.ResponseWriter, req *http.Request) {
+	io.WriteString(w, "hello!\n")
+	fmt.Println("hello...")
+}
+
+// bye, the web server
+func httpHandlerBye(w http.ResponseWriter, req *http.Request) {
+	io.WriteString(w, "bey!\n")
+	fmt.Println("bye...")
 }
 
 func main() {
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	var benchFile BenchFile
-	benchFile.FileIni.Path = "./bench.ini"
+	benchFile.FileIni.Path = "/Users/mlc/Desktop/GoServer/icartravel/bench.ini"
 	benchFile.Load()
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP SERVER
-	httpServerIp := benchFile.FileIni.Get("http_server", "ip", "999")
-	httpServerPort := zzcommon.StringToUint16(benchFile.FileIni.Get("http_server", "port", "0"))
-	var httpAddr = httpServerIp + ":" + strconv.Itoa(int(httpServerPort))
-	fmt.Println(httpAddr)
-	var pattern string = "/"
+	var httpServer zzhttp.HttpServer
+	httpServer.Ip = benchFile.FileIni.Get("http_server", "ip", "999")
+	httpServer.Port = zzcommon.StringToUint16(benchFile.FileIni.Get("http_server", "port", "0"))
+	httpServer.AddHandler("/hello/", httpHandlerHello)
+	httpServer.AddHandler("/bye/", httpHandlerBye)
+	go httpServer.Run()
 
-	http.HandleFunc(pattern, helloServerTest)
-	err := http.ListenAndServe(httpAddr, nil)
-
-	if nil != err {
-		fmt.Println("######ListenAndServe: ", err)
-	}
-	fmt.Println("ListenAndServe")
 	//////////////////////////////////////////////////////////////////
 	//定时器
 	//zztimer.Second(1, timerSecondTest)
