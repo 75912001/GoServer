@@ -1,8 +1,10 @@
-package ict
+// icartravel project main.go
+package main
 
 import (
-	"net/http"
 	"fmt"
+	"io"
+	"net/http"
 	"strconv"
 	"sync"
 	"time"
@@ -109,6 +111,12 @@ func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 	return 0
 }
 
+// hello world, the web server
+func helloServerTest(w http.ResponseWriter, req *http.Request) {
+	io.WriteString(w, "hello, world!\n")
+	fmt.Println("helloServerTest...")
+}
+
 func main() {
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
@@ -116,8 +124,24 @@ func main() {
 	benchFile.FileIni.Path = "./bench.ini"
 	benchFile.Load()
 	//////////////////////////////////////////////////////////////////
+	//作为HTTP SERVER
+	httpServerIp := benchFile.FileIni.Get("http_server", "ip", "999")
+	httpServerPort := zzcommon.StringToUint16(benchFile.FileIni.Get("http_server", "port", "0"))
+	var httpAddr = httpServerIp + ":" + strconv.Itoa(int(httpServerPort))
+	fmt.Println(httpAddr)
+	var pattern string = "/"
+
+	http.HandleFunc(pattern, helloServerTest)
+	err := http.ListenAndServe(httpAddr, nil)
+
+	if nil != err {
+		fmt.Println("######ListenAndServe: ", err)
+	}
+	fmt.Println("ListenAndServe")
+	//////////////////////////////////////////////////////////////////
 	//定时器
-	zztimer.Second(1, timerSecondTest)
+	//zztimer.Second(1, timerSecondTest)
+
 	///////////////////////////////////////////////////////////////////
 	//测试chan
 	/*
@@ -154,17 +178,6 @@ func main() {
 		}
 	*/
 	//////////////////////////////////////////////////////////////////
-
-	//////////////////////////////////////////////////////////////////
-	//作为HTTP SERVER
-	httpServerIp := benchFile.FileIni.Get("http_server", "ip", "999")
-	httpServerPort := zzcommon.StringToUint16(benchFile.FileIni.Get("http_server", "port", "0"))
-	var addr = httpServerIp + ":" + strconv.Itoa(int(httpServerPort))
-	http.Handle("/foo", fooHandler)
-	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-	})
-	http.ListenAndServe(addr, nil)
 
 	//////////////////////////////////////////////////////////////////
 	//做为服务端

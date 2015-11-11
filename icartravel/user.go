@@ -1,4 +1,4 @@
-package ict
+package main
 
 import (
 	"bytes"
