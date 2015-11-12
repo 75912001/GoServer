@@ -24,6 +24,10 @@ packet_length_max=81920
 ip=192.168.8.36
 port=8002
 
+[weather]
+url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f6193555e3c5a08bb9df964cc8893b&format=json
+#url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f6193555e3c5a08bb9df964cc8893b&format=xml
+
 [log]
 #log path
 dir=./log

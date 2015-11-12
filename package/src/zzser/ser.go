@@ -69,7 +69,7 @@ func (p *Server) Run(ip string, port uint16, packetLengthMax int, delay bool) (e
 	go handleAccept(listen, p, packetLengthMax, delay)
 
 	for p.IsRun {
-		time.Sleep(10 * time.Second)
+		time.Sleep(60 * time.Second)
 		fmt.Println("server runing...")
 	}
 	return err
