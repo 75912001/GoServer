@@ -3,16 +3,14 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"net/http"
 	"strconv"
 	"sync"
 	"time"
 	"zzcli"
 	"zzcommon"
+	"zzhttp"
 	"zzser"
 	"zztimer"
-	"zzhttp"
 )
 
 var gLock = &sync.Mutex{}
@@ -112,36 +110,32 @@ func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 	return 0
 }
 
-// hello, the web server
-func httpHandlerHello(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "hello!\n")
-	fmt.Println("hello...")
-}
-
-// bye, the web server
-func httpHandlerBye(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "bey!\n")
-	fmt.Println("bye...")
-}
-
 func main() {
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	var benchFile BenchFile
-	benchFile.FileIni.Path = "/Users/mlc/Desktop/GoServer/icartravel/bench.ini"
+	if zzcommon.IsWindows() {
+		benchFile.FileIni.Path = "./bench.ini"
+	} else {
+		benchFile.FileIni.Path = "/Users/mlc/Desktop/GoServer/icartravel/bench.ini"
+	}
 	benchFile.Load()
+	//////////////////////////////////////////////////////////////////
+	//作为HTTP CLIENT Weather
+	httpClientWeather.Url = benchFile.FileIni.Get("weather", "url", " ")
+	httpClientWeather.Get()
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP SERVER
 	var httpServer zzhttp.HttpServer
 	httpServer.Ip = benchFile.FileIni.Get("http_server", "ip", "999")
 	httpServer.Port = zzcommon.StringToUint16(benchFile.FileIni.Get("http_server", "port", "0"))
-	httpServer.AddHandler("/hello/", httpHandlerHello)
-	httpServer.AddHandler("/bye/", httpHandlerBye)
+	var weather Weather
+	weather.Register(&httpServer)
 	go httpServer.Run()
 
 	//////////////////////////////////////////////////////////////////
 	//定时器
-	//zztimer.Second(1, timerSecondTest)
+	//zztimer.Second(10, timerSecondTest)
 
 	///////////////////////////////////////////////////////////////////
 	//测试chan

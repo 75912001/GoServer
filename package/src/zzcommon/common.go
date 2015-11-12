@@ -1,6 +1,7 @@
 package zzcommon
 
 import (
+	"runtime"
 	"strconv"
 )
 
@@ -35,4 +36,8 @@ func StringToUint16(s string) (value uint16) {
 		return 0
 	}
 	return uint16(vaule)
+}
+
+func IsWindows() bool {
+	return `windows` == runtime.GOOS
 }
