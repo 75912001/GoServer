@@ -70,7 +70,7 @@ func (p *Server) Run(ip string, port uint16, packetLengthMax int, delay bool) (e
 
 	for p.IsRun {
 		time.Sleep(10 * time.Second)
-		fmt.Println("server runing...")
+		fmt.Println("server runing...", time.Now())
 	}
 	return err
 }
