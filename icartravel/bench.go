@@ -7,6 +7,8 @@ import (
 	"zzini"
 )
 
+var gBenchFile BenchFile
+
 //bench.ini配置文件
 type BenchFile struct {
 	FileIni         zzini.ZZIni //ini配置文件

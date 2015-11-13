@@ -6,9 +6,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
-	"zzcli"
 	"zzcommon"
-	"zzhttp"
 	"zzser"
 	"zztimer"
 )
@@ -113,29 +111,102 @@ func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 func main() {
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
-	var benchFile BenchFile
 	if zzcommon.IsWindows() {
-		benchFile.FileIni.Path = "./bench.ini"
+		gBenchFile.FileIni.Path = "./bench.ini"
 	} else {
-		benchFile.FileIni.Path = "/Users/mlc/Desktop/GoServer/icartravel/bench.ini"
+		gBenchFile.FileIni.Path = "/Users/mlc/Desktop/GoServer/icartravel/bench.ini"
 	}
-	benchFile.Load()
+	gBenchFile.Load()
+	//////////////////////////////////////////////////////////////////
+	//做为客户端
+	gzzcliClient.OnSerConn = onSerConn
+	gzzcliClient.OnSerConnClosed = onSerConnClosed
+	gzzcliClient.OnSerGetPacketLen = onSerGetPacketLen
+	gzzcliClient.OnSerPacket = onSerPacket
+
+	gameServerIp := gBenchFile.FileIni.Get("game_server", "ip", "999")
+	gameServerPort := zzcommon.StringToUint16(gBenchFile.FileIni.Get("game_server", "port", "0"))
+
+	GUserMgr.Init()
+	var conn_time uint32
+	for {
+		conn_time++
+		fmt.Println("conn time", conn_time)
+		for i := 1; i <= 10000; i++ {
+			var user User
+			user.Account = "mm" + strconv.Itoa(i)
+			conn, err := gzzcliClient.Connect(gameServerIp, gameServerPort)
+			if nil != err {
+				fmt.Println("######zzcli_client.Connect err:", err)
+			} else {
+				user.Conn = conn
+
+				{ //登录
+					/*
+						req := &game_msg.LoginMsg{
+							Platform: proto.Uint32(0),
+							Account:  proto.String(user.Account),
+							Password: proto.String(user.Account),
+						}
+						user.Send(0x00010101, req)
+					*/
+				}
+
+				GUserMgr.UserMap[conn] = user
+				go gzzcliClient.ClientRecv(conn, gBenchFile.PacketLengthMax)
+			}
+			if 0 == i%1000 {
+				fmt.Println(i)
+			}
+		}
+		fmt.Println("conn done")
+		time.Sleep(1000000000 * 10)
+		fmt.Println("close")
+		var close_idx uint32
+		for k, v := range GUserMgr.UserMap {
+			close_idx++
+			if 0 == close_idx%1000 {
+				fmt.Println(close_idx)
+			}
+			v.Conn.Close()
+			delete(GUserMgr.UserMap, k)
+		}
+		fmt.Println("close done")
+		time.Sleep(1000000000)
+	}
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP CLIENT Weather
-	httpClientWeather.Url = benchFile.FileIni.Get("weather", "url", " ")
-	httpClientWeather.Get()
+	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
+	gHttpClientWeather.Get()
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP SERVER
-	var httpServer zzhttp.HttpServer
-	httpServer.Ip = benchFile.FileIni.Get("http_server", "ip", "999")
-	httpServer.Port = zzcommon.StringToUint16(benchFile.FileIni.Get("http_server", "port", "0"))
-	var weather Weather
-	weather.Register(&httpServer)
-	go httpServer.Run()
+	gHttpServer.Ip = gBenchFile.FileIni.Get("http_server", "ip", "999")
+	gHttpServer.Port = zzcommon.StringToUint16(gBenchFile.FileIni.Get("http_server", "port", "0"))
+	gHttpServer.AddHandler(pattern, WeatherHttpHandler)
+	go gHttpServer.Run()
 
 	//////////////////////////////////////////////////////////////////
 	//定时器
 	//zztimer.Second(10, timerSecondTest)
+
+	//////////////////////////////////////////////////////////////////
+	//做为服务端
+	var zzserServer zzser.Server
+	//设置回调函数
+	zzserServer.OnInit = onInit
+	zzserServer.OnFini = onFini
+	zzserServer.OnCliConnClosed = onCliConnClosed
+	zzserServer.OnCliConn = onCliConn
+	zzserServer.OnCliGetPacketLength = onCliGetPacketLen
+	zzserServer.OnCliPacket = onCliPacket
+	//运行
+	go zzserServer.Run(gBenchFile.Ip, gBenchFile.Port, gBenchFile.PacketLengthMax, gBenchFile.Delay)
+
+	for {
+		time.Sleep(10 * time.Second)
+		gLock.Lock()
+		gLock.Unlock()
+	}
 
 	///////////////////////////////////////////////////////////////////
 	//测试chan
@@ -173,83 +244,6 @@ func main() {
 		}
 	*/
 	//////////////////////////////////////////////////////////////////
-
-	//////////////////////////////////////////////////////////////////
-	//做为服务端
-	var zzserServer zzser.Server
-	//设置回调函数
-	zzserServer.OnInit = onInit
-	zzserServer.OnFini = onFini
-	zzserServer.OnCliConnClosed = onCliConnClosed
-	zzserServer.OnCliConn = onCliConn
-	zzserServer.OnCliGetPacketLength = onCliGetPacketLen
-	zzserServer.OnCliPacket = onCliPacket
-	//运行
-	go zzserServer.Run(benchFile.Ip, benchFile.Port, benchFile.PacketLengthMax, benchFile.Delay)
-
-	for {
-		time.Sleep(10 * time.Second)
-		gLock.Lock()
-		gLock.Unlock()
-	}
-	//////////////////////////////////////////////////////////////////
-	//做为客户端
-	var zzcliClient zzcli.Client
-	zzcliClient.OnSerConn = onSerConn
-	zzcliClient.OnSerConnClosed = onSerConnClosed
-	zzcliClient.OnSerGetPacketLen = onSerGetPacketLen
-	zzcliClient.OnSerPacket = onSerPacket
-
-	gameServerIp := benchFile.FileIni.Get("game_server", "ip", "999")
-	gameServerPort := zzcommon.StringToUint16(benchFile.FileIni.Get("game_server", "port", "0"))
-
-	GUserMgr.Init()
-	var conn_time uint32
-	for {
-		conn_time++
-		fmt.Println("conn time", conn_time)
-		for i := 1; i <= 10000; i++ {
-			var user User
-			user.Account = "mm" + strconv.Itoa(i)
-			conn, err := zzcliClient.Connect(gameServerIp, gameServerPort)
-			if nil != err {
-				fmt.Println("######zzcli_client.Connect err:", err)
-			} else {
-				user.Conn = conn
-
-				{ //登录
-					/*
-						req := &game_msg.LoginMsg{
-							Platform: proto.Uint32(0),
-							Account:  proto.String(user.Account),
-							Password: proto.String(user.Account),
-						}
-						user.Send(0x00010101, req)
-					*/
-				}
-
-				GUserMgr.UserMap[conn] = user
-				go zzcliClient.ClientRecv(conn, benchFile.PacketLengthMax)
-			}
-			if 0 == i%1000 {
-				fmt.Println(i)
-			}
-		}
-		fmt.Println("conn done")
-		time.Sleep(1000000000 * 10)
-		fmt.Println("close")
-		var close_idx uint32
-		for k, v := range GUserMgr.UserMap {
-			close_idx++
-			if 0 == close_idx%1000 {
-				fmt.Println(close_idx)
-			}
-			v.Conn.Close()
-			delete(GUserMgr.UserMap, k)
-		}
-		fmt.Println("close done")
-		time.Sleep(1000000000)
-	}
 
 	fmt.Println("!!!!!!server done!")
 }

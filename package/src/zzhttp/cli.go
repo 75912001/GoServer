@@ -1,6 +1,7 @@
 package zzhttp
 
 import (
+	//	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,6 +10,12 @@ import (
 type HttpClient struct {
 	Url    string
 	Result []byte
+}
+type Book struct {
+	Title       string
+	Publisher   string
+	IsPublished bool
+	Price       float32
 }
 
 func (p *HttpClient) Get() {
@@ -26,4 +33,16 @@ func (p *HttpClient) Get() {
 		fmt.Println("######HttpClient.Get err:", err, resp.Body)
 		return
 	}
+	//	var strResult string = string(p.Result)
+	//	fmt.Println("######")
+	//	fmt.Println(strResult)
+	//	fmt.Println("######")
+	//测试json
+	//var gobook Book
+	//gobook.Title = "Go语言编程"
+	//gobook.Publisher = "ituring.com.cn"
+	//gobook.IsPublished = true
+	//gobook.Price = 9.99
+	//p.Result, err = json.Marshal(gobook)
+	//	fmt.Println(p.Result)
 }
