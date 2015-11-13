@@ -2,7 +2,9 @@
 package main
 
 import (
+	//	"common_msg"
 	"fmt"
+	"game_msg"
 	"strconv"
 	"sync"
 	"time"
@@ -127,12 +129,13 @@ func main() {
 	gameServerIp := gBenchFile.FileIni.Get("game_server", "ip", "999")
 	gameServerPort := zzcommon.StringToUint16(gBenchFile.FileIni.Get("game_server", "port", "0"))
 
+	var userCount = 10000
 	GUserMgr.Init()
-	var conn_time uint32
+	var connCount uint32
 	for {
-		conn_time++
-		fmt.Println("conn time", conn_time)
-		for i := 1; i <= 10000; i++ {
+		connCount++
+		fmt.Println("conn time", connCount)
+		for i := 1; i <= userCount; i++ {
 			var user User
 			user.Account = "mm" + strconv.Itoa(i)
 			conn, err := gzzcliClient.Connect(gameServerIp, gameServerPort)
@@ -142,37 +145,36 @@ func main() {
 				user.Conn = conn
 
 				{ //登录
-					/*
-						req := &game_msg.LoginMsg{
-							Platform: proto.Uint32(0),
-							Account:  proto.String(user.Account),
-							Password: proto.String(user.Account),
-						}
-						user.Send(0x00010101, req)
-					*/
+
+					req := &game_msg.LoginMsg{
+						Platform: proto.Uint32(0),
+						Account:  proto.String(user.Account),
+						Password: proto.String(user.Account),
+					}
+					user.Send(0x00010101, req)
 				}
 
 				GUserMgr.UserMap[conn] = user
 				go gzzcliClient.ClientRecv(conn, gBenchFile.PacketLengthMax)
 			}
-			if 0 == i%1000 {
+			if 0 == i%100 {
 				fmt.Println(i)
 			}
 		}
 		fmt.Println("conn done")
-		time.Sleep(1000000000 * 10)
+		time.Sleep(10 * time.Second)
 		fmt.Println("close")
-		var close_idx uint32
+		var closeCount uint32
 		for k, v := range GUserMgr.UserMap {
-			close_idx++
-			if 0 == close_idx%1000 {
-				fmt.Println(close_idx)
+			closeCount++
+			if 0 == closeCount%100 {
+				fmt.Println(closeCount)
 			}
 			v.Conn.Close()
 			delete(GUserMgr.UserMap, k)
 		}
 		fmt.Println("close done")
-		time.Sleep(1000000000)
+		time.Sleep(10 * time.Second)
 	}
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP CLIENT Weather

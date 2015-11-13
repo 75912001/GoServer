@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"net"
-	"proto"
 )
 
 var GUserMgr UserMgr

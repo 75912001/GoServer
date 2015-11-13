@@ -23,3 +23,5 @@ icartravel/icartravel
 package/pkg/windows_amd64/zzhttp.a
 icartravel/protobuffer/src/game_msg/game.pb.go
 icartravel/protobuffer/src/common_msg/common.pb.go
+icartravel/src/game_msg/game.pb.go
+icartravel/src/common_msg/common.pb.go
