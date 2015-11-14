@@ -152,6 +152,7 @@ func main() {
 						Password: proto.String(user.Account),
 					}
 					user.Send(0x00010101, req)
+
 				}
 
 				GUserMgr.UserMap[conn] = user
