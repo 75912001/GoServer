@@ -18,3 +18,11 @@ icartravel/src/game.pb.go
 icartravel/src/common.pb.go
 
 icartravel/icartravel
+icartravel/icartravel.exe
+package_protobuf/pkg/windows_amd64/proto.a
+package/pkg/windows_amd64/zztimer.a
+package/pkg/windows_amd64/zzser.a
+package/pkg/windows_amd64/zzini.a
+package/pkg/windows_amd64/zzhttp.a
+package/pkg/windows_amd64/zzcommon.a
+package/pkg/windows_amd64/zzcli.a
