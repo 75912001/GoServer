@@ -1,27 +1,20 @@
 
-package/pkg/darwin_amd64/zzcommon.a
-
-package/pkg/darwin_amd64/zzini.a
-
-package/pkg/darwin_amd64/zzser.a
 icartravel/bench.ini
-icartravel/icartravel.exe
-package/pkg/windows_amd64/zztimer.a
-package/pkg/windows_amd64/zzser.a
-package/pkg/windows_amd64/zzini.a
-package/pkg/windows_amd64/zzcommon.a
-package_protobuf/pkg/windows_amd64/proto.a
-package/pkg/windows_amd64/zzcli.a
-
-package_protobuf/pkg/darwin_amd64/proto.a
-
-package/pkg/darwin_amd64/zzcli.a
 
 package/pkg/darwin_amd64/zztimer.a
 
+package/pkg/darwin_amd64/zzser.a
+
+package/pkg/darwin_amd64/zzini.a
+
+package/pkg/darwin_amd64/zzcommon.a
+
+package/pkg/darwin_amd64/zzcli.a
+
+package_protobuf/pkg/darwin_amd64/proto.a
+
+icartravel/src/game.pb.go
+
+icartravel/src/common.pb.go
+
 icartravel/icartravel
-package/pkg/windows_amd64/zzhttp.a
-icartravel/protobuffer/src/game_msg/game.pb.go
-icartravel/protobuffer/src/common_msg/common.pb.go
-icartravel/src/game_msg/game.pb.go
-icartravel/src/common_msg/common.pb.go
