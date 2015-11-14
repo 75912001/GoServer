@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"net"
+	"zzser"
 )
 
-var GUserMgr UserMgr
+var gUserMgr UserMgr
 
 type User struct {
 	Conn    *net.TCPConn
@@ -17,20 +18,20 @@ type User struct {
 }
 
 //todo
-func (p *User) Send(cmdId CMD_ID, req proto.Message) (ret int, err error) {
+func (p *User) Send(messageId MESSAGE_ID, req proto.Message) (ret int, err error) {
 	reqBuf, err := proto.Marshal(req)
 	if nil != err {
 		fmt.Printf("######proto.Marshal err:", err)
 		return ret, err
 	}
 	var reqBufLen = len(reqBuf)
-	var send_buf_all_len uint32
-	send_buf_all_len = uint32(reqBufLen + 8)
+	var send_buf_all_len uint32              //todo
+	send_buf_all_len = uint32(reqBufLen + 8) //todo
 
 	head_buf := new(bytes.Buffer)
 	var data = []interface{}{
 		send_buf_all_len,
-		cmdId,
+		messageId,
 	}
 	for _, v := range data {
 		err := binary.Write(head_buf, binary.LittleEndian, v)
@@ -50,12 +51,12 @@ func (p *User) Send(cmdId CMD_ID, req proto.Message) (ret int, err error) {
 	return ret, err
 }
 
-type USER_MAP map[*net.TCPConn]User
+type USER_MAP map[*zzser.PeerConn]User
 
 type UserMgr struct {
 	UserMap USER_MAP
 }
 
-func (user_mgr *UserMgr) Init() {
-	user_mgr.UserMap = make(USER_MAP)
+func (p *UserMgr) Init() {
+	p.UserMap = make(USER_MAP)
 }

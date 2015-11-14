@@ -4,22 +4,21 @@ package main
 import (
 	//"common_msg"
 	"fmt"
-	"game_msg"
-	"github.com/golang/protobuf/proto"
-	"strconv"
-	"sync"
+	//	"game_msg"
+	//	"github.com/golang/protobuf/proto"
+	//	"strconv"
 	"time"
+	"zzcli"
 	"zzcommon"
 	"zzser"
 	"zztimer"
 )
 
-var gLock = &sync.Mutex{}
-
 func onInit() (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
+	gUserMgr.Init()
 	fmt.Println("onInit")
 	return 0
 }
@@ -38,6 +37,9 @@ func onCliConn(peerConn *zzser.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
+	var user User
+	gUserMgr.UserMap[peerConn] = user
+
 	fmt.Println("onCliConn")
 	return 0
 }
@@ -46,6 +48,7 @@ func onCliConnClosed(peerConn *zzser.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
+	delete(gUserMgr.UserMap, peerConn)
 	fmt.Println("onCliConnClosed")
 	return 0
 }
@@ -55,7 +58,6 @@ func onCliGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 	defer gLock.Unlock()
 
 	//	fmt.Println("onCliGetPacketLen")
-	return 5
 	return packetLength
 	return 0
 }
@@ -112,6 +114,7 @@ func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 }
 
 func main() {
+	fmt.Println("ProtoHead Length:", len(ProtoHead))
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	if zzcommon.IsWindows() {
@@ -121,7 +124,19 @@ func main() {
 	}
 	gBenchFile.Load()
 	//////////////////////////////////////////////////////////////////
+	//做为服务端
+	//设置回调函数
+	gzzserServer.OnInit = onInit
+	gzzserServer.OnFini = onFini
+	gzzserServer.OnCliConnClosed = onCliConnClosed
+	gzzserServer.OnCliConn = onCliConn
+	gzzserServer.OnCliGetPacketLength = onCliGetPacketLen
+	gzzserServer.OnCliPacket = onCliPacket
+	//运行
+	go gzzserServer.Run(gBenchFile.Ip, gBenchFile.Port, gBenchFile.PacketLengthMax, gBenchFile.Delay)
+	//////////////////////////////////////////////////////////////////
 	//做为客户端
+	var gzzcliClient zzcli.Client
 	gzzcliClient.OnSerConn = onSerConn
 	gzzcliClient.OnSerConnClosed = onSerConnClosed
 	gzzcliClient.OnSerGetPacketLen = onSerGetPacketLen
@@ -129,22 +144,15 @@ func main() {
 
 	gameServerIp := gBenchFile.FileIni.Get("game_server", "ip", "999")
 	gameServerPort := zzcommon.StringToUint16(gBenchFile.FileIni.Get("game_server", "port", "0"))
-
-	var userCount = 1000
-	GUserMgr.Init()
-	var connCount uint32
-	for {
-		connCount++
-		fmt.Println("conn time", connCount)
+	err := gzzcliClient.Connect(gameServerIp, gameServerPort, gBenchFile.PacketLengthMax)
+	if nil != err {
+		fmt.Println("######zzcliClient.Connect err:", err)
+	} else {
+	}
+	/*
+		var userCount = 1000
 		for i := 1; i <= userCount; i++ {
-			var user User
 			user.Account = "mm" + strconv.Itoa(i)
-			conn, err := gzzcliClient.Connect(gameServerIp, gameServerPort)
-			if nil != err {
-				fmt.Println("######zzcli_client.Connect err:", err)
-			} else {
-				user.Conn = conn
-
 				{ //登录
 
 					req := &game_msg.LoginMsg{
@@ -154,29 +162,9 @@ func main() {
 					}
 					user.Send(0x00010101, req)
 				}
-
-				GUserMgr.UserMap[conn] = user
-				go gzzcliClient.ClientRecv(conn, gBenchFile.PacketLengthMax)
-			}
-			if 0 == i%100 {
-				//				fmt.Println(i)
 			}
 		}
-		fmt.Println("conn done")
-		time.Sleep(10 * time.Second)
-		fmt.Println("close")
-		var closeCount uint32
-		for k, v := range GUserMgr.UserMap {
-			closeCount++
-			if 0 == closeCount%100 {
-				//				fmt.Println(closeCount)
-			}
-			v.Conn.Close()
-			delete(GUserMgr.UserMap, k)
-		}
-		fmt.Println("close done")
-		time.Sleep(10 * time.Second)
-	}
+	*/
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP CLIENT Weather
 	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
@@ -191,19 +179,6 @@ func main() {
 	//////////////////////////////////////////////////////////////////
 	//定时器
 	//zztimer.Second(10, timerSecondTest)
-
-	//////////////////////////////////////////////////////////////////
-	//做为服务端
-	var zzserServer zzser.Server
-	//设置回调函数
-	zzserServer.OnInit = onInit
-	zzserServer.OnFini = onFini
-	zzserServer.OnCliConnClosed = onCliConnClosed
-	zzserServer.OnCliConn = onCliConn
-	zzserServer.OnCliGetPacketLength = onCliGetPacketLen
-	zzserServer.OnCliPacket = onCliPacket
-	//运行
-	go zzserServer.Run(gBenchFile.Ip, gBenchFile.Port, gBenchFile.PacketLengthMax, gBenchFile.Delay)
 
 	for {
 		time.Sleep(10 * time.Second)

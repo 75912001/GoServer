@@ -1,7 +1,10 @@
 package zzcli
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"net"
 	"strconv"
 	"zzcommon"
@@ -28,42 +31,79 @@ type Client struct {
 	OnSerConnClosed   ON_SER_CONN_CLOSED
 	OnSerGetPacketLen ON_SER_GET_PACKET_LEN
 	OnSerPacket       ON_SER_PACKET
+
+	Conn *net.TCPConn
 }
 
 //连接
-func (p *Client) Connect(ip string, port uint16) (conn *net.TCPConn, err error) {
+func (p *Client) Connect(ip string, port uint16, recvBufMax int) (err error) {
 
 	var addr = ip + ":" + strconv.Itoa(int(port))
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
 	if nil != err {
 		fmt.Println("######net.ResolveTCPAddr err:", err, addr)
-		return conn, err
+		return err
 	}
-	conn, err = net.DialTCP("tcp", nil, tcpAddr)
+	p.Conn, err = net.DialTCP("tcp", nil, tcpAddr)
 	if nil != err {
 		fmt.Println("######net.Dial err:", err, addr)
-		return conn, err
+		return err
 	}
-	return conn, err
+	go p.recv(recvBufMax)
+	return err
 }
 
-func (p *Client) ClientRecv(conn *net.TCPConn, recvBufMax int) {
+//todo
+func (p *Client) Send(messageId uint32, req proto.Message) (ret int, err error) {
+	reqBuf, err := proto.Marshal(req)
+	if nil != err {
+		fmt.Printf("######proto.Marshal err:", err)
+		return ret, err
+	}
+	var reqBufLen = len(reqBuf)
+	var sendBufAllLength uint32
+	sendBufAllLength = uint32(reqBufLen + 20)
+
+	head_buf := new(bytes.Buffer)
+	var data = []interface{}{
+		sendBufAllLength,
+		messageId,
+	}
+	for _, v := range data {
+		err := binary.Write(head_buf, binary.LittleEndian, v)
+		if nil != err {
+			fmt.Println("binary.Write failed:", err)
+		}
+	}
+
+	//todo
+	ret, err = p.Conn.Write(head_buf.Bytes())
+	ret, err = p.Conn.Write(reqBuf)
+	if nil != err {
+		fmt.Printf("######user.Conn.Write err:", err)
+		return ret, err
+	}
+	fmt.Println("Send body len:", reqBufLen)
+	return ret, err
+}
+
+func (p *Client) recv(recvBufMax int) {
 	var peerConn zzser.PeerConn
-	peerConn.Conn = conn
+	peerConn.Conn = p.Conn
 	p.OnSerConn(&peerConn)
-	defer conn.Close()
+	defer p.Conn.Close()
 
 	defer p.OnSerConnClosed(&peerConn)
 
 	//优化[消耗内存过大]
-	recvBuf := make([]byte, recvBufMax)
+	peerConn.RecvBuf = make([]byte, recvBufMax)
 
 	var readIndex int
 
 	for {
-		readNum, err := conn.Read(recvBuf[readIndex:])
+		readNum, err := p.Conn.Read(peerConn.RecvBuf[readIndex:])
 		if nil != err {
-			fmt.Println("######conn.Read err:", readNum, err)
+			fmt.Println("######Conn.Read err:", readNum, err)
 			break
 		}
 
@@ -79,9 +119,9 @@ func (p *Client) ClientRecv(conn *net.TCPConn, recvBufMax int) {
 				fmt.Println("######OnSerPacket:", zzcommon.ERROR_DISCONNECT_PEER)
 				break
 			}
-			recvBuf = recvBuf[readIndex-packetLength : readIndex]
+			peerConn.RecvBuf = peerConn.RecvBuf[readIndex-packetLength : readIndex]
 			readIndex = readIndex - packetLength
 		}
 	}
-	recvBuf = nil
+	peerConn.RecvBuf = nil
 }

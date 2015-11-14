@@ -42,7 +42,7 @@ type Server struct {
 //对端连接信息
 type PeerConn struct {
 	Conn    *net.TCPConn //连接
-	recvBuf []byte
+	RecvBuf []byte
 }
 
 //运行
@@ -72,6 +72,9 @@ func (p *Server) Run(ip string, port uint16, packetLengthMax int, delay bool) (e
 		time.Sleep(60 * time.Second)
 		fmt.Println("server runing...", time.Now())
 	}
+
+	fmt.Println("######server done...", time.Now())
+
 	return err
 }
 
@@ -80,6 +83,7 @@ func handleAccept(listen *net.TCPListener, server *Server, packetLengthMax int, 
 		conn, err := listen.AcceptTCP()
 		if nil != err {
 			fmt.Println("######listen.Accept err:", err)
+			server.IsRun = false
 			return
 		}
 
@@ -103,11 +107,11 @@ func handleConnection(server *Server, conn *net.TCPConn, packetLengthMax int) {
 	defer server.OnCliConnClosed(&peerConn)
 
 	//优化[消耗内存过大]
-	peerConn.recvBuf = make([]byte, packetLengthMax)
+	peerConn.RecvBuf = make([]byte, packetLengthMax)
 
 	var readIndex int
 	for {
-		readNum, err := conn.Read(peerConn.recvBuf[readIndex:])
+		readNum, err := conn.Read(peerConn.RecvBuf[readIndex:])
 		if nil != err {
 			fmt.Println("######conn.Read err:", readNum, err)
 			break
@@ -120,10 +124,11 @@ func handleConnection(server *Server, conn *net.TCPConn, packetLengthMax int) {
 			if zzcommon.ERROR_DISCONNECT_PEER == ret {
 				break
 			}
-			copy(peerConn.recvBuf, peerConn.recvBuf[packetLength:readIndex])
+			copy(peerConn.RecvBuf, peerConn.RecvBuf[packetLength:readIndex])
 			readIndex -= packetLength
 		} else if zzcommon.ERROR_DISCONNECT_PEER == packetLength {
 			break
 		}
 	}
+	peerConn.RecvBuf = nil
 }
