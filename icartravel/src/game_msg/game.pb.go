@@ -200,7 +200,8 @@ package game_msg
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import common_msg "."
+
+import "common_msg"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal

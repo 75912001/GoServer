@@ -2,9 +2,10 @@
 package main
 
 import (
-	//	"common_msg"
+	//"common_msg"
 	"fmt"
 	"game_msg"
+	"github.com/golang/protobuf/proto"
 	"strconv"
 	"sync"
 	"time"
@@ -63,7 +64,7 @@ func onCliPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	//	fmt.Println("on_cli_conn")
+	//fmt.Println("on_cli_conn")
 	//	peer_conn.conn.Write("123")
 	//	peer_conn.Conn.Write([]byte("123"))
 	return 0
@@ -96,7 +97,7 @@ func onSerGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	fmt.Println("onSerGetPacketLen")
+	fmt.Println("onSerGetPacketLen packetLength:", packetLength)
 	return 0
 }
 
@@ -129,7 +130,7 @@ func main() {
 	gameServerIp := gBenchFile.FileIni.Get("game_server", "ip", "999")
 	gameServerPort := zzcommon.StringToUint16(gBenchFile.FileIni.Get("game_server", "port", "0"))
 
-	var userCount = 10000
+	var userCount = 1000
 	GUserMgr.Init()
 	var connCount uint32
 	for {
@@ -152,14 +153,13 @@ func main() {
 						Password: proto.String(user.Account),
 					}
 					user.Send(0x00010101, req)
-
 				}
 
 				GUserMgr.UserMap[conn] = user
 				go gzzcliClient.ClientRecv(conn, gBenchFile.PacketLengthMax)
 			}
 			if 0 == i%100 {
-				fmt.Println(i)
+				//				fmt.Println(i)
 			}
 		}
 		fmt.Println("conn done")
@@ -169,7 +169,7 @@ func main() {
 		for k, v := range GUserMgr.UserMap {
 			closeCount++
 			if 0 == closeCount%100 {
-				fmt.Println(closeCount)
+				//				fmt.Println(closeCount)
 			}
 			v.Conn.Close()
 			delete(GUserMgr.UserMap, k)
