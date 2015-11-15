@@ -10,7 +10,7 @@ import (
 	"time"
 	"zzcli"
 	"zzcommon"
-	"zzser"
+	//	"zzser"
 	"zztimer"
 )
 
@@ -33,18 +33,19 @@ func onFini() (ret int) {
 
 ////////////////////////////////////////////////////////////////////////////////
 //客户端相关的回调函数
-func onCliConn(peerConn *zzser.PeerConn) (ret int) {
+func onCliConn(peerConn *zzcommon.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
 	var user User
-	gUserMgr.UserMap[peerConn] = user
+	user.PeerConn = peerConn
+	gUserMgr.UserMap[user.PeerConn] = user
 
 	fmt.Println("onCliConn")
 	return 0
 }
 
-func onCliConnClosed(peerConn *zzser.PeerConn) (ret int) {
+func onCliConnClosed(peerConn *zzcommon.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -53,7 +54,7 @@ func onCliConnClosed(peerConn *zzser.PeerConn) (ret int) {
 	return 0
 }
 
-func onCliGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+func onCliGetPacketLen(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -62,7 +63,7 @@ func onCliGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 	return 0
 }
 
-func onCliPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+func onCliPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -76,7 +77,7 @@ func onCliPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 //服务器相关回调函数
 
 //服务器连接成功
-func onSerConn(peerConn *zzser.PeerConn) (ret int) {
+func onSerConn(peerConn *zzcommon.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -85,7 +86,7 @@ func onSerConn(peerConn *zzser.PeerConn) (ret int) {
 }
 
 //服务端连接关闭
-func onSerConnClosed(peerConn *zzser.PeerConn) (ret int) {
+func onSerConnClosed(peerConn *zzcommon.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -95,7 +96,7 @@ func onSerConnClosed(peerConn *zzser.PeerConn) (ret int) {
 
 //获取消息的长度,0表示消息还未接受完成,
 //ERROR_DISCONNECT_PEER表示长度有误,服务端断开
-func onSerGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+func onSerGetPacketLen(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -105,7 +106,7 @@ func onSerGetPacketLen(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 
 //服务端消息
 //返回ERROR_DISCONNECT_PEER断开服务端
-func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
+func onSerPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -114,7 +115,6 @@ func onSerPacket(peerConn *zzser.PeerConn, packetLength int) (ret int) {
 }
 
 func main() {
-	fmt.Println("ProtoHead Length:", len(ProtoHead))
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	if zzcommon.IsWindows() {
@@ -149,22 +149,7 @@ func main() {
 		fmt.Println("######zzcliClient.Connect err:", err)
 	} else {
 	}
-	/*
-		var userCount = 1000
-		for i := 1; i <= userCount; i++ {
-			user.Account = "mm" + strconv.Itoa(i)
-				{ //登录
 
-					req := &game_msg.LoginMsg{
-						Platform: proto.Uint32(0),
-						Account:  proto.String(user.Account),
-						Password: proto.String(user.Account),
-					}
-					user.Send(0x00010101, req)
-				}
-			}
-		}
-	*/
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP CLIENT Weather
 	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
