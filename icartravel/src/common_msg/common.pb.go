@@ -10,45 +10,11 @@ It is generated from these files:
 
 It has these top-level messages:
 	ListServT
-	FengshentaiEventT
-	ShilianchouEventT
-	FriendT
-	MapT
-	FairylandLineupT
-	UserLineupT
-	ResourceLineupT
-	PrivateMapPosT
-	PrivateMapT
-	LoadUserT
+	UserT
 	HeadT
 	EventT
-	MountT
-	MountCfgT
-	HeroT
-	HeroPowerT
-	OfflineUserPrivateMapT
-	SoldierPowerT
-	SoldierLevelT
-	LineupLevelT
-	CliOfflineUserPrivateMapT
-	NpcSellConfT
-	NpcSellPriceT
-	NpcSellBuyCntT
-	MapUserT
-	TaskT
 	ItemT
-	UserSellItemT
 	ItemCfgT
-	EquipmentT
-	MailBuyAttachmentT
-	MailT
-	EquipmentCfgT
-	EquipmentKindCfgT
-	PveIngRewardT
-	RewardT
-	BuildingT
-	EmbattleT
-	EmbattlePosT
 */
 package common_msg
 
@@ -68,251 +34,56 @@ type E_ERROR_CODE int32
 
 const (
 	// 通用错误
-	E_ERROR_CODE_EEC_SUCCESS                                         E_ERROR_CODE = 0
-	E_ERROR_CODE_EEC_ERROR                                           E_ERROR_CODE = 1
-	E_ERROR_CODE_EEC_VALUE_INVALID                                   E_ERROR_CODE = 2
-	E_ERROR_CODE_EEC_LOGIN_T                                         E_ERROR_CODE = 3
-	E_ERROR_CODE_EEC_INEXISTENT_ITEM                                 E_ERROR_CODE = 4
-	E_ERROR_CODE_EEC_INEXISTENT_USER                                 E_ERROR_CODE = 5
-	E_ERROR_CODE_EEC_EXISTENT_ROLE                                   E_ERROR_CODE = 6
-	E_ERROR_CODE_EEC_INEXISTENT_ACCOUNT                              E_ERROR_CODE = 7
-	E_ERROR_CODE_EEC_NO_APPROVED                                     E_ERROR_CODE = 8
-	E_ERROR_CODE_EEC_EVENT_LIMIT                                     E_ERROR_CODE = 9
-	E_ERROR_CODE_EEC_USER_LEVEL                                      E_ERROR_CODE = 10
-	E_ERROR_CODE_EEC_USER_BTL                                        E_ERROR_CODE = 11
-	E_ERROR_CODE_EEC_USER_IN_CURRENT_MAP                             E_ERROR_CODE = 12
-	E_ERROR_CODE_EEC_MAP_INVALID                                     E_ERROR_CODE = 13
-	E_ERROR_CODE_EEC_PASSWORD                                        E_ERROR_CODE = 14
-	E_ERROR_CODE_EEC_CHAT_LEN_MAX                                    E_ERROR_CODE = 15
-	E_ERROR_CODE_EEC_MOUNT_USED                                      E_ERROR_CODE = 16
-	E_ERROR_CODE_EEC_MOUNT_INEXISTENT                                E_ERROR_CODE = 17
-	E_ERROR_CODE_EEC_MOUNT_UNUSED                                    E_ERROR_CODE = 18
-	E_ERROR_CODE_EEC_NO_TASK                                         E_ERROR_CODE = 19
-	E_ERROR_CODE_EEC_NO_TASK_FINISH                                  E_ERROR_CODE = 20
-	E_ERROR_CODE_EEC_NO_TASK_REWARD                                  E_ERROR_CODE = 21
-	E_ERROR_CODE_EEC_CLI_EVENT_TYPE                                  E_ERROR_CODE = 22
-	E_ERROR_CODE_EEC_MAIL_INEXISTENT                                 E_ERROR_CODE = 23
-	E_ERROR_CODE_EEC_MAIL_ATTACHMENT_INEXISTENT                      E_ERROR_CODE = 24
-	E_ERROR_CODE_EEC_USER_NO_BTL                                     E_ERROR_CODE = 27
-	E_ERROR_CODE_EEC_GET_FORAGE_TIME_ERR                             E_ERROR_CODE = 30
-	E_ERROR_CODE_EEC_GET_FORAGE_EXISTENT                             E_ERROR_CODE = 31
-	E_ERROR_CODE_EEC_FORAGE_CNT                                      E_ERROR_CODE = 32
-	E_ERROR_CODE_EEC_EQUIPMENT_INEXISTENT                            E_ERROR_CODE = 33
-	E_ERROR_CODE_EEC_EQUIPMENT_ON                                    E_ERROR_CODE = 34
-	E_ERROR_CODE_EEC_HERO_INEXISTENT                                 E_ERROR_CODE = 35
-	E_ERROR_CODE_EEC_HERO_EQUIPMENT_POS                              E_ERROR_CODE = 36
-	E_ERROR_CODE_EEC_EQUIPMENT_OFF                                   E_ERROR_CODE = 37
-	E_ERROR_CODE_EEC_HERO_EQUIPMENT_POS_NO                           E_ERROR_CODE = 38
-	E_ERROR_CODE_EEC_HERO_STAR_LEVEL_MAX                             E_ERROR_CODE = 40
-	E_ERROR_CODE_EEC_ITEM_CNT                                        E_ERROR_CODE = 41
-	E_ERROR_CODE_EEC_PEACH_CNT                                       E_ERROR_CODE = 42
-	E_ERROR_CODE_EEC_EQUIPMENT_LEVEL_UP                              E_ERROR_CODE = 43
-	E_ERROR_CODE_EEC_GOLD_CNT                                        E_ERROR_CODE = 44
-	E_ERROR_CODE_EEC_HERO_INEXISTENT_IN_HERO_SKILL                   E_ERROR_CODE = 45
-	E_ERROR_CODE_EEC_HERO_SKILL_INACTIVE                             E_ERROR_CODE = 46
-	E_ERROR_CODE_EEC_HERO_SKILL_UP                                   E_ERROR_CODE = 47
-	E_ERROR_CODE_EEC_HERO_EXISTENT                                   E_ERROR_CODE = 48
-	E_ERROR_CODE_EEC_BUILDING_LEVEL_UP                               E_ERROR_CODE = 49
-	E_ERROR_CODE_EEC_BUILDING_HALL_LEVEL                             E_ERROR_CODE = 50
-	E_ERROR_CODE_EEC_SOLDIER_CNT_MAX                                 E_ERROR_CODE = 51
-	E_ERROR_CODE_EEC_HERO_LEVEL                                      E_ERROR_CODE = 52
-	E_ERROR_CODE_EEC_MAP_TYPE                                        E_ERROR_CODE = 53
-	E_ERROR_CODE_EEC_PRIVATE_MAP_RESOURCE_BEFORE_THE_PRODUCTION_TIME E_ERROR_CODE = 54
-	E_ERROR_CODE_EEC_PRIVATE_MAP_USER_IN                             E_ERROR_CODE = 55
-	E_ERROR_CODE_EEC_INGOTS_CNT                                      E_ERROR_CODE = 56
-	E_ERROR_CODE_EEC_FRIEND_SELF_CNT                                 E_ERROR_CODE = 57
-	E_ERROR_CODE_EEC_HAS_FRIEND                                      E_ERROR_CODE = 58
-	E_ERROR_CODE_EEC_FRIEND_APPLY_CNT                                E_ERROR_CODE = 59
-	E_ERROR_CODE_EEC_IN_FRIEND_APPLY_CNT                             E_ERROR_CODE = 60
-	E_ERROR_CODE_EEC_IN_FRIEND                                       E_ERROR_CODE = 61
-	E_ERROR_CODE_EEC_FRIEND_CNT                                      E_ERROR_CODE = 62
-	E_ERROR_CODE_EEC_NPC_SELL_ITEM_INEXISTENT                        E_ERROR_CODE = 63
-	E_ERROR_CODE_EEC_NPC_SELL_BUY_ITEM_CNT_MAX                       E_ERROR_CODE = 64
-	E_ERROR_CODE_EEC_SILVER_CNT                                      E_ERROR_CODE = 65
-	E_ERROR_CODE_EEC_USER_SELL_EQUIPMENT_EXP                         E_ERROR_CODE = 66
-	E_ERROR_CODE_EEC_USER_SELL_BUY_SELF                              E_ERROR_CODE = 67
-	E_ERROR_CODE_EEC_USER_SELL_BUY_NULL                              E_ERROR_CODE = 68
-	E_ERROR_CODE_EEC_LINEUP_CNT                                      E_ERROR_CODE = 69
-	E_ERROR_CODE_EEC_LINEUP_LEVEL                                    E_ERROR_CODE = 70
-	E_ERROR_CODE_EEC_LINEUP_ID                                       E_ERROR_CODE = 71
-	E_ERROR_CODE_EEC_EQUIPMENT_ELEMENT_TYPE                          E_ERROR_CODE = 72
-	E_ERROR_CODE_EEC_NOT_IN_MAP_PRIVATE                              E_ERROR_CODE = 73
-	E_ERROR_CODE_EEC_SOLDIER_ALREADY_UNLOCK                          E_ERROR_CODE = 74
-	E_ERROR_CODE_EEC_HERO_EXP_ALREADY_FULL                           E_ERROR_CODE = 75
-	E_ERROR_CODE_EEC_ZHUJIDAN_FREE_CNT                               E_ERROR_CODE = 76
-	E_ERROR_CODE_EEC_ZHUJIDAN_FREE_TIME                              E_ERROR_CODE = 77
-	E_ERROR_CODE_EEC_ZAOHUADAN_FREE_TIME                             E_ERROR_CODE = 78
-	E_ERROR_CODE_EEC_FORAGE_FULL                                     E_ERROR_CODE = 79
-	E_ERROR_CODE_EEC_JADE_CNT                                        E_ERROR_CODE = 80
-	E_ERROR_CODE_EEC_MOUNT_EXSIT                                     E_ERROR_CODE = 82
-	E_ERROR_CODE_EEC_POS                                             E_ERROR_CODE = 100
-	E_ERROR_CODE_EEC_ERROR_MYSQL                                     E_ERROR_CODE = 6000
-	E_ERROR_CODE_EEC_MAX                                             E_ERROR_CODE = 10000
+	E_ERROR_CODE_EEC_SUCCESS            E_ERROR_CODE = 0
+	E_ERROR_CODE_EEC_ERROR              E_ERROR_CODE = 1
+	E_ERROR_CODE_EEC_VALUE_INVALID      E_ERROR_CODE = 2
+	E_ERROR_CODE_EEC_ITEM_CNT           E_ERROR_CODE = 3
+	E_ERROR_CODE_EEC_ITEM_INEXISTENT    E_ERROR_CODE = 4
+	E_ERROR_CODE_EEC_USER_INEXISTENT    E_ERROR_CODE = 5
+	E_ERROR_CODE_EEC_ROLE_EXISTENT_ROLE E_ERROR_CODE = 6
+	E_ERROR_CODE_EEC_ACCOUNT_INEXISTENT E_ERROR_CODE = 7
+	E_ERROR_CODE_EEC_APPROVED_NO        E_ERROR_CODE = 8
+	E_ERROR_CODE_EEC_EVENT_LIMIT        E_ERROR_CODE = 9
+	E_ERROR_CODE_EEC_USER_LEVEL         E_ERROR_CODE = 10
+	E_ERROR_CODE_EEC_PASSWORD_ERROR     E_ERROR_CODE = 14
+	E_ERROR_CODE_EEC_CHAT_LEN_MAX       E_ERROR_CODE = 15
+	E_ERROR_CODE_EEC_ERROR_MYSQL        E_ERROR_CODE = 9000
+	E_ERROR_CODE_EEC_MAX                E_ERROR_CODE = 10000
 )
 
 var E_ERROR_CODE_name = map[int32]string{
 	0:     "EEC_SUCCESS",
 	1:     "EEC_ERROR",
 	2:     "EEC_VALUE_INVALID",
-	3:     "EEC_LOGIN_T",
-	4:     "EEC_INEXISTENT_ITEM",
-	5:     "EEC_INEXISTENT_USER",
-	6:     "EEC_EXISTENT_ROLE",
-	7:     "EEC_INEXISTENT_ACCOUNT",
-	8:     "EEC_NO_APPROVED",
+	3:     "EEC_ITEM_CNT",
+	4:     "EEC_ITEM_INEXISTENT",
+	5:     "EEC_USER_INEXISTENT",
+	6:     "EEC_ROLE_EXISTENT_ROLE",
+	7:     "EEC_ACCOUNT_INEXISTENT",
+	8:     "EEC_APPROVED_NO",
 	9:     "EEC_EVENT_LIMIT",
 	10:    "EEC_USER_LEVEL",
-	11:    "EEC_USER_BTL",
-	12:    "EEC_USER_IN_CURRENT_MAP",
-	13:    "EEC_MAP_INVALID",
-	14:    "EEC_PASSWORD",
+	14:    "EEC_PASSWORD_ERROR",
 	15:    "EEC_CHAT_LEN_MAX",
-	16:    "EEC_MOUNT_USED",
-	17:    "EEC_MOUNT_INEXISTENT",
-	18:    "EEC_MOUNT_UNUSED",
-	19:    "EEC_NO_TASK",
-	20:    "EEC_NO_TASK_FINISH",
-	21:    "EEC_NO_TASK_REWARD",
-	22:    "EEC_CLI_EVENT_TYPE",
-	23:    "EEC_MAIL_INEXISTENT",
-	24:    "EEC_MAIL_ATTACHMENT_INEXISTENT",
-	27:    "EEC_USER_NO_BTL",
-	30:    "EEC_GET_FORAGE_TIME_ERR",
-	31:    "EEC_GET_FORAGE_EXISTENT",
-	32:    "EEC_FORAGE_CNT",
-	33:    "EEC_EQUIPMENT_INEXISTENT",
-	34:    "EEC_EQUIPMENT_ON",
-	35:    "EEC_HERO_INEXISTENT",
-	36:    "EEC_HERO_EQUIPMENT_POS",
-	37:    "EEC_EQUIPMENT_OFF",
-	38:    "EEC_HERO_EQUIPMENT_POS_NO",
-	40:    "EEC_HERO_STAR_LEVEL_MAX",
-	41:    "EEC_ITEM_CNT",
-	42:    "EEC_PEACH_CNT",
-	43:    "EEC_EQUIPMENT_LEVEL_UP",
-	44:    "EEC_GOLD_CNT",
-	45:    "EEC_HERO_INEXISTENT_IN_HERO_SKILL",
-	46:    "EEC_HERO_SKILL_INACTIVE",
-	47:    "EEC_HERO_SKILL_UP",
-	48:    "EEC_HERO_EXISTENT",
-	49:    "EEC_BUILDING_LEVEL_UP",
-	50:    "EEC_BUILDING_HALL_LEVEL",
-	51:    "EEC_SOLDIER_CNT_MAX",
-	52:    "EEC_HERO_LEVEL",
-	53:    "EEC_MAP_TYPE",
-	54:    "EEC_PRIVATE_MAP_RESOURCE_BEFORE_THE_PRODUCTION_TIME",
-	55:    "EEC_PRIVATE_MAP_USER_IN",
-	56:    "EEC_INGOTS_CNT",
-	57:    "EEC_FRIEND_SELF_CNT",
-	58:    "EEC_HAS_FRIEND",
-	59:    "EEC_FRIEND_APPLY_CNT",
-	60:    "EEC_IN_FRIEND_APPLY_CNT",
-	61:    "EEC_IN_FRIEND",
-	62:    "EEC_FRIEND_CNT",
-	63:    "EEC_NPC_SELL_ITEM_INEXISTENT",
-	64:    "EEC_NPC_SELL_BUY_ITEM_CNT_MAX",
-	65:    "EEC_SILVER_CNT",
-	66:    "EEC_USER_SELL_EQUIPMENT_EXP",
-	67:    "EEC_USER_SELL_BUY_SELF",
-	68:    "EEC_USER_SELL_BUY_NULL",
-	69:    "EEC_LINEUP_CNT",
-	70:    "EEC_LINEUP_LEVEL",
-	71:    "EEC_LINEUP_ID",
-	72:    "EEC_EQUIPMENT_ELEMENT_TYPE",
-	73:    "EEC_NOT_IN_MAP_PRIVATE",
-	74:    "EEC_SOLDIER_ALREADY_UNLOCK",
-	75:    "EEC_HERO_EXP_ALREADY_FULL",
-	76:    "EEC_ZHUJIDAN_FREE_CNT",
-	77:    "EEC_ZHUJIDAN_FREE_TIME",
-	78:    "EEC_ZAOHUADAN_FREE_TIME",
-	79:    "EEC_FORAGE_FULL",
-	80:    "EEC_JADE_CNT",
-	82:    "EEC_MOUNT_EXSIT",
-	100:   "EEC_POS",
-	6000:  "EEC_ERROR_MYSQL",
+	9000:  "EEC_ERROR_MYSQL",
 	10000: "EEC_MAX",
 }
 var E_ERROR_CODE_value = map[string]int32{
-	"EEC_SUCCESS":                                         0,
-	"EEC_ERROR":                                           1,
-	"EEC_VALUE_INVALID":                                   2,
-	"EEC_LOGIN_T":                                         3,
-	"EEC_INEXISTENT_ITEM":                                 4,
-	"EEC_INEXISTENT_USER":                                 5,
-	"EEC_EXISTENT_ROLE":                                   6,
-	"EEC_INEXISTENT_ACCOUNT":                              7,
-	"EEC_NO_APPROVED":                                     8,
-	"EEC_EVENT_LIMIT":                                     9,
-	"EEC_USER_LEVEL":                                      10,
-	"EEC_USER_BTL":                                        11,
-	"EEC_USER_IN_CURRENT_MAP":                             12,
-	"EEC_MAP_INVALID":                                     13,
-	"EEC_PASSWORD":                                        14,
-	"EEC_CHAT_LEN_MAX":                                    15,
-	"EEC_MOUNT_USED":                                      16,
-	"EEC_MOUNT_INEXISTENT":                                17,
-	"EEC_MOUNT_UNUSED":                                    18,
-	"EEC_NO_TASK":                                         19,
-	"EEC_NO_TASK_FINISH":                                  20,
-	"EEC_NO_TASK_REWARD":                                  21,
-	"EEC_CLI_EVENT_TYPE":                                  22,
-	"EEC_MAIL_INEXISTENT":                                 23,
-	"EEC_MAIL_ATTACHMENT_INEXISTENT":                      24,
-	"EEC_USER_NO_BTL":                                     27,
-	"EEC_GET_FORAGE_TIME_ERR":                             30,
-	"EEC_GET_FORAGE_EXISTENT":                             31,
-	"EEC_FORAGE_CNT":                                      32,
-	"EEC_EQUIPMENT_INEXISTENT":                            33,
-	"EEC_EQUIPMENT_ON":                                    34,
-	"EEC_HERO_INEXISTENT":                                 35,
-	"EEC_HERO_EQUIPMENT_POS":                              36,
-	"EEC_EQUIPMENT_OFF":                                   37,
-	"EEC_HERO_EQUIPMENT_POS_NO":                           38,
-	"EEC_HERO_STAR_LEVEL_MAX":                             40,
-	"EEC_ITEM_CNT":                                        41,
-	"EEC_PEACH_CNT":                                       42,
-	"EEC_EQUIPMENT_LEVEL_UP":                              43,
-	"EEC_GOLD_CNT":                                        44,
-	"EEC_HERO_INEXISTENT_IN_HERO_SKILL":                   45,
-	"EEC_HERO_SKILL_INACTIVE":                             46,
-	"EEC_HERO_SKILL_UP":                                   47,
-	"EEC_HERO_EXISTENT":                                   48,
-	"EEC_BUILDING_LEVEL_UP":                               49,
-	"EEC_BUILDING_HALL_LEVEL":                             50,
-	"EEC_SOLDIER_CNT_MAX":                                 51,
-	"EEC_HERO_LEVEL":                                      52,
-	"EEC_MAP_TYPE":                                        53,
-	"EEC_PRIVATE_MAP_RESOURCE_BEFORE_THE_PRODUCTION_TIME": 54,
-	"EEC_PRIVATE_MAP_USER_IN":                             55,
-	"EEC_INGOTS_CNT":                                      56,
-	"EEC_FRIEND_SELF_CNT":                                 57,
-	"EEC_HAS_FRIEND":                                      58,
-	"EEC_FRIEND_APPLY_CNT":                                59,
-	"EEC_IN_FRIEND_APPLY_CNT":                             60,
-	"EEC_IN_FRIEND":                                       61,
-	"EEC_FRIEND_CNT":                                      62,
-	"EEC_NPC_SELL_ITEM_INEXISTENT":                        63,
-	"EEC_NPC_SELL_BUY_ITEM_CNT_MAX":                       64,
-	"EEC_SILVER_CNT":                                      65,
-	"EEC_USER_SELL_EQUIPMENT_EXP":                         66,
-	"EEC_USER_SELL_BUY_SELF":                              67,
-	"EEC_USER_SELL_BUY_NULL":                              68,
-	"EEC_LINEUP_CNT":                                      69,
-	"EEC_LINEUP_LEVEL":                                    70,
-	"EEC_LINEUP_ID":                                       71,
-	"EEC_EQUIPMENT_ELEMENT_TYPE":                          72,
-	"EEC_NOT_IN_MAP_PRIVATE":                              73,
-	"EEC_SOLDIER_ALREADY_UNLOCK":                          74,
-	"EEC_HERO_EXP_ALREADY_FULL":                           75,
-	"EEC_ZHUJIDAN_FREE_CNT":                               76,
-	"EEC_ZHUJIDAN_FREE_TIME":                              77,
-	"EEC_ZAOHUADAN_FREE_TIME":                             78,
-	"EEC_FORAGE_FULL":                                     79,
-	"EEC_JADE_CNT":                                        80,
-	"EEC_MOUNT_EXSIT":                                     82,
-	"EEC_POS":                                             100,
-	"EEC_ERROR_MYSQL":                                     6000,
-	"EEC_MAX":                                             10000,
+	"EEC_SUCCESS":            0,
+	"EEC_ERROR":              1,
+	"EEC_VALUE_INVALID":      2,
+	"EEC_ITEM_CNT":           3,
+	"EEC_ITEM_INEXISTENT":    4,
+	"EEC_USER_INEXISTENT":    5,
+	"EEC_ROLE_EXISTENT_ROLE": 6,
+	"EEC_ACCOUNT_INEXISTENT": 7,
+	"EEC_APPROVED_NO":        8,
+	"EEC_EVENT_LIMIT":        9,
+	"EEC_USER_LEVEL":         10,
+	"EEC_PASSWORD_ERROR":     14,
+	"EEC_CHAT_LEN_MAX":       15,
+	"EEC_ERROR_MYSQL":        9000,
+	"EEC_MAX":                10000,
 }
 
 func (x E_ERROR_CODE) Enum() *E_ERROR_CODE {
@@ -337,13 +108,8 @@ type USER_EVENT_TYPE int32
 const (
 	// ----------------------------------------------------------------------------
 	// 每日事件 DAILY_EVENT_XX
-	USER_EVENT_TYPE_DAILY_EVENT_BEGIN             USER_EVENT_TYPE = 100000
-	USER_EVENT_TYPE_DAILY_GET_FORAGE              USER_EVENT_TYPE = 100300
-	USER_EVENT_TYPE_DAILY_EVENT_NPC_SELL_BUY_CNT  USER_EVENT_TYPE = 100301
-	USER_EVENT_TYPE_DAILY_EVENT_FREE_GET_ZHUJIDAN USER_EVENT_TYPE = 100302
-	USER_EVENT_TYPE_DAILY_EVENT_FENGSHENTAI       USER_EVENT_TYPE = 100303
-	USER_EVENT_TYPE_DAILY_EVENT_TASK              USER_EVENT_TYPE = 100304
-	USER_EVENT_TYPE_DAILY_EVENT_END               USER_EVENT_TYPE = 199999
+	USER_EVENT_TYPE_DAILY_EVENT_BEGIN USER_EVENT_TYPE = 100000
+	USER_EVENT_TYPE_DAILY_EVENT_END   USER_EVENT_TYPE = 199999
 	// ----------------------------------------------------------------------------
 	// 每周事件 WEEKLY_EVENT_XX
 	USER_EVENT_TYPE_WEEKLY_EVENT_BEGIN USER_EVENT_TYPE = 200000
@@ -354,47 +120,8 @@ const (
 	USER_EVENT_TYPE_MONTHLY_EVENT_END   USER_EVENT_TYPE = 399999
 	// ----------------------------------------------------------------------------
 	// 永久事件 FOREVER_EVENT_XX
-	USER_EVENT_TYPE_FOREVER_EVENT_BEGIN                     USER_EVENT_TYPE = 400000
-	USER_EVENT_TYPE_FOREVER_EVENT_TASK                      USER_EVENT_TYPE = 400001
-	USER_EVENT_TYPE_FOREVER_EVENT_EQUIPMENT_IDX             USER_EVENT_TYPE = 400002
-	USER_EVENT_TYPE_FOREVER_EVENT_FAIRYLAND                 USER_EVENT_TYPE = 400003
-	USER_EVENT_TYPE_FOREVER_EVENT_BUILDING_LEVEL            USER_EVENT_TYPE = 400004
-	USER_EVENT_TYPE_FOREVER_EVENT_FREE_GET_ZAOHUADAN        USER_EVENT_TYPE = 400005
-	USER_EVENT_TYPE_FOREVER_EVENT_HEAD                      USER_EVENT_TYPE = 400006
-	USER_EVENT_TYPE_FOREVER_EVENT_PRIVATE_MAP               USER_EVENT_TYPE = 400007
-	USER_EVENT_TYPE_FOREVER_EVENT_COMMON_MAP                USER_EVENT_TYPE = 400008
-	USER_EVENT_TYPE_FOREVER_EVENT_PRIVATE_MAP_TIME          USER_EVENT_TYPE = 400009
-	USER_EVENT_TYPE_FOREVER_EVENT_UPDATE_LINEUP             USER_EVENT_TYPE = 400010
-	USER_EVENT_TYPE_FOREVER_EVENT_FAIRYLAND_LINEUP          USER_EVENT_TYPE = 400011
-	USER_EVENT_TYPE_FOREVER_EVENT_PRIVATE_BTL_SCENE         USER_EVENT_TYPE = 400012
-	USER_EVENT_TYPE_FOREVER_EVENT_SOLDIER_LEVEL             USER_EVENT_TYPE = 400013
-	USER_EVENT_TYPE_FOREVER_EVENT_MAIL_IDX                  USER_EVENT_TYPE = 400014
-	USER_EVENT_TYPE_FOREVER_EVENT_NPC_SELL_PRICE_LAST       USER_EVENT_TYPE = 400015
-	USER_EVENT_TYPE_FOREVER_EVENT_NPC_SELL_PRICE_CURRENT    USER_EVENT_TYPE = 400016
-	USER_EVENT_TYPE_FOREVER_EVENT_NPC_SELL_CNT              USER_EVENT_TYPE = 400017
-	USER_EVENT_TYPE_FOREVER_EVENT_NPC_SELL_CNT_LAST         USER_EVENT_TYPE = 400018
-	USER_EVENT_TYPE_FOREVER_EVENT_NPC_SELL_CNT_CURRENT      USER_EVENT_TYPE = 400019
-	USER_EVENT_TYPE_FOREVER_EVENT_USER_SELL_PRICE_LAST_LAST USER_EVENT_TYPE = 400030
-	USER_EVENT_TYPE_FOREVER_EVENT_USER_SELL_PRICE_LAST      USER_EVENT_TYPE = 400031
-	USER_EVENT_TYPE_FOREVER_EVENT_USER_SELL_PRICE_CURRENT   USER_EVENT_TYPE = 400032
-	USER_EVENT_TYPE_FOREVER_EVENT_USER_SELL_CNT_LAST_LAST   USER_EVENT_TYPE = 400033
-	USER_EVENT_TYPE_FOREVER_EVENT_USER_SELL_CNT_LAST        USER_EVENT_TYPE = 400034
-	USER_EVENT_TYPE_FOREVER_EVENT_USER_SELL_CNT_CURRENT     USER_EVENT_TYPE = 400035
-	USER_EVENT_TYPE_FOREVER_EVENT_USER_SELL_IDX             USER_EVENT_TYPE = 400040
-	USER_EVENT_TYPE_FOREVER_EVENT_HEAD_FRAME_ACTIVATE       USER_EVENT_TYPE = 400050
-	USER_EVENT_TYPE_FOREVER_EVENT_LINEUP_LEVEL              USER_EVENT_TYPE = 400051
-	USER_EVENT_TYPE_FOREVER_EVENT_REWARD_TASK               USER_EVENT_TYPE = 400052
-	// [400100-400500]
-	USER_EVENT_TYPE_FOREVER_EVENT_PRIVATE_MAP_DATA_BEGIN USER_EVENT_TYPE = 400100
-	USER_EVENT_TYPE_FOREVER_EVENT_PRIVATE_MAP_DATA       USER_EVENT_TYPE = 400101
-	// str_data:字符串数据(owner_uid,get_resource_time,lineup_id,hero[15],data[btl scene id])
-	USER_EVENT_TYPE_FOREVER_EVENT_PRIVATE_MAP_DATA_END USER_EVENT_TYPE = 400500
-	USER_EVENT_TYPE_FOREVER_EVENT_CLI_START            USER_EVENT_TYPE = 480000
-	// 	//不关心,只占位.具体由客户端自行查询和存储...
-	USER_EVENT_TYPE_FOREVER_EVENT_CLI_END             USER_EVENT_TYPE = 489999
-	USER_EVENT_TYPE_FOREVER_EVENT_SYS_UID             USER_EVENT_TYPE = 490000
-	USER_EVENT_TYPE_FOREVER_EVENT_SYS_SERVER_OPEN_DAY USER_EVENT_TYPE = 490001
-	USER_EVENT_TYPE_FOREVER_EVENT_END                 USER_EVENT_TYPE = 499999
+	USER_EVENT_TYPE_FOREVER_EVENT_BEGIN USER_EVENT_TYPE = 400000
+	USER_EVENT_TYPE_FOREVER_EVENT_END   USER_EVENT_TYPE = 499999
 	// ----------------------------------------------------------------------------
 	// 过期事件 EXPRIE_EVENT_XX
 	USER_EVENT_TYPE_EXPRIE_EVENT_BEGIN USER_EVENT_TYPE = 500000
@@ -403,109 +130,27 @@ const (
 
 var USER_EVENT_TYPE_name = map[int32]string{
 	100000: "DAILY_EVENT_BEGIN",
-	100300: "DAILY_GET_FORAGE",
-	100301: "DAILY_EVENT_NPC_SELL_BUY_CNT",
-	100302: "DAILY_EVENT_FREE_GET_ZHUJIDAN",
-	100303: "DAILY_EVENT_FENGSHENTAI",
-	100304: "DAILY_EVENT_TASK",
 	199999: "DAILY_EVENT_END",
 	200000: "WEEKLY_EVENT_BEGIN",
 	299999: "WEEKLY_EVENT_END",
 	300000: "MONTHLY_EVENT_BEGIN",
 	399999: "MONTHLY_EVENT_END",
 	400000: "FOREVER_EVENT_BEGIN",
-	400001: "FOREVER_EVENT_TASK",
-	400002: "FOREVER_EVENT_EQUIPMENT_IDX",
-	400003: "FOREVER_EVENT_FAIRYLAND",
-	400004: "FOREVER_EVENT_BUILDING_LEVEL",
-	400005: "FOREVER_EVENT_FREE_GET_ZAOHUADAN",
-	400006: "FOREVER_EVENT_HEAD",
-	400007: "FOREVER_EVENT_PRIVATE_MAP",
-	400008: "FOREVER_EVENT_COMMON_MAP",
-	400009: "FOREVER_EVENT_PRIVATE_MAP_TIME",
-	400010: "FOREVER_EVENT_UPDATE_LINEUP",
-	400011: "FOREVER_EVENT_FAIRYLAND_LINEUP",
-	400012: "FOREVER_EVENT_PRIVATE_BTL_SCENE",
-	400013: "FOREVER_EVENT_SOLDIER_LEVEL",
-	400014: "FOREVER_EVENT_MAIL_IDX",
-	400015: "FOREVER_EVENT_NPC_SELL_PRICE_LAST",
-	400016: "FOREVER_EVENT_NPC_SELL_PRICE_CURRENT",
-	400017: "FOREVER_EVENT_NPC_SELL_CNT",
-	400018: "FOREVER_EVENT_NPC_SELL_CNT_LAST",
-	400019: "FOREVER_EVENT_NPC_SELL_CNT_CURRENT",
-	400030: "FOREVER_EVENT_USER_SELL_PRICE_LAST_LAST",
-	400031: "FOREVER_EVENT_USER_SELL_PRICE_LAST",
-	400032: "FOREVER_EVENT_USER_SELL_PRICE_CURRENT",
-	400033: "FOREVER_EVENT_USER_SELL_CNT_LAST_LAST",
-	400034: "FOREVER_EVENT_USER_SELL_CNT_LAST",
-	400035: "FOREVER_EVENT_USER_SELL_CNT_CURRENT",
-	400040: "FOREVER_EVENT_USER_SELL_IDX",
-	400050: "FOREVER_EVENT_HEAD_FRAME_ACTIVATE",
-	400051: "FOREVER_EVENT_LINEUP_LEVEL",
-	400052: "FOREVER_EVENT_REWARD_TASK",
-	400100: "FOREVER_EVENT_PRIVATE_MAP_DATA_BEGIN",
-	400101: "FOREVER_EVENT_PRIVATE_MAP_DATA",
-	400500: "FOREVER_EVENT_PRIVATE_MAP_DATA_END",
-	480000: "FOREVER_EVENT_CLI_START",
-	489999: "FOREVER_EVENT_CLI_END",
-	490000: "FOREVER_EVENT_SYS_UID",
-	490001: "FOREVER_EVENT_SYS_SERVER_OPEN_DAY",
 	499999: "FOREVER_EVENT_END",
 	500000: "EXPRIE_EVENT_BEGIN",
 	599999: "EXPRIE_EVENT_END",
 }
 var USER_EVENT_TYPE_value = map[string]int32{
-	"DAILY_EVENT_BEGIN":                       100000,
-	"DAILY_GET_FORAGE":                        100300,
-	"DAILY_EVENT_NPC_SELL_BUY_CNT":            100301,
-	"DAILY_EVENT_FREE_GET_ZHUJIDAN":           100302,
-	"DAILY_EVENT_FENGSHENTAI":                 100303,
-	"DAILY_EVENT_TASK":                        100304,
-	"DAILY_EVENT_END":                         199999,
-	"WEEKLY_EVENT_BEGIN":                      200000,
-	"WEEKLY_EVENT_END":                        299999,
-	"MONTHLY_EVENT_BEGIN":                     300000,
-	"MONTHLY_EVENT_END":                       399999,
-	"FOREVER_EVENT_BEGIN":                     400000,
-	"FOREVER_EVENT_TASK":                      400001,
-	"FOREVER_EVENT_EQUIPMENT_IDX":             400002,
-	"FOREVER_EVENT_FAIRYLAND":                 400003,
-	"FOREVER_EVENT_BUILDING_LEVEL":            400004,
-	"FOREVER_EVENT_FREE_GET_ZAOHUADAN":        400005,
-	"FOREVER_EVENT_HEAD":                      400006,
-	"FOREVER_EVENT_PRIVATE_MAP":               400007,
-	"FOREVER_EVENT_COMMON_MAP":                400008,
-	"FOREVER_EVENT_PRIVATE_MAP_TIME":          400009,
-	"FOREVER_EVENT_UPDATE_LINEUP":             400010,
-	"FOREVER_EVENT_FAIRYLAND_LINEUP":          400011,
-	"FOREVER_EVENT_PRIVATE_BTL_SCENE":         400012,
-	"FOREVER_EVENT_SOLDIER_LEVEL":             400013,
-	"FOREVER_EVENT_MAIL_IDX":                  400014,
-	"FOREVER_EVENT_NPC_SELL_PRICE_LAST":       400015,
-	"FOREVER_EVENT_NPC_SELL_PRICE_CURRENT":    400016,
-	"FOREVER_EVENT_NPC_SELL_CNT":              400017,
-	"FOREVER_EVENT_NPC_SELL_CNT_LAST":         400018,
-	"FOREVER_EVENT_NPC_SELL_CNT_CURRENT":      400019,
-	"FOREVER_EVENT_USER_SELL_PRICE_LAST_LAST": 400030,
-	"FOREVER_EVENT_USER_SELL_PRICE_LAST":      400031,
-	"FOREVER_EVENT_USER_SELL_PRICE_CURRENT":   400032,
-	"FOREVER_EVENT_USER_SELL_CNT_LAST_LAST":   400033,
-	"FOREVER_EVENT_USER_SELL_CNT_LAST":        400034,
-	"FOREVER_EVENT_USER_SELL_CNT_CURRENT":     400035,
-	"FOREVER_EVENT_USER_SELL_IDX":             400040,
-	"FOREVER_EVENT_HEAD_FRAME_ACTIVATE":       400050,
-	"FOREVER_EVENT_LINEUP_LEVEL":              400051,
-	"FOREVER_EVENT_REWARD_TASK":               400052,
-	"FOREVER_EVENT_PRIVATE_MAP_DATA_BEGIN":    400100,
-	"FOREVER_EVENT_PRIVATE_MAP_DATA":          400101,
-	"FOREVER_EVENT_PRIVATE_MAP_DATA_END":      400500,
-	"FOREVER_EVENT_CLI_START":                 480000,
-	"FOREVER_EVENT_CLI_END":                   489999,
-	"FOREVER_EVENT_SYS_UID":                   490000,
-	"FOREVER_EVENT_SYS_SERVER_OPEN_DAY":       490001,
-	"FOREVER_EVENT_END":                       499999,
-	"EXPRIE_EVENT_BEGIN":                      500000,
-	"EXPRIE_EVENT_END":                        599999,
+	"DAILY_EVENT_BEGIN":   100000,
+	"DAILY_EVENT_END":     199999,
+	"WEEKLY_EVENT_BEGIN":  200000,
+	"WEEKLY_EVENT_END":    299999,
+	"MONTHLY_EVENT_BEGIN": 300000,
+	"MONTHLY_EVENT_END":   399999,
+	"FOREVER_EVENT_BEGIN": 400000,
+	"FOREVER_EVENT_END":   499999,
+	"EXPRIE_EVENT_BEGIN":  500000,
+	"EXPRIE_EVENT_END":    599999,
 }
 
 func (x USER_EVENT_TYPE) Enum() *USER_EVENT_TYPE {
@@ -561,18 +206,15 @@ type E_CHAT_TYPE int32
 
 const (
 	E_CHAT_TYPE_E_CHAT_TYPE_PRIVATE E_CHAT_TYPE = 0
-	E_CHAT_TYPE_E_CHAT_TYPE_MAP     E_CHAT_TYPE = 1
 	E_CHAT_TYPE_E_CHAT_TYPE_ALL     E_CHAT_TYPE = 2
 )
 
 var E_CHAT_TYPE_name = map[int32]string{
 	0: "E_CHAT_TYPE_PRIVATE",
-	1: "E_CHAT_TYPE_MAP",
 	2: "E_CHAT_TYPE_ALL",
 }
 var E_CHAT_TYPE_value = map[string]int32{
 	"E_CHAT_TYPE_PRIVATE": 0,
-	"E_CHAT_TYPE_MAP":     1,
 	"E_CHAT_TYPE_ALL":     2,
 }
 
@@ -593,297 +235,21 @@ func (x *E_CHAT_TYPE) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// 地图类型
-type E_MAP_TYPE int32
-
-const (
-	E_MAP_TYPE_E_MAP_TYPE_PRIVATE E_MAP_TYPE = 0
-	E_MAP_TYPE_E_MAP_TYPE_COMMON  E_MAP_TYPE = 1
-	E_MAP_TYPE_E_MAP_TYPE_BTL     E_MAP_TYPE = 2
-)
-
-var E_MAP_TYPE_name = map[int32]string{
-	0: "E_MAP_TYPE_PRIVATE",
-	1: "E_MAP_TYPE_COMMON",
-	2: "E_MAP_TYPE_BTL",
-}
-var E_MAP_TYPE_value = map[string]int32{
-	"E_MAP_TYPE_PRIVATE": 0,
-	"E_MAP_TYPE_COMMON":  1,
-	"E_MAP_TYPE_BTL":     2,
-}
-
-func (x E_MAP_TYPE) Enum() *E_MAP_TYPE {
-	p := new(E_MAP_TYPE)
-	*p = x
-	return p
-}
-func (x E_MAP_TYPE) String() string {
-	return proto.EnumName(E_MAP_TYPE_name, int32(x))
-}
-func (x *E_MAP_TYPE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_MAP_TYPE_value, data, "E_MAP_TYPE")
-	if err != nil {
-		return err
-	}
-	*x = E_MAP_TYPE(value)
-	return nil
-}
-
-type E_PRIVATE_MAP_POS_TYPE int32
-
-const (
-	E_PRIVATE_MAP_POS_TYPE_E_PRIVATE_MAP_POS_RESOURCE   E_PRIVATE_MAP_POS_TYPE = 0
-	E_PRIVATE_MAP_POS_TYPE_E_PRIVATE_MAP_POS_MONSTER    E_PRIVATE_MAP_POS_TYPE = 1
-	E_PRIVATE_MAP_POS_TYPE_E_PRIVATE_MAP_POS_BOSS       E_PRIVATE_MAP_POS_TYPE = 2
-	E_PRIVATE_MAP_POS_TYPE_E_PRIVATE_MAP_POS_ITEM       E_PRIVATE_MAP_POS_TYPE = 3
-	E_PRIVATE_MAP_POS_TYPE_E_PRIVATE_MAP_POS_TOWER      E_PRIVATE_MAP_POS_TYPE = 4
-	E_PRIVATE_MAP_POS_TYPE_E_PRIVATE_MAP_POS_GUARD_BOSS E_PRIVATE_MAP_POS_TYPE = 5
-)
-
-var E_PRIVATE_MAP_POS_TYPE_name = map[int32]string{
-	0: "E_PRIVATE_MAP_POS_RESOURCE",
-	1: "E_PRIVATE_MAP_POS_MONSTER",
-	2: "E_PRIVATE_MAP_POS_BOSS",
-	3: "E_PRIVATE_MAP_POS_ITEM",
-	4: "E_PRIVATE_MAP_POS_TOWER",
-	5: "E_PRIVATE_MAP_POS_GUARD_BOSS",
-}
-var E_PRIVATE_MAP_POS_TYPE_value = map[string]int32{
-	"E_PRIVATE_MAP_POS_RESOURCE":   0,
-	"E_PRIVATE_MAP_POS_MONSTER":    1,
-	"E_PRIVATE_MAP_POS_BOSS":       2,
-	"E_PRIVATE_MAP_POS_ITEM":       3,
-	"E_PRIVATE_MAP_POS_TOWER":      4,
-	"E_PRIVATE_MAP_POS_GUARD_BOSS": 5,
-}
-
-func (x E_PRIVATE_MAP_POS_TYPE) Enum() *E_PRIVATE_MAP_POS_TYPE {
-	p := new(E_PRIVATE_MAP_POS_TYPE)
-	*p = x
-	return p
-}
-func (x E_PRIVATE_MAP_POS_TYPE) String() string {
-	return proto.EnumName(E_PRIVATE_MAP_POS_TYPE_name, int32(x))
-}
-func (x *E_PRIVATE_MAP_POS_TYPE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_PRIVATE_MAP_POS_TYPE_value, data, "E_PRIVATE_MAP_POS_TYPE")
-	if err != nil {
-		return err
-	}
-	*x = E_PRIVATE_MAP_POS_TYPE(value)
-	return nil
-}
-
-// 坐骑状态
-type E_MOUNT_STATE int32
-
-const (
-	E_MOUNT_STATE_E_MOUNT_STATE_UNUSED E_MOUNT_STATE = 0
-	E_MOUNT_STATE_E_MOUNT_STATE_USED   E_MOUNT_STATE = 1
-)
-
-var E_MOUNT_STATE_name = map[int32]string{
-	0: "E_MOUNT_STATE_UNUSED",
-	1: "E_MOUNT_STATE_USED",
-}
-var E_MOUNT_STATE_value = map[string]int32{
-	"E_MOUNT_STATE_UNUSED": 0,
-	"E_MOUNT_STATE_USED":   1,
-}
-
-func (x E_MOUNT_STATE) Enum() *E_MOUNT_STATE {
-	p := new(E_MOUNT_STATE)
-	*p = x
-	return p
-}
-func (x E_MOUNT_STATE) String() string {
-	return proto.EnumName(E_MOUNT_STATE_name, int32(x))
-}
-func (x *E_MOUNT_STATE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_MOUNT_STATE_value, data, "E_MOUNT_STATE")
-	if err != nil {
-		return err
-	}
-	*x = E_MOUNT_STATE(value)
-	return nil
-}
-
-// 任务状态
-type E_TASK_STATE int32
-
-const (
-	E_TASK_STATE_E_TASK_STATE_FINISH E_TASK_STATE = 2000000001
-	E_TASK_STATE_E_TASK_STATE_REWARD E_TASK_STATE = 2000000002
-)
-
-var E_TASK_STATE_name = map[int32]string{
-	2000000001: "E_TASK_STATE_FINISH",
-	2000000002: "E_TASK_STATE_REWARD",
-}
-var E_TASK_STATE_value = map[string]int32{
-	"E_TASK_STATE_FINISH": 2000000001,
-	"E_TASK_STATE_REWARD": 2000000002,
-}
-
-func (x E_TASK_STATE) Enum() *E_TASK_STATE {
-	p := new(E_TASK_STATE)
-	*p = x
-	return p
-}
-func (x E_TASK_STATE) String() string {
-	return proto.EnumName(E_TASK_STATE_name, int32(x))
-}
-func (x *E_TASK_STATE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_TASK_STATE_value, data, "E_TASK_STATE")
-	if err != nil {
-		return err
-	}
-	*x = E_TASK_STATE(value)
-	return nil
-}
-
-// 任务主类型
-type E_TASK_MAIN_TYPE int32
-
-const (
-	E_TASK_MAIN_TYPE_E_TASK_MAIN_THREAD E_TASK_MAIN_TYPE = 0
-	E_TASK_MAIN_TYPE_E_TASK_DAILY_TASK  E_TASK_MAIN_TYPE = 1
-	E_TASK_MAIN_TYPE_E_TASK_REWARD_TASK E_TASK_MAIN_TYPE = 2
-)
-
-var E_TASK_MAIN_TYPE_name = map[int32]string{
-	0: "E_TASK_MAIN_THREAD",
-	1: "E_TASK_DAILY_TASK",
-	2: "E_TASK_REWARD_TASK",
-}
-var E_TASK_MAIN_TYPE_value = map[string]int32{
-	"E_TASK_MAIN_THREAD": 0,
-	"E_TASK_DAILY_TASK":  1,
-	"E_TASK_REWARD_TASK": 2,
-}
-
-func (x E_TASK_MAIN_TYPE) Enum() *E_TASK_MAIN_TYPE {
-	p := new(E_TASK_MAIN_TYPE)
-	*p = x
-	return p
-}
-func (x E_TASK_MAIN_TYPE) String() string {
-	return proto.EnumName(E_TASK_MAIN_TYPE_name, int32(x))
-}
-func (x *E_TASK_MAIN_TYPE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_TASK_MAIN_TYPE_value, data, "E_TASK_MAIN_TYPE")
-	if err != nil {
-		return err
-	}
-	*x = E_TASK_MAIN_TYPE(value)
-	return nil
-}
-
-// 主类型任务范围
-type E_TASK_MAIN_RANGE int32
-
-const (
-	E_TASK_MAIN_RANGE_E_TASK_MAIN_START   E_TASK_MAIN_RANGE = 1
-	E_TASK_MAIN_RANGE_E_TASK_MAIN_MAX     E_TASK_MAIN_RANGE = 10000
-	E_TASK_MAIN_RANGE_E_TASK_DAILY_START  E_TASK_MAIN_RANGE = 10001
-	E_TASK_MAIN_RANGE_E_TASK_DAILY_MAX    E_TASK_MAIN_RANGE = 20000
-	E_TASK_MAIN_RANGE_E_TASK_REWARD_START E_TASK_MAIN_RANGE = 20001
-	E_TASK_MAIN_RANGE_E_TASK_REWARD_MAX   E_TASK_MAIN_RANGE = 30000
-)
-
-var E_TASK_MAIN_RANGE_name = map[int32]string{
-	1:     "E_TASK_MAIN_START",
-	10000: "E_TASK_MAIN_MAX",
-	10001: "E_TASK_DAILY_START",
-	20000: "E_TASK_DAILY_MAX",
-	20001: "E_TASK_REWARD_START",
-	30000: "E_TASK_REWARD_MAX",
-}
-var E_TASK_MAIN_RANGE_value = map[string]int32{
-	"E_TASK_MAIN_START":   1,
-	"E_TASK_MAIN_MAX":     10000,
-	"E_TASK_DAILY_START":  10001,
-	"E_TASK_DAILY_MAX":    20000,
-	"E_TASK_REWARD_START": 20001,
-	"E_TASK_REWARD_MAX":   30000,
-}
-
-func (x E_TASK_MAIN_RANGE) Enum() *E_TASK_MAIN_RANGE {
-	p := new(E_TASK_MAIN_RANGE)
-	*p = x
-	return p
-}
-func (x E_TASK_MAIN_RANGE) String() string {
-	return proto.EnumName(E_TASK_MAIN_RANGE_name, int32(x))
-}
-func (x *E_TASK_MAIN_RANGE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_TASK_MAIN_RANGE_value, data, "E_TASK_MAIN_RANGE")
-	if err != nil {
-		return err
-	}
-	*x = E_TASK_MAIN_RANGE(value)
-	return nil
-}
-
-// 任务功能类型
-type E_TASK_FUNC_TYPE int32
-
-const (
-	E_TASK_FUNC_TYPE_E_TASK_BUILDING             E_TASK_FUNC_TYPE = 1
-	E_TASK_FUNC_TYPE_E_TASK_KILL_APPOINT_MONSTER E_TASK_FUNC_TYPE = 2
-	E_TASK_FUNC_TYPE_E_TASK_KILL_TYPE_MONSTER    E_TASK_FUNC_TYPE = 3
-	E_TASK_FUNC_TYPE_E_TASK_HAVA_TEN_LEVEL_HEROS E_TASK_FUNC_TYPE = 4
-)
-
-var E_TASK_FUNC_TYPE_name = map[int32]string{
-	1: "E_TASK_BUILDING",
-	2: "E_TASK_KILL_APPOINT_MONSTER",
-	3: "E_TASK_KILL_TYPE_MONSTER",
-	4: "E_TASK_HAVA_TEN_LEVEL_HEROS",
-}
-var E_TASK_FUNC_TYPE_value = map[string]int32{
-	"E_TASK_BUILDING":             1,
-	"E_TASK_KILL_APPOINT_MONSTER": 2,
-	"E_TASK_KILL_TYPE_MONSTER":    3,
-	"E_TASK_HAVA_TEN_LEVEL_HEROS": 4,
-}
-
-func (x E_TASK_FUNC_TYPE) Enum() *E_TASK_FUNC_TYPE {
-	p := new(E_TASK_FUNC_TYPE)
-	*p = x
-	return p
-}
-func (x E_TASK_FUNC_TYPE) String() string {
-	return proto.EnumName(E_TASK_FUNC_TYPE_name, int32(x))
-}
-func (x *E_TASK_FUNC_TYPE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_TASK_FUNC_TYPE_value, data, "E_TASK_FUNC_TYPE")
-	if err != nil {
-		return err
-	}
-	*x = E_TASK_FUNC_TYPE(value)
-	return nil
-}
-
 // 邮件状态
 type E_MAIL_STATE int32
 
 const (
 	E_MAIL_STATE_E_MAIL_STATE_UNREAD E_MAIL_STATE = 0
 	E_MAIL_STATE_E_MAIL_STATE_READ   E_MAIL_STATE = 1
-	E_MAIL_STATE_E_MAIL_STATE_READ2  E_MAIL_STATE = 2
 )
 
 var E_MAIL_STATE_name = map[int32]string{
 	0: "E_MAIL_STATE_UNREAD",
 	1: "E_MAIL_STATE_READ",
-	2: "E_MAIL_STATE_READ2",
 }
 var E_MAIL_STATE_value = map[string]int32{
 	"E_MAIL_STATE_UNREAD": 0,
 	"E_MAIL_STATE_READ":   1,
-	"E_MAIL_STATE_READ2":  2,
 }
 
 func (x E_MAIL_STATE) Enum() *E_MAIL_STATE {
@@ -907,62 +273,14 @@ func (x *E_MAIL_STATE) UnmarshalJSON(data []byte) error {
 type E_COMMON_VAL int32
 
 const (
-	E_COMMON_VAL_E_COMMON_HERO_STAR_MAX                E_COMMON_VAL = 5
-	E_COMMON_VAL_E_COMMON_USER_LINEUP_DATA_CNT         E_COMMON_VAL = 16
-	E_COMMON_VAL_E_COMMON_USER_LINEUP_HERO_CNT_MAX     E_COMMON_VAL = 3
-	E_COMMON_VAL_E_COMMON_PRIVATE_MAP_RESOURCES_CNT    E_COMMON_VAL = 4
-	E_COMMON_VAL_E_COMMON_FRIEND_APPLY_CNT             E_COMMON_VAL = 10
-	E_COMMON_VAL_E_COMMON_FRIEND_MAX_CNT               E_COMMON_VAL = 100
-	E_COMMON_VAL_E_COMMON_MAIL_ATTACHMENT_TYPE_MAX_CNT E_COMMON_VAL = 50
-	E_COMMON_VAL_E_COMMON_MAIL_OUT_ID                  E_COMMON_VAL = 10001
-	E_COMMON_VAL_E_COMMON_MAIL_IN_ID                   E_COMMON_VAL = 10002
-	E_COMMON_VAL_E_COMMON_MAIL_BACK_ID                 E_COMMON_VAL = 10003
-	E_COMMON_VAL_E_COMMON_USER_SELL_TYPE_MAX_CNT       E_COMMON_VAL = 8
-	E_COMMON_VAL_E_COMMON_LINEUP_IDX_MAX               E_COMMON_VAL = 6
-	E_COMMON_VAL_E_COMMON_USER_SELL_PRICE_MAX          E_COMMON_VAL = 1000000000
-	E_COMMON_VAL_E_COMMON_USER_SELL_MAIL_ID_BEGIN      E_COMMON_VAL = 10001
-	E_COMMON_VAL_E_COMMON_USER_SELL_MAIL_ID_END        E_COMMON_VAL = 19999
-	E_COMMON_VAL_E_COMMON_HERO_ADD_STAR_EXP_EQUAL      E_COMMON_VAL = 150
-	E_COMMON_VAL_E_COMMON_HERO_ADD_STAR_EXP_UNEQUAL    E_COMMON_VAL = 100
+	E_COMMON_VAL_E_COMMON_FRIEND_CNT_MAX E_COMMON_VAL = 100
 )
 
 var E_COMMON_VAL_name = map[int32]string{
-	5:          "E_COMMON_HERO_STAR_MAX",
-	16:         "E_COMMON_USER_LINEUP_DATA_CNT",
-	3:          "E_COMMON_USER_LINEUP_HERO_CNT_MAX",
-	4:          "E_COMMON_PRIVATE_MAP_RESOURCES_CNT",
-	10:         "E_COMMON_FRIEND_APPLY_CNT",
-	100:        "E_COMMON_FRIEND_MAX_CNT",
-	50:         "E_COMMON_MAIL_ATTACHMENT_TYPE_MAX_CNT",
-	10001:      "E_COMMON_MAIL_OUT_ID",
-	10002:      "E_COMMON_MAIL_IN_ID",
-	10003:      "E_COMMON_MAIL_BACK_ID",
-	8:          "E_COMMON_USER_SELL_TYPE_MAX_CNT",
-	6:          "E_COMMON_LINEUP_IDX_MAX",
-	1000000000: "E_COMMON_USER_SELL_PRICE_MAX",
-	// Duplicate value: 10001: "E_COMMON_USER_SELL_MAIL_ID_BEGIN",
-	19999: "E_COMMON_USER_SELL_MAIL_ID_END",
-	150:   "E_COMMON_HERO_ADD_STAR_EXP_EQUAL",
-	// Duplicate value: 100: "E_COMMON_HERO_ADD_STAR_EXP_UNEQUAL",
+	100: "E_COMMON_FRIEND_CNT_MAX",
 }
 var E_COMMON_VAL_value = map[string]int32{
-	"E_COMMON_HERO_STAR_MAX":                5,
-	"E_COMMON_USER_LINEUP_DATA_CNT":         16,
-	"E_COMMON_USER_LINEUP_HERO_CNT_MAX":     3,
-	"E_COMMON_PRIVATE_MAP_RESOURCES_CNT":    4,
-	"E_COMMON_FRIEND_APPLY_CNT":             10,
-	"E_COMMON_FRIEND_MAX_CNT":               100,
-	"E_COMMON_MAIL_ATTACHMENT_TYPE_MAX_CNT": 50,
-	"E_COMMON_MAIL_OUT_ID":                  10001,
-	"E_COMMON_MAIL_IN_ID":                   10002,
-	"E_COMMON_MAIL_BACK_ID":                 10003,
-	"E_COMMON_USER_SELL_TYPE_MAX_CNT":       8,
-	"E_COMMON_LINEUP_IDX_MAX":               6,
-	"E_COMMON_USER_SELL_PRICE_MAX":          1000000000,
-	"E_COMMON_USER_SELL_MAIL_ID_BEGIN":      10001,
-	"E_COMMON_USER_SELL_MAIL_ID_END":        19999,
-	"E_COMMON_HERO_ADD_STAR_EXP_EQUAL":      150,
-	"E_COMMON_HERO_ADD_STAR_EXP_UNEQUAL":    100,
+	"E_COMMON_FRIEND_CNT_MAX": 100,
 }
 
 func (x E_COMMON_VAL) Enum() *E_COMMON_VAL {
@@ -982,231 +300,39 @@ func (x *E_COMMON_VAL) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// 装备位置
-// 1 武器
-// 2 衣服
-// 3 裤子
-// 4 饰品
-// 5 法宝
-type E_EQUIPMENT_POSITION int32
+type E_USER_ONLINE_STATE int32
 
 const (
-	E_EQUIPMENT_POSITION_E_EQUIPMENT_POSITION_1 E_EQUIPMENT_POSITION = 1
-	E_EQUIPMENT_POSITION_E_EQUIPMENT_POSITION_2 E_EQUIPMENT_POSITION = 2
-	E_EQUIPMENT_POSITION_E_EQUIPMENT_POSITION_3 E_EQUIPMENT_POSITION = 3
-	E_EQUIPMENT_POSITION_E_EQUIPMENT_POSITION_4 E_EQUIPMENT_POSITION = 4
-	E_EQUIPMENT_POSITION_E_EQUIPMENT_POSITION_5 E_EQUIPMENT_POSITION = 5
+	E_USER_ONLINE_STATE_E_FRIEND_STATE_OFFLINE E_USER_ONLINE_STATE = 0
+	E_USER_ONLINE_STATE_E_FRIEND_STATE_ONLINE  E_USER_ONLINE_STATE = 1
 )
 
-var E_EQUIPMENT_POSITION_name = map[int32]string{
-	1: "E_EQUIPMENT_POSITION_1",
-	2: "E_EQUIPMENT_POSITION_2",
-	3: "E_EQUIPMENT_POSITION_3",
-	4: "E_EQUIPMENT_POSITION_4",
-	5: "E_EQUIPMENT_POSITION_5",
-}
-var E_EQUIPMENT_POSITION_value = map[string]int32{
-	"E_EQUIPMENT_POSITION_1": 1,
-	"E_EQUIPMENT_POSITION_2": 2,
-	"E_EQUIPMENT_POSITION_3": 3,
-	"E_EQUIPMENT_POSITION_4": 4,
-	"E_EQUIPMENT_POSITION_5": 5,
-}
-
-func (x E_EQUIPMENT_POSITION) Enum() *E_EQUIPMENT_POSITION {
-	p := new(E_EQUIPMENT_POSITION)
-	*p = x
-	return p
-}
-func (x E_EQUIPMENT_POSITION) String() string {
-	return proto.EnumName(E_EQUIPMENT_POSITION_name, int32(x))
-}
-func (x *E_EQUIPMENT_POSITION) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_EQUIPMENT_POSITION_value, data, "E_EQUIPMENT_POSITION")
-	if err != nil {
-		return err
-	}
-	*x = E_EQUIPMENT_POSITION(value)
-	return nil
-}
-
-// [1-5 白兰紫橙绿]
-type E_EQUIPMENT_QUALITY int32
-
-const (
-	E_EQUIPMENT_QUALITY_E_EQUIPMENT_QUALITY_1 E_EQUIPMENT_QUALITY = 1
-	E_EQUIPMENT_QUALITY_E_EQUIPMENT_QUALITY_2 E_EQUIPMENT_QUALITY = 2
-	E_EQUIPMENT_QUALITY_E_EQUIPMENT_QUALITY_3 E_EQUIPMENT_QUALITY = 3
-	E_EQUIPMENT_QUALITY_E_EQUIPMENT_QUALITY_4 E_EQUIPMENT_QUALITY = 4
-	E_EQUIPMENT_QUALITY_E_EQUIPMENT_QUALITY_5 E_EQUIPMENT_QUALITY = 5
-)
-
-var E_EQUIPMENT_QUALITY_name = map[int32]string{
-	1: "E_EQUIPMENT_QUALITY_1",
-	2: "E_EQUIPMENT_QUALITY_2",
-	3: "E_EQUIPMENT_QUALITY_3",
-	4: "E_EQUIPMENT_QUALITY_4",
-	5: "E_EQUIPMENT_QUALITY_5",
-}
-var E_EQUIPMENT_QUALITY_value = map[string]int32{
-	"E_EQUIPMENT_QUALITY_1": 1,
-	"E_EQUIPMENT_QUALITY_2": 2,
-	"E_EQUIPMENT_QUALITY_3": 3,
-	"E_EQUIPMENT_QUALITY_4": 4,
-	"E_EQUIPMENT_QUALITY_5": 5,
-}
-
-func (x E_EQUIPMENT_QUALITY) Enum() *E_EQUIPMENT_QUALITY {
-	p := new(E_EQUIPMENT_QUALITY)
-	*p = x
-	return p
-}
-func (x E_EQUIPMENT_QUALITY) String() string {
-	return proto.EnumName(E_EQUIPMENT_QUALITY_name, int32(x))
-}
-func (x *E_EQUIPMENT_QUALITY) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_EQUIPMENT_QUALITY_value, data, "E_EQUIPMENT_QUALITY")
-	if err != nil {
-		return err
-	}
-	*x = E_EQUIPMENT_QUALITY(value)
-	return nil
-}
-
-type E_NPC_TYPE int32
-
-const (
-	E_NPC_TYPE_E_NPC_HERO    E_NPC_TYPE = 1
-	E_NPC_TYPE_E_NPC_SOLDIER E_NPC_TYPE = 2
-	E_NPC_TYPE_E_NPC_MONSTER E_NPC_TYPE = 3
-)
-
-var E_NPC_TYPE_name = map[int32]string{
-	1: "E_NPC_HERO",
-	2: "E_NPC_SOLDIER",
-	3: "E_NPC_MONSTER",
-}
-var E_NPC_TYPE_value = map[string]int32{
-	"E_NPC_HERO":    1,
-	"E_NPC_SOLDIER": 2,
-	"E_NPC_MONSTER": 3,
-}
-
-func (x E_NPC_TYPE) Enum() *E_NPC_TYPE {
-	p := new(E_NPC_TYPE)
-	*p = x
-	return p
-}
-func (x E_NPC_TYPE) String() string {
-	return proto.EnumName(E_NPC_TYPE_name, int32(x))
-}
-func (x *E_NPC_TYPE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_NPC_TYPE_value, data, "E_NPC_TYPE")
-	if err != nil {
-		return err
-	}
-	*x = E_NPC_TYPE(value)
-	return nil
-}
-
-type E_BUILDING int32
-
-const (
-	E_BUILDING_E_BUILDING_BEGIN        E_BUILDING = 0
-	E_BUILDING_E_BUILDING_HALL         E_BUILDING = 1
-	E_BUILDING_E_BUILDING_BARRACKS     E_BUILDING = 2
-	E_BUILDING_E_BUILDING_SKY          E_BUILDING = 3
-	E_BUILDING_E_BUILDING_GRANARY      E_BUILDING = 4
-	E_BUILDING_E_BUILDING_BAR          E_BUILDING = 5
-	E_BUILDING_E_BUILDING_JUN_JI_CHU   E_BUILDING = 6
-	E_BUILDING_E_BUILDING_NUO_YI_ZHEN  E_BUILDING = 7
-	E_BUILDING_E_BUILDING_ZHU_ZAO_FANG E_BUILDING = 8
-	E_BUILDING_E_BUILDING_ZHEN_FA_YAN  E_BUILDING = 9
-	E_BUILDING_E_BUILDING_END          E_BUILDING = 10
-)
-
-var E_BUILDING_name = map[int32]string{
-	0:  "E_BUILDING_BEGIN",
-	1:  "E_BUILDING_HALL",
-	2:  "E_BUILDING_BARRACKS",
-	3:  "E_BUILDING_SKY",
-	4:  "E_BUILDING_GRANARY",
-	5:  "E_BUILDING_BAR",
-	6:  "E_BUILDING_JUN_JI_CHU",
-	7:  "E_BUILDING_NUO_YI_ZHEN",
-	8:  "E_BUILDING_ZHU_ZAO_FANG",
-	9:  "E_BUILDING_ZHEN_FA_YAN",
-	10: "E_BUILDING_END",
-}
-var E_BUILDING_value = map[string]int32{
-	"E_BUILDING_BEGIN":        0,
-	"E_BUILDING_HALL":         1,
-	"E_BUILDING_BARRACKS":     2,
-	"E_BUILDING_SKY":          3,
-	"E_BUILDING_GRANARY":      4,
-	"E_BUILDING_BAR":          5,
-	"E_BUILDING_JUN_JI_CHU":   6,
-	"E_BUILDING_NUO_YI_ZHEN":  7,
-	"E_BUILDING_ZHU_ZAO_FANG": 8,
-	"E_BUILDING_ZHEN_FA_YAN":  9,
-	"E_BUILDING_END":          10,
-}
-
-func (x E_BUILDING) Enum() *E_BUILDING {
-	p := new(E_BUILDING)
-	*p = x
-	return p
-}
-func (x E_BUILDING) String() string {
-	return proto.EnumName(E_BUILDING_name, int32(x))
-}
-func (x *E_BUILDING) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_BUILDING_value, data, "E_BUILDING")
-	if err != nil {
-		return err
-	}
-	*x = E_BUILDING(value)
-	return nil
-}
-
-type E_FRIEND_STATE int32
-
-const (
-	E_FRIEND_STATE_E_FRIEND_STATE_OFFLINE E_FRIEND_STATE = 0
-	E_FRIEND_STATE_E_FRIEND_STATE_ONLINE  E_FRIEND_STATE = 1
-	E_FRIEND_STATE_E_FRIEND_STATE_APPLY   E_FRIEND_STATE = 2
-)
-
-var E_FRIEND_STATE_name = map[int32]string{
+var E_USER_ONLINE_STATE_name = map[int32]string{
 	0: "E_FRIEND_STATE_OFFLINE",
 	1: "E_FRIEND_STATE_ONLINE",
-	2: "E_FRIEND_STATE_APPLY",
 }
-var E_FRIEND_STATE_value = map[string]int32{
+var E_USER_ONLINE_STATE_value = map[string]int32{
 	"E_FRIEND_STATE_OFFLINE": 0,
 	"E_FRIEND_STATE_ONLINE":  1,
-	"E_FRIEND_STATE_APPLY":   2,
 }
 
-func (x E_FRIEND_STATE) Enum() *E_FRIEND_STATE {
-	p := new(E_FRIEND_STATE)
+func (x E_USER_ONLINE_STATE) Enum() *E_USER_ONLINE_STATE {
+	p := new(E_USER_ONLINE_STATE)
 	*p = x
 	return p
 }
-func (x E_FRIEND_STATE) String() string {
-	return proto.EnumName(E_FRIEND_STATE_name, int32(x))
+func (x E_USER_ONLINE_STATE) String() string {
+	return proto.EnumName(E_USER_ONLINE_STATE_name, int32(x))
 }
-func (x *E_FRIEND_STATE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_FRIEND_STATE_value, data, "E_FRIEND_STATE")
+func (x *E_USER_ONLINE_STATE) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(E_USER_ONLINE_STATE_value, data, "E_USER_ONLINE_STATE")
 	if err != nil {
 		return err
 	}
-	*x = E_FRIEND_STATE(value)
+	*x = E_USER_ONLINE_STATE(value)
 	return nil
 }
 
-// //////////////////////////////////////////////////
-// 结构体
 // //////////////////////////////////////////////////
 // 服务器列表数据
 type ListServT struct {
@@ -1241,371 +367,33 @@ func (m *ListServT) GetPort() uint32 {
 	return 0
 }
 
-// 封神台
-type FengshentaiEventT struct {
-	Idx              *uint32 `protobuf:"varint,1,opt,name=idx" json:"idx,omitempty"`
-	HeroId           *uint32 `protobuf:"varint,2,opt,name=hero_id" json:"hero_id,omitempty"`
-	Discount         *uint32 `protobuf:"varint,3,opt,name=discount" json:"discount,omitempty"`
-	IsBuy            *uint32 `protobuf:"varint,4,opt,name=is_buy" json:"is_buy,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *FengshentaiEventT) Reset()         { *m = FengshentaiEventT{} }
-func (m *FengshentaiEventT) String() string { return proto.CompactTextString(m) }
-func (*FengshentaiEventT) ProtoMessage()    {}
-
-func (m *FengshentaiEventT) GetIdx() uint32 {
-	if m != nil && m.Idx != nil {
-		return *m.Idx
-	}
-	return 0
-}
-
-func (m *FengshentaiEventT) GetHeroId() uint32 {
-	if m != nil && m.HeroId != nil {
-		return *m.HeroId
-	}
-	return 0
-}
-
-func (m *FengshentaiEventT) GetDiscount() uint32 {
-	if m != nil && m.Discount != nil {
-		return *m.Discount
-	}
-	return 0
-}
-
-func (m *FengshentaiEventT) GetIsBuy() uint32 {
-	if m != nil && m.IsBuy != nil {
-		return *m.IsBuy
-	}
-	return 0
-}
-
-// 事件
-type ShilianchouEventT struct {
-	UseCnt           *uint32 `protobuf:"varint,1,opt,name=use_cnt" json:"use_cnt,omitempty"`
-	NextTime         *uint32 `protobuf:"varint,2,opt,name=next_time" json:"next_time,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *ShilianchouEventT) Reset()         { *m = ShilianchouEventT{} }
-func (m *ShilianchouEventT) String() string { return proto.CompactTextString(m) }
-func (*ShilianchouEventT) ProtoMessage()    {}
-
-func (m *ShilianchouEventT) GetUseCnt() uint32 {
-	if m != nil && m.UseCnt != nil {
-		return *m.UseCnt
-	}
-	return 0
-}
-
-func (m *ShilianchouEventT) GetNextTime() uint32 {
-	if m != nil && m.NextTime != nil {
-		return *m.NextTime
-	}
-	return 0
-}
-
-// 好友
-type FriendT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Nick             *string `protobuf:"bytes,2,opt,name=nick" json:"nick,omitempty"`
-	Head             *HeadT  `protobuf:"bytes,3,opt,name=head" json:"head,omitempty"`
-	State            *uint32 `protobuf:"varint,4,opt,name=state" json:"state,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *FriendT) Reset()         { *m = FriendT{} }
-func (m *FriendT) String() string { return proto.CompactTextString(m) }
-func (*FriendT) ProtoMessage()    {}
-
-func (m *FriendT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *FriendT) GetNick() string {
-	if m != nil && m.Nick != nil {
-		return *m.Nick
-	}
-	return ""
-}
-
-func (m *FriendT) GetHead() *HeadT {
-	if m != nil {
-		return m.Head
-	}
-	return nil
-}
-
-func (m *FriendT) GetState() uint32 {
-	if m != nil && m.State != nil {
-		return *m.State
-	}
-	return 0
-}
-
-// 地图数据
-type MapT struct {
-	Type             *E_MAP_TYPE `protobuf:"varint,1,opt,name=type,enum=common_msg.E_MAP_TYPE" json:"type,omitempty"`
-	Uid              *uint32     `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	Id               *uint32     `protobuf:"varint,3,opt,name=id" json:"id,omitempty"`
-	X                *float32    `protobuf:"fixed32,4,opt,name=x" json:"x,omitempty"`
-	Y                *float32    `protobuf:"fixed32,5,opt,name=y" json:"y,omitempty"`
-	Z                *float32    `protobuf:"fixed32,6,opt,name=z" json:"z,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
-}
-
-func (m *MapT) Reset()         { *m = MapT{} }
-func (m *MapT) String() string { return proto.CompactTextString(m) }
-func (*MapT) ProtoMessage()    {}
-
-func (m *MapT) GetType() E_MAP_TYPE {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return E_MAP_TYPE_E_MAP_TYPE_PRIVATE
-}
-
-func (m *MapT) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *MapT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *MapT) GetX() float32 {
-	if m != nil && m.X != nil {
-		return *m.X
-	}
-	return 0
-}
-
-func (m *MapT) GetY() float32 {
-	if m != nil && m.Y != nil {
-		return *m.Y
-	}
-	return 0
-}
-
-func (m *MapT) GetZ() float32 {
-	if m != nil && m.Z != nil {
-		return *m.Z
-	}
-	return 0
-}
-
-// 幻境阵容
-type FairylandLineupT struct {
-	LineupId         *uint32  `protobuf:"varint,1,opt,name=lineup_id" json:"lineup_id,omitempty"`
-	HeroSoldierId    []uint32 `protobuf:"varint,2,rep,name=hero_soldier_id" json:"hero_soldier_id,omitempty"`
-	ScencId          *uint32  `protobuf:"varint,3,opt,name=scenc_id" json:"scenc_id,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
-}
-
-func (m *FairylandLineupT) Reset()         { *m = FairylandLineupT{} }
-func (m *FairylandLineupT) String() string { return proto.CompactTextString(m) }
-func (*FairylandLineupT) ProtoMessage()    {}
-
-func (m *FairylandLineupT) GetLineupId() uint32 {
-	if m != nil && m.LineupId != nil {
-		return *m.LineupId
-	}
-	return 0
-}
-
-func (m *FairylandLineupT) GetHeroSoldierId() []uint32 {
-	if m != nil {
-		return m.HeroSoldierId
-	}
-	return nil
-}
-
-func (m *FairylandLineupT) GetScencId() uint32 {
-	if m != nil && m.ScencId != nil {
-		return *m.ScencId
-	}
-	return 0
-}
-
-// 英雄阵容
-type UserLineupT struct {
-	LineupId         *uint32  `protobuf:"varint,1,opt,name=lineup_id" json:"lineup_id,omitempty"`
-	HeroSoldierId    []uint32 `protobuf:"varint,2,rep,name=hero_soldier_id" json:"hero_soldier_id,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
-}
-
-func (m *UserLineupT) Reset()         { *m = UserLineupT{} }
-func (m *UserLineupT) String() string { return proto.CompactTextString(m) }
-func (*UserLineupT) ProtoMessage()    {}
-
-func (m *UserLineupT) GetLineupId() uint32 {
-	if m != nil && m.LineupId != nil {
-		return *m.LineupId
-	}
-	return 0
-}
-
-func (m *UserLineupT) GetHeroSoldierId() []uint32 {
-	if m != nil {
-		return m.HeroSoldierId
-	}
-	return nil
-}
-
-// 资源阵容
-type ResourceLineupT struct {
-	LineupId         *uint32  `protobuf:"varint,1,opt,name=lineup_id" json:"lineup_id,omitempty"`
-	HeroSoldierId    []uint32 `protobuf:"varint,2,rep,name=hero_soldier_id" json:"hero_soldier_id,omitempty"`
-	ScencId          *uint32  `protobuf:"varint,3,opt,name=scenc_id" json:"scenc_id,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
-}
-
-func (m *ResourceLineupT) Reset()         { *m = ResourceLineupT{} }
-func (m *ResourceLineupT) String() string { return proto.CompactTextString(m) }
-func (*ResourceLineupT) ProtoMessage()    {}
-
-func (m *ResourceLineupT) GetLineupId() uint32 {
-	if m != nil && m.LineupId != nil {
-		return *m.LineupId
-	}
-	return 0
-}
-
-func (m *ResourceLineupT) GetHeroSoldierId() []uint32 {
-	if m != nil {
-		return m.HeroSoldierId
-	}
-	return nil
-}
-
-func (m *ResourceLineupT) GetScencId() uint32 {
-	if m != nil && m.ScencId != nil {
-		return *m.ScencId
-	}
-	return 0
-}
-
-// 私有地图点数据
-type PrivateMapPosT struct {
-	Pos             *uint32 `protobuf:"varint,1,opt,name=pos" json:"pos,omitempty"`
-	Idx             *uint32 `protobuf:"varint,2,opt,name=idx" json:"idx,omitempty"`
-	OwnerUid        *uint32 `protobuf:"varint,3,opt,name=owner_uid" json:"owner_uid,omitempty"`
-	GetResourceTime *uint32 `protobuf:"varint,4,opt,name=get_resource_time" json:"get_resource_time,omitempty"`
-	// 	optional uint32 mark = 5;//是否标记1:标记 0:未标记
-	Lineup           *ResourceLineupT `protobuf:"bytes,6,opt,name=lineup" json:"lineup,omitempty"`
-	ResourceIdx      *uint32          `protobuf:"varint,7,opt,name=resource_idx" json:"resource_idx,omitempty"`
-	XXX_unrecognized []byte           `json:"-"`
-}
-
-func (m *PrivateMapPosT) Reset()         { *m = PrivateMapPosT{} }
-func (m *PrivateMapPosT) String() string { return proto.CompactTextString(m) }
-func (*PrivateMapPosT) ProtoMessage()    {}
-
-func (m *PrivateMapPosT) GetPos() uint32 {
-	if m != nil && m.Pos != nil {
-		return *m.Pos
-	}
-	return 0
-}
-
-func (m *PrivateMapPosT) GetIdx() uint32 {
-	if m != nil && m.Idx != nil {
-		return *m.Idx
-	}
-	return 0
-}
-
-func (m *PrivateMapPosT) GetOwnerUid() uint32 {
-	if m != nil && m.OwnerUid != nil {
-		return *m.OwnerUid
-	}
-	return 0
-}
-
-func (m *PrivateMapPosT) GetGetResourceTime() uint32 {
-	if m != nil && m.GetResourceTime != nil {
-		return *m.GetResourceTime
-	}
-	return 0
-}
-
-func (m *PrivateMapPosT) GetLineup() *ResourceLineupT {
-	if m != nil {
-		return m.Lineup
-	}
-	return nil
-}
-
-func (m *PrivateMapPosT) GetResourceIdx() uint32 {
-	if m != nil && m.ResourceIdx != nil {
-		return *m.ResourceIdx
-	}
-	return 0
-}
-
-// 私有地图数据
-type PrivateMapT struct {
-	MapId            *uint32           `protobuf:"varint,1,opt,name=map_id" json:"map_id,omitempty"`
-	Pos              []*PrivateMapPosT `protobuf:"bytes,2,rep,name=pos" json:"pos,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *PrivateMapT) Reset()         { *m = PrivateMapT{} }
-func (m *PrivateMapT) String() string { return proto.CompactTextString(m) }
-func (*PrivateMapT) ProtoMessage()    {}
-
-func (m *PrivateMapT) GetMapId() uint32 {
-	if m != nil && m.MapId != nil {
-		return *m.MapId
-	}
-	return 0
-}
-
-func (m *PrivateMapT) GetPos() []*PrivateMapPosT {
-	if m != nil {
-		return m.Pos
-	}
-	return nil
-}
-
 // 返回的用户数据
-type LoadUserT struct {
+type UserT struct {
 	Uid              *uint32 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
 	Nick             *string `protobuf:"bytes,2,opt,name=nick" json:"nick,omitempty"`
 	LastLogoutTime   *uint32 `protobuf:"varint,3,opt,name=last_logout_time" json:"last_logout_time,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *LoadUserT) Reset()         { *m = LoadUserT{} }
-func (m *LoadUserT) String() string { return proto.CompactTextString(m) }
-func (*LoadUserT) ProtoMessage()    {}
+func (m *UserT) Reset()         { *m = UserT{} }
+func (m *UserT) String() string { return proto.CompactTextString(m) }
+func (*UserT) ProtoMessage()    {}
 
-func (m *LoadUserT) GetUid() uint32 {
+func (m *UserT) GetUid() uint32 {
 	if m != nil && m.Uid != nil {
 		return *m.Uid
 	}
 	return 0
 }
 
-func (m *LoadUserT) GetNick() string {
+func (m *UserT) GetNick() string {
 	if m != nil && m.Nick != nil {
 		return *m.Nick
 	}
 	return ""
 }
 
-func (m *LoadUserT) GetLastLogoutTime() uint32 {
+func (m *UserT) GetLastLogoutTime() uint32 {
 	if m != nil && m.LastLogoutTime != nil {
 		return *m.LastLogoutTime
 	}
@@ -1614,7 +402,7 @@ func (m *LoadUserT) GetLastLogoutTime() uint32 {
 
 // 头像
 type HeadT struct {
-	Face             *uint32 `protobuf:"varint,1,opt,name=face" json:"face,omitempty"`
+	Face             *string `protobuf:"bytes,1,opt,name=face" json:"face,omitempty"`
 	Frame            *uint32 `protobuf:"varint,2,opt,name=frame" json:"frame,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -1623,11 +411,11 @@ func (m *HeadT) Reset()         { *m = HeadT{} }
 func (m *HeadT) String() string { return proto.CompactTextString(m) }
 func (*HeadT) ProtoMessage()    {}
 
-func (m *HeadT) GetFace() uint32 {
+func (m *HeadT) GetFace() string {
 	if m != nil && m.Face != nil {
 		return *m.Face
 	}
-	return 0
+	return ""
 }
 
 func (m *HeadT) GetFrame() uint32 {
@@ -1637,6 +425,7 @@ func (m *HeadT) GetFrame() uint32 {
 	return 0
 }
 
+// 事件
 type EventT struct {
 	Type             *uint32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
 	Id               *uint32 `protobuf:"varint,2,opt,name=id" json:"id,omitempty"`
@@ -1685,695 +474,10 @@ func (m *EventT) GetStrData() string {
 	return ""
 }
 
-// 坐骑
-type MountT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	State            *uint32 `protobuf:"varint,2,opt,name=state" json:"state,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *MountT) Reset()         { *m = MountT{} }
-func (m *MountT) String() string { return proto.CompactTextString(m) }
-func (*MountT) ProtoMessage()    {}
-
-func (m *MountT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *MountT) GetState() uint32 {
-	if m != nil && m.State != nil {
-		return *m.State
-	}
-	return 0
-}
-
-// 坐骑
-type MountCfgT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Att              *uint32 `protobuf:"varint,2,opt,name=att" json:"att,omitempty"`
-	Def              *uint32 `protobuf:"varint,3,opt,name=def" json:"def,omitempty"`
-	Hp               *uint32 `protobuf:"varint,4,opt,name=hp" json:"hp,omitempty"`
-	Bang             *uint32 `protobuf:"varint,5,opt,name=bang" json:"bang,omitempty"`
-	Hit              *uint32 `protobuf:"varint,6,opt,name=hit" json:"hit,omitempty"`
-	Dodge            *uint32 `protobuf:"varint,7,opt,name=dodge" json:"dodge,omitempty"`
-	Speed            *uint32 `protobuf:"varint,8,opt,name=speed" json:"speed,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *MountCfgT) Reset()         { *m = MountCfgT{} }
-func (m *MountCfgT) String() string { return proto.CompactTextString(m) }
-func (*MountCfgT) ProtoMessage()    {}
-
-func (m *MountCfgT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *MountCfgT) GetAtt() uint32 {
-	if m != nil && m.Att != nil {
-		return *m.Att
-	}
-	return 0
-}
-
-func (m *MountCfgT) GetDef() uint32 {
-	if m != nil && m.Def != nil {
-		return *m.Def
-	}
-	return 0
-}
-
-func (m *MountCfgT) GetHp() uint32 {
-	if m != nil && m.Hp != nil {
-		return *m.Hp
-	}
-	return 0
-}
-
-func (m *MountCfgT) GetBang() uint32 {
-	if m != nil && m.Bang != nil {
-		return *m.Bang
-	}
-	return 0
-}
-
-func (m *MountCfgT) GetHit() uint32 {
-	if m != nil && m.Hit != nil {
-		return *m.Hit
-	}
-	return 0
-}
-
-func (m *MountCfgT) GetDodge() uint32 {
-	if m != nil && m.Dodge != nil {
-		return *m.Dodge
-	}
-	return 0
-}
-
-func (m *MountCfgT) GetSpeed() uint32 {
-	if m != nil && m.Speed != nil {
-		return *m.Speed
-	}
-	return 0
-}
-
-// 英雄
-type HeroT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Exp              *uint32 `protobuf:"varint,2,opt,name=exp" json:"exp,omitempty"`
-	StarExp          *uint32 `protobuf:"varint,3,opt,name=star_exp" json:"star_exp,omitempty"`
-	Jingmai          *uint32 `protobuf:"varint,4,opt,name=jingmai" json:"jingmai,omitempty"`
-	Equipment1       *uint32 `protobuf:"varint,5,opt,name=equipment1" json:"equipment1,omitempty"`
-	Equipment2       *uint32 `protobuf:"varint,6,opt,name=equipment2" json:"equipment2,omitempty"`
-	Equipment3       *uint32 `protobuf:"varint,7,opt,name=equipment3" json:"equipment3,omitempty"`
-	Equipment4       *uint32 `protobuf:"varint,8,opt,name=equipment4" json:"equipment4,omitempty"`
-	Equipment5       *uint32 `protobuf:"varint,9,opt,name=equipment5" json:"equipment5,omitempty"`
-	SkillLevel1      *uint32 `protobuf:"varint,10,opt,name=skill_level1" json:"skill_level1,omitempty"`
-	SkillLevel2      *uint32 `protobuf:"varint,11,opt,name=skill_level2" json:"skill_level2,omitempty"`
-	SkillLevel3      *uint32 `protobuf:"varint,12,opt,name=skill_level3" json:"skill_level3,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *HeroT) Reset()         { *m = HeroT{} }
-func (m *HeroT) String() string { return proto.CompactTextString(m) }
-func (*HeroT) ProtoMessage()    {}
-
-func (m *HeroT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *HeroT) GetExp() uint32 {
-	if m != nil && m.Exp != nil {
-		return *m.Exp
-	}
-	return 0
-}
-
-func (m *HeroT) GetStarExp() uint32 {
-	if m != nil && m.StarExp != nil {
-		return *m.StarExp
-	}
-	return 0
-}
-
-func (m *HeroT) GetJingmai() uint32 {
-	if m != nil && m.Jingmai != nil {
-		return *m.Jingmai
-	}
-	return 0
-}
-
-func (m *HeroT) GetEquipment1() uint32 {
-	if m != nil && m.Equipment1 != nil {
-		return *m.Equipment1
-	}
-	return 0
-}
-
-func (m *HeroT) GetEquipment2() uint32 {
-	if m != nil && m.Equipment2 != nil {
-		return *m.Equipment2
-	}
-	return 0
-}
-
-func (m *HeroT) GetEquipment3() uint32 {
-	if m != nil && m.Equipment3 != nil {
-		return *m.Equipment3
-	}
-	return 0
-}
-
-func (m *HeroT) GetEquipment4() uint32 {
-	if m != nil && m.Equipment4 != nil {
-		return *m.Equipment4
-	}
-	return 0
-}
-
-func (m *HeroT) GetEquipment5() uint32 {
-	if m != nil && m.Equipment5 != nil {
-		return *m.Equipment5
-	}
-	return 0
-}
-
-func (m *HeroT) GetSkillLevel1() uint32 {
-	if m != nil && m.SkillLevel1 != nil {
-		return *m.SkillLevel1
-	}
-	return 0
-}
-
-func (m *HeroT) GetSkillLevel2() uint32 {
-	if m != nil && m.SkillLevel2 != nil {
-		return *m.SkillLevel2
-	}
-	return 0
-}
-
-func (m *HeroT) GetSkillLevel3() uint32 {
-	if m != nil && m.SkillLevel3 != nil {
-		return *m.SkillLevel3
-	}
-	return 0
-}
-
-// 英雄战斗力
-type HeroPowerT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Power            *uint32 `protobuf:"varint,2,opt,name=power" json:"power,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *HeroPowerT) Reset()         { *m = HeroPowerT{} }
-func (m *HeroPowerT) String() string { return proto.CompactTextString(m) }
-func (*HeroPowerT) ProtoMessage()    {}
-
-func (m *HeroPowerT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *HeroPowerT) GetPower() uint32 {
-	if m != nil && m.Power != nil {
-		return *m.Power
-	}
-	return 0
-}
-
-// 离线角色私有地图信息
-type OfflineUserPrivateMapT struct {
-	Uid              *uint32       `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
-	Nick             *string       `protobuf:"bytes,2,opt,name=nick" json:"nick,omitempty"`
-	Level            *uint32       `protobuf:"varint,3,opt,name=level" json:"level,omitempty"`
-	Events           []*EventT     `protobuf:"bytes,4,rep,name=events" json:"events,omitempty"`
-	Heros            []*HeroT      `protobuf:"bytes,5,rep,name=heros" json:"heros,omitempty"`
-	Equipments       []*EquipmentT `protobuf:"bytes,6,rep,name=equipments" json:"equipments,omitempty"`
-	Head             *HeadT        `protobuf:"bytes,7,opt,name=head" json:"head,omitempty"`
-	Mounts           []*MountT     `protobuf:"bytes,8,rep,name=mounts" json:"mounts,omitempty"`
-	XXX_unrecognized []byte        `json:"-"`
-}
-
-func (m *OfflineUserPrivateMapT) Reset()         { *m = OfflineUserPrivateMapT{} }
-func (m *OfflineUserPrivateMapT) String() string { return proto.CompactTextString(m) }
-func (*OfflineUserPrivateMapT) ProtoMessage()    {}
-
-func (m *OfflineUserPrivateMapT) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *OfflineUserPrivateMapT) GetNick() string {
-	if m != nil && m.Nick != nil {
-		return *m.Nick
-	}
-	return ""
-}
-
-func (m *OfflineUserPrivateMapT) GetLevel() uint32 {
-	if m != nil && m.Level != nil {
-		return *m.Level
-	}
-	return 0
-}
-
-func (m *OfflineUserPrivateMapT) GetEvents() []*EventT {
-	if m != nil {
-		return m.Events
-	}
-	return nil
-}
-
-func (m *OfflineUserPrivateMapT) GetHeros() []*HeroT {
-	if m != nil {
-		return m.Heros
-	}
-	return nil
-}
-
-func (m *OfflineUserPrivateMapT) GetEquipments() []*EquipmentT {
-	if m != nil {
-		return m.Equipments
-	}
-	return nil
-}
-
-func (m *OfflineUserPrivateMapT) GetHead() *HeadT {
-	if m != nil {
-		return m.Head
-	}
-	return nil
-}
-
-func (m *OfflineUserPrivateMapT) GetMounts() []*MountT {
-	if m != nil {
-		return m.Mounts
-	}
-	return nil
-}
-
-// 士兵战斗力
-type SoldierPowerT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Power            *uint32 `protobuf:"varint,2,opt,name=power" json:"power,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *SoldierPowerT) Reset()         { *m = SoldierPowerT{} }
-func (m *SoldierPowerT) String() string { return proto.CompactTextString(m) }
-func (*SoldierPowerT) ProtoMessage()    {}
-
-func (m *SoldierPowerT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *SoldierPowerT) GetPower() uint32 {
-	if m != nil && m.Power != nil {
-		return *m.Power
-	}
-	return 0
-}
-
-// 士兵等级
-type SoldierLevelT struct {
-	SoldierId        *uint32 `protobuf:"varint,1,opt,name=soldier_id" json:"soldier_id,omitempty"`
-	SoldierLevel     *uint32 `protobuf:"varint,2,opt,name=soldier_level" json:"soldier_level,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *SoldierLevelT) Reset()         { *m = SoldierLevelT{} }
-func (m *SoldierLevelT) String() string { return proto.CompactTextString(m) }
-func (*SoldierLevelT) ProtoMessage()    {}
-
-func (m *SoldierLevelT) GetSoldierId() uint32 {
-	if m != nil && m.SoldierId != nil {
-		return *m.SoldierId
-	}
-	return 0
-}
-
-func (m *SoldierLevelT) GetSoldierLevel() uint32 {
-	if m != nil && m.SoldierLevel != nil {
-		return *m.SoldierLevel
-	}
-	return 0
-}
-
-// 阵形等级
-type LineupLevelT struct {
-	LineupId         *uint32 `protobuf:"varint,1,opt,name=lineup_id" json:"lineup_id,omitempty"`
-	LineupLevel      *uint32 `protobuf:"varint,2,opt,name=lineup_level" json:"lineup_level,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *LineupLevelT) Reset()         { *m = LineupLevelT{} }
-func (m *LineupLevelT) String() string { return proto.CompactTextString(m) }
-func (*LineupLevelT) ProtoMessage()    {}
-
-func (m *LineupLevelT) GetLineupId() uint32 {
-	if m != nil && m.LineupId != nil {
-		return *m.LineupId
-	}
-	return 0
-}
-
-func (m *LineupLevelT) GetLineupLevel() uint32 {
-	if m != nil && m.LineupLevel != nil {
-		return *m.LineupLevel
-	}
-	return 0
-}
-
-// 离线角色私有地图信息
-type CliOfflineUserPrivateMapT struct {
-	Uid              *uint32           `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
-	Nick             *string           `protobuf:"bytes,2,opt,name=nick" json:"nick,omitempty"`
-	Level            *uint32           `protobuf:"varint,3,opt,name=level" json:"level,omitempty"`
-	FairylandOpen    *uint32           `protobuf:"varint,4,opt,name=fairyland_open" json:"fairyland_open,omitempty"`
-	PrivateMaps      []*PrivateMapT    `protobuf:"bytes,5,rep,name=private_maps" json:"private_maps,omitempty"`
-	FairylandLineup  *FairylandLineupT `protobuf:"bytes,6,opt,name=fairyland_lineup" json:"fairyland_lineup,omitempty"`
-	Heros            []*HeroT          `protobuf:"bytes,7,rep,name=heros" json:"heros,omitempty"`
-	Equipments       []*EquipmentT     `protobuf:"bytes,8,rep,name=equipments" json:"equipments,omitempty"`
-	UseUid           *uint32           `protobuf:"varint,9,opt,name=use_uid" json:"use_uid,omitempty"`
-	UserLineup       *UserLineupT      `protobuf:"bytes,10,opt,name=user_lineup" json:"user_lineup,omitempty"`
-	SoldierLevel     []*SoldierLevelT  `protobuf:"bytes,11,rep,name=soldier_level" json:"soldier_level,omitempty"`
-	Head             *HeadT            `protobuf:"bytes,12,opt,name=head" json:"head,omitempty"`
-	HerosPower       []*HeroPowerT     `protobuf:"bytes,13,rep,name=heros_power" json:"heros_power,omitempty"`
-	SoldiersPower    []*SoldierPowerT  `protobuf:"bytes,14,rep,name=soldiers_power" json:"soldiers_power,omitempty"`
-	LineupsLevel     []*LineupLevelT   `protobuf:"bytes,15,rep,name=lineups_level" json:"lineups_level,omitempty"`
-	Mounts           []*MountT         `protobuf:"bytes,16,rep,name=mounts" json:"mounts,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *CliOfflineUserPrivateMapT) Reset()         { *m = CliOfflineUserPrivateMapT{} }
-func (m *CliOfflineUserPrivateMapT) String() string { return proto.CompactTextString(m) }
-func (*CliOfflineUserPrivateMapT) ProtoMessage()    {}
-
-func (m *CliOfflineUserPrivateMapT) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *CliOfflineUserPrivateMapT) GetNick() string {
-	if m != nil && m.Nick != nil {
-		return *m.Nick
-	}
-	return ""
-}
-
-func (m *CliOfflineUserPrivateMapT) GetLevel() uint32 {
-	if m != nil && m.Level != nil {
-		return *m.Level
-	}
-	return 0
-}
-
-func (m *CliOfflineUserPrivateMapT) GetFairylandOpen() uint32 {
-	if m != nil && m.FairylandOpen != nil {
-		return *m.FairylandOpen
-	}
-	return 0
-}
-
-func (m *CliOfflineUserPrivateMapT) GetPrivateMaps() []*PrivateMapT {
-	if m != nil {
-		return m.PrivateMaps
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetFairylandLineup() *FairylandLineupT {
-	if m != nil {
-		return m.FairylandLineup
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetHeros() []*HeroT {
-	if m != nil {
-		return m.Heros
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetEquipments() []*EquipmentT {
-	if m != nil {
-		return m.Equipments
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetUseUid() uint32 {
-	if m != nil && m.UseUid != nil {
-		return *m.UseUid
-	}
-	return 0
-}
-
-func (m *CliOfflineUserPrivateMapT) GetUserLineup() *UserLineupT {
-	if m != nil {
-		return m.UserLineup
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetSoldierLevel() []*SoldierLevelT {
-	if m != nil {
-		return m.SoldierLevel
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetHead() *HeadT {
-	if m != nil {
-		return m.Head
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetHerosPower() []*HeroPowerT {
-	if m != nil {
-		return m.HerosPower
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetSoldiersPower() []*SoldierPowerT {
-	if m != nil {
-		return m.SoldiersPower
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetLineupsLevel() []*LineupLevelT {
-	if m != nil {
-		return m.LineupsLevel
-	}
-	return nil
-}
-
-func (m *CliOfflineUserPrivateMapT) GetMounts() []*MountT {
-	if m != nil {
-		return m.Mounts
-	}
-	return nil
-}
-
-// npc商会配置
-type NpcSellConfT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Limit            *uint32 `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
-	Price            *uint32 `protobuf:"varint,3,opt,name=price" json:"price,omitempty"`
-	Preset           *uint32 `protobuf:"varint,4,opt,name=preset" json:"preset,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *NpcSellConfT) Reset()         { *m = NpcSellConfT{} }
-func (m *NpcSellConfT) String() string { return proto.CompactTextString(m) }
-func (*NpcSellConfT) ProtoMessage()    {}
-
-func (m *NpcSellConfT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *NpcSellConfT) GetLimit() uint32 {
-	if m != nil && m.Limit != nil {
-		return *m.Limit
-	}
-	return 0
-}
-
-func (m *NpcSellConfT) GetPrice() uint32 {
-	if m != nil && m.Price != nil {
-		return *m.Price
-	}
-	return 0
-}
-
-func (m *NpcSellConfT) GetPreset() uint32 {
-	if m != nil && m.Preset != nil {
-		return *m.Preset
-	}
-	return 0
-}
-
-// npc商会配置
-type NpcSellPriceT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Price            *uint32 `protobuf:"varint,2,opt,name=price" json:"price,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *NpcSellPriceT) Reset()         { *m = NpcSellPriceT{} }
-func (m *NpcSellPriceT) String() string { return proto.CompactTextString(m) }
-func (*NpcSellPriceT) ProtoMessage()    {}
-
-func (m *NpcSellPriceT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *NpcSellPriceT) GetPrice() uint32 {
-	if m != nil && m.Price != nil {
-		return *m.Price
-	}
-	return 0
-}
-
-type NpcSellBuyCntT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Cnt              *uint32 `protobuf:"varint,2,opt,name=cnt" json:"cnt,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *NpcSellBuyCntT) Reset()         { *m = NpcSellBuyCntT{} }
-func (m *NpcSellBuyCntT) String() string { return proto.CompactTextString(m) }
-func (*NpcSellBuyCntT) ProtoMessage()    {}
-
-func (m *NpcSellBuyCntT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *NpcSellBuyCntT) GetCnt() uint32 {
-	if m != nil && m.Cnt != nil {
-		return *m.Cnt
-	}
-	return 0
-}
-
-// 地图中的玩家数据
-type MapUserT struct {
-	Uid              *uint32  `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
-	Nick             *string  `protobuf:"bytes,2,opt,name=nick" json:"nick,omitempty"`
-	X                *float32 `protobuf:"fixed32,3,opt,name=x" json:"x,omitempty"`
-	Y                *float32 `protobuf:"fixed32,4,opt,name=y" json:"y,omitempty"`
-	MountId          *uint32  `protobuf:"varint,5,opt,name=mount_id" json:"mount_id,omitempty"`
-	Z                *float32 `protobuf:"fixed32,6,opt,name=z" json:"z,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
-}
-
-func (m *MapUserT) Reset()         { *m = MapUserT{} }
-func (m *MapUserT) String() string { return proto.CompactTextString(m) }
-func (*MapUserT) ProtoMessage()    {}
-
-func (m *MapUserT) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *MapUserT) GetNick() string {
-	if m != nil && m.Nick != nil {
-		return *m.Nick
-	}
-	return ""
-}
-
-func (m *MapUserT) GetX() float32 {
-	if m != nil && m.X != nil {
-		return *m.X
-	}
-	return 0
-}
-
-func (m *MapUserT) GetY() float32 {
-	if m != nil && m.Y != nil {
-		return *m.Y
-	}
-	return 0
-}
-
-func (m *MapUserT) GetMountId() uint32 {
-	if m != nil && m.MountId != nil {
-		return *m.MountId
-	}
-	return 0
-}
-
-func (m *MapUserT) GetZ() float32 {
-	if m != nil && m.Z != nil {
-		return *m.Z
-	}
-	return 0
-}
-
-// 任务数据
-type TaskT struct {
-	TaskId           *uint32 `protobuf:"varint,1,opt,name=task_id" json:"task_id,omitempty"`
-	Data             *uint32 `protobuf:"varint,2,opt,name=data" json:"data,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *TaskT) Reset()         { *m = TaskT{} }
-func (m *TaskT) String() string { return proto.CompactTextString(m) }
-func (*TaskT) ProtoMessage()    {}
-
-func (m *TaskT) GetTaskId() uint32 {
-	if m != nil && m.TaskId != nil {
-		return *m.TaskId
-	}
-	return 0
-}
-
-func (m *TaskT) GetData() uint32 {
-	if m != nil && m.Data != nil {
-		return *m.Data
-	}
-	return 0
-}
-
+// //////////////////////////////////////////////////
 // 道具
 type ItemT struct {
 	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Bind             *uint32 `protobuf:"varint,2,opt,name=bind" json:"bind,omitempty"`
 	Cnt              *uint32 `protobuf:"varint,3,opt,name=cnt" json:"cnt,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -2389,13 +493,6 @@ func (m *ItemT) GetId() uint32 {
 	return 0
 }
 
-func (m *ItemT) GetBind() uint32 {
-	if m != nil && m.Bind != nil {
-		return *m.Bind
-	}
-	return 0
-}
-
 func (m *ItemT) GetCnt() uint32 {
 	if m != nil && m.Cnt != nil {
 		return *m.Cnt
@@ -2403,86 +500,9 @@ func (m *ItemT) GetCnt() uint32 {
 	return 0
 }
 
-// 用户摆摊道具
-type UserSellItemT struct {
-	Idx              *uint32 `protobuf:"varint,1,opt,name=idx" json:"idx,omitempty"`
-	Uid              *uint32 `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	Id               *uint32 `protobuf:"varint,3,opt,name=id" json:"id,omitempty"`
-	Cnt              *uint32 `protobuf:"varint,4,opt,name=cnt" json:"cnt,omitempty"`
-	Price            *uint32 `protobuf:"varint,5,opt,name=price" json:"price,omitempty"`
-	OpenTime         *uint32 `protobuf:"varint,6,opt,name=open_time" json:"open_time,omitempty"`
-	RandomAttribute  *string `protobuf:"bytes,7,opt,name=random_attribute" json:"random_attribute,omitempty"`
-	OffTime          *uint32 `protobuf:"varint,8,opt,name=off_time" json:"off_time,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *UserSellItemT) Reset()         { *m = UserSellItemT{} }
-func (m *UserSellItemT) String() string { return proto.CompactTextString(m) }
-func (*UserSellItemT) ProtoMessage()    {}
-
-func (m *UserSellItemT) GetIdx() uint32 {
-	if m != nil && m.Idx != nil {
-		return *m.Idx
-	}
-	return 0
-}
-
-func (m *UserSellItemT) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *UserSellItemT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *UserSellItemT) GetCnt() uint32 {
-	if m != nil && m.Cnt != nil {
-		return *m.Cnt
-	}
-	return 0
-}
-
-func (m *UserSellItemT) GetPrice() uint32 {
-	if m != nil && m.Price != nil {
-		return *m.Price
-	}
-	return 0
-}
-
-func (m *UserSellItemT) GetOpenTime() uint32 {
-	if m != nil && m.OpenTime != nil {
-		return *m.OpenTime
-	}
-	return 0
-}
-
-func (m *UserSellItemT) GetRandomAttribute() string {
-	if m != nil && m.RandomAttribute != nil {
-		return *m.RandomAttribute
-	}
-	return ""
-}
-
-func (m *UserSellItemT) GetOffTime() uint32 {
-	if m != nil && m.OffTime != nil {
-		return *m.OffTime
-	}
-	return 0
-}
-
-// 道具
+// 道具,配置表
 type ItemCfgT struct {
 	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	IsSell           *uint32 `protobuf:"varint,2,opt,name=is_sell" json:"is_sell,omitempty"`
-	Price            *uint32 `protobuf:"varint,3,opt,name=price" json:"price,omitempty"`
-	Classy           *uint32 `protobuf:"varint,4,opt,name=classy" json:"classy,omitempty"`
-	Quality          *uint32 `protobuf:"varint,5,opt,name=quality" json:"quality,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
@@ -2497,645 +517,18 @@ func (m *ItemCfgT) GetId() uint32 {
 	return 0
 }
 
-func (m *ItemCfgT) GetIsSell() uint32 {
-	if m != nil && m.IsSell != nil {
-		return *m.IsSell
-	}
-	return 0
-}
-
-func (m *ItemCfgT) GetPrice() uint32 {
-	if m != nil && m.Price != nil {
-		return *m.Price
-	}
-	return 0
-}
-
-func (m *ItemCfgT) GetClassy() uint32 {
-	if m != nil && m.Classy != nil {
-		return *m.Classy
-	}
-	return 0
-}
-
-func (m *ItemCfgT) GetQuality() uint32 {
-	if m != nil && m.Quality != nil {
-		return *m.Quality
-	}
-	return 0
-}
-
-// 装备
-type EquipmentT struct {
-	Idx              *uint32 `protobuf:"varint,1,opt,name=idx" json:"idx,omitempty"`
-	Uid              *uint32 `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	Id               *uint32 `protobuf:"varint,3,opt,name=id" json:"id,omitempty"`
-	Bind             *uint32 `protobuf:"varint,4,opt,name=bind" json:"bind,omitempty"`
-	RandomAttribute  *string `protobuf:"bytes,5,opt,name=random_attribute" json:"random_attribute,omitempty"`
-	Exp              *uint32 `protobuf:"varint,6,opt,name=exp" json:"exp,omitempty"`
-	HeroId           *uint32 `protobuf:"varint,7,opt,name=hero_id" json:"hero_id,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *EquipmentT) Reset()         { *m = EquipmentT{} }
-func (m *EquipmentT) String() string { return proto.CompactTextString(m) }
-func (*EquipmentT) ProtoMessage()    {}
-
-func (m *EquipmentT) GetIdx() uint32 {
-	if m != nil && m.Idx != nil {
-		return *m.Idx
-	}
-	return 0
-}
-
-func (m *EquipmentT) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *EquipmentT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *EquipmentT) GetBind() uint32 {
-	if m != nil && m.Bind != nil {
-		return *m.Bind
-	}
-	return 0
-}
-
-func (m *EquipmentT) GetRandomAttribute() string {
-	if m != nil && m.RandomAttribute != nil {
-		return *m.RandomAttribute
-	}
-	return ""
-}
-
-func (m *EquipmentT) GetExp() uint32 {
-	if m != nil && m.Exp != nil {
-		return *m.Exp
-	}
-	return 0
-}
-
-func (m *EquipmentT) GetHeroId() uint32 {
-	if m != nil && m.HeroId != nil {
-		return *m.HeroId
-	}
-	return 0
-}
-
-// 邮件购买附件
-type MailBuyAttachmentT struct {
-	Item             *ItemT      `protobuf:"bytes,1,opt,name=item" json:"item,omitempty"`
-	Equipment        *EquipmentT `protobuf:"bytes,2,opt,name=equipment" json:"equipment,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
-}
-
-func (m *MailBuyAttachmentT) Reset()         { *m = MailBuyAttachmentT{} }
-func (m *MailBuyAttachmentT) String() string { return proto.CompactTextString(m) }
-func (*MailBuyAttachmentT) ProtoMessage()    {}
-
-func (m *MailBuyAttachmentT) GetItem() *ItemT {
-	if m != nil {
-		return m.Item
-	}
-	return nil
-}
-
-func (m *MailBuyAttachmentT) GetEquipment() *EquipmentT {
-	if m != nil {
-		return m.Equipment
-	}
-	return nil
-}
-
-// 邮件
-type MailT struct {
-	Idx              *uint32 `protobuf:"varint,1,opt,name=idx" json:"idx,omitempty"`
-	Uid              *uint32 `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	State            *uint32 `protobuf:"varint,3,opt,name=state" json:"state,omitempty"`
-	MailId           *uint32 `protobuf:"varint,4,opt,name=mail_id" json:"mail_id,omitempty"`
-	Attachment       *string `protobuf:"bytes,6,opt,name=attachment" json:"attachment,omitempty"`
-	Time             *uint32 `protobuf:"varint,7,opt,name=time" json:"time,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *MailT) Reset()         { *m = MailT{} }
-func (m *MailT) String() string { return proto.CompactTextString(m) }
-func (*MailT) ProtoMessage()    {}
-
-func (m *MailT) GetIdx() uint32 {
-	if m != nil && m.Idx != nil {
-		return *m.Idx
-	}
-	return 0
-}
-
-func (m *MailT) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *MailT) GetState() uint32 {
-	if m != nil && m.State != nil {
-		return *m.State
-	}
-	return 0
-}
-
-func (m *MailT) GetMailId() uint32 {
-	if m != nil && m.MailId != nil {
-		return *m.MailId
-	}
-	return 0
-}
-
-func (m *MailT) GetAttachment() string {
-	if m != nil && m.Attachment != nil {
-		return *m.Attachment
-	}
-	return ""
-}
-
-func (m *MailT) GetTime() uint32 {
-	if m != nil && m.Time != nil {
-		return *m.Time
-	}
-	return 0
-}
-
-// 装备配置属性
-type EquipmentCfgT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Position         *uint32 `protobuf:"varint,2,opt,name=position" json:"position,omitempty"`
-	Quality          *uint32 `protobuf:"varint,3,opt,name=quality" json:"quality,omitempty"`
-	EquipLv          *uint32 `protobuf:"varint,4,opt,name=equip_lv" json:"equip_lv,omitempty"`
-	RandomId         *uint32 `protobuf:"varint,5,opt,name=random_id" json:"random_id,omitempty"`
-	Bind             *uint32 `protobuf:"varint,6,opt,name=bind" json:"bind,omitempty"`
-	GrowId           *uint32 `protobuf:"varint,7,opt,name=grow_id" json:"grow_id,omitempty"`
-	Exp              *uint32 `protobuf:"varint,8,opt,name=exp" json:"exp,omitempty"`
-	IsSell           *uint32 `protobuf:"varint,9,opt,name=is_sell" json:"is_sell,omitempty"`
-	Price            *uint32 `protobuf:"varint,10,opt,name=price" json:"price,omitempty"`
-	NoLimited        *uint32 `protobuf:"varint,11,opt,name=no_limited" json:"no_limited,omitempty"`
-	CanFix           *uint32 `protobuf:"varint,12,opt,name=can_fix" json:"can_fix,omitempty"`
-	Classy           *uint32 `protobuf:"varint,13,opt,name=classy" json:"classy,omitempty"`
-	Attack           *uint32 `protobuf:"varint,14,opt,name=attack" json:"attack,omitempty"`
-	Defend           *uint32 `protobuf:"varint,15,opt,name=defend" json:"defend,omitempty"`
-	Hp               *uint32 `protobuf:"varint,16,opt,name=hp" json:"hp,omitempty"`
-	SkillId          *uint32 `protobuf:"varint,17,opt,name=skill_id" json:"skill_id,omitempty"`
-	BreakItem        *uint32 `protobuf:"varint,18,opt,name=break_item" json:"break_item,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *EquipmentCfgT) Reset()         { *m = EquipmentCfgT{} }
-func (m *EquipmentCfgT) String() string { return proto.CompactTextString(m) }
-func (*EquipmentCfgT) ProtoMessage()    {}
-
-func (m *EquipmentCfgT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetPosition() uint32 {
-	if m != nil && m.Position != nil {
-		return *m.Position
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetQuality() uint32 {
-	if m != nil && m.Quality != nil {
-		return *m.Quality
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetEquipLv() uint32 {
-	if m != nil && m.EquipLv != nil {
-		return *m.EquipLv
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetRandomId() uint32 {
-	if m != nil && m.RandomId != nil {
-		return *m.RandomId
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetBind() uint32 {
-	if m != nil && m.Bind != nil {
-		return *m.Bind
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetGrowId() uint32 {
-	if m != nil && m.GrowId != nil {
-		return *m.GrowId
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetExp() uint32 {
-	if m != nil && m.Exp != nil {
-		return *m.Exp
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetIsSell() uint32 {
-	if m != nil && m.IsSell != nil {
-		return *m.IsSell
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetPrice() uint32 {
-	if m != nil && m.Price != nil {
-		return *m.Price
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetNoLimited() uint32 {
-	if m != nil && m.NoLimited != nil {
-		return *m.NoLimited
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetCanFix() uint32 {
-	if m != nil && m.CanFix != nil {
-		return *m.CanFix
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetClassy() uint32 {
-	if m != nil && m.Classy != nil {
-		return *m.Classy
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetAttack() uint32 {
-	if m != nil && m.Attack != nil {
-		return *m.Attack
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetDefend() uint32 {
-	if m != nil && m.Defend != nil {
-		return *m.Defend
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetHp() uint32 {
-	if m != nil && m.Hp != nil {
-		return *m.Hp
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetSkillId() uint32 {
-	if m != nil && m.SkillId != nil {
-		return *m.SkillId
-	}
-	return 0
-}
-
-func (m *EquipmentCfgT) GetBreakItem() uint32 {
-	if m != nil && m.BreakItem != nil {
-		return *m.BreakItem
-	}
-	return 0
-}
-
-// 装备配置属性
-type EquipmentKindCfgT struct {
-	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Attack           *uint32 `protobuf:"varint,2,opt,name=attack" json:"attack,omitempty"`
-	Defend           *uint32 `protobuf:"varint,3,opt,name=defend" json:"defend,omitempty"`
-	Hp               *uint32 `protobuf:"varint,4,opt,name=hp" json:"hp,omitempty"`
-	Dodge            *uint32 `protobuf:"varint,5,opt,name=dodge" json:"dodge,omitempty"`
-	Percision        *uint32 `protobuf:"varint,6,opt,name=percision" json:"percision,omitempty"`
-	Parry            *uint32 `protobuf:"varint,7,opt,name=parry" json:"parry,omitempty"`
-	RedeuceParry     *uint32 `protobuf:"varint,8,opt,name=redeuce_parry" json:"redeuce_parry,omitempty"`
-	CritRate         *uint32 `protobuf:"varint,9,opt,name=crit_rate" json:"crit_rate,omitempty"`
-	ReduceCritDamage *uint32 `protobuf:"varint,10,opt,name=reduce_crit_damage" json:"reduce_crit_damage,omitempty"`
-	CritDamage       *uint32 `protobuf:"varint,11,opt,name=crit_damage" json:"crit_damage,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *EquipmentKindCfgT) Reset()         { *m = EquipmentKindCfgT{} }
-func (m *EquipmentKindCfgT) String() string { return proto.CompactTextString(m) }
-func (*EquipmentKindCfgT) ProtoMessage()    {}
-
-func (m *EquipmentKindCfgT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetAttack() uint32 {
-	if m != nil && m.Attack != nil {
-		return *m.Attack
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetDefend() uint32 {
-	if m != nil && m.Defend != nil {
-		return *m.Defend
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetHp() uint32 {
-	if m != nil && m.Hp != nil {
-		return *m.Hp
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetDodge() uint32 {
-	if m != nil && m.Dodge != nil {
-		return *m.Dodge
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetPercision() uint32 {
-	if m != nil && m.Percision != nil {
-		return *m.Percision
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetParry() uint32 {
-	if m != nil && m.Parry != nil {
-		return *m.Parry
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetRedeuceParry() uint32 {
-	if m != nil && m.RedeuceParry != nil {
-		return *m.RedeuceParry
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetCritRate() uint32 {
-	if m != nil && m.CritRate != nil {
-		return *m.CritRate
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetReduceCritDamage() uint32 {
-	if m != nil && m.ReduceCritDamage != nil {
-		return *m.ReduceCritDamage
-	}
-	return 0
-}
-
-func (m *EquipmentKindCfgT) GetCritDamage() uint32 {
-	if m != nil && m.CritDamage != nil {
-		return *m.CritDamage
-	}
-	return 0
-}
-
-// pve战斗中奖励
-type PveIngRewardT struct {
-	MajorIdx         *uint32       `protobuf:"varint,1,opt,name=major_idx" json:"major_idx,omitempty"`
-	MinorIdx         *uint32       `protobuf:"varint,2,opt,name=minor_idx" json:"minor_idx,omitempty"`
-	Item             []*ItemT      `protobuf:"bytes,3,rep,name=item" json:"item,omitempty"`
-	Equipment        []*EquipmentT `protobuf:"bytes,4,rep,name=equipment" json:"equipment,omitempty"`
-	XXX_unrecognized []byte        `json:"-"`
-}
-
-func (m *PveIngRewardT) Reset()         { *m = PveIngRewardT{} }
-func (m *PveIngRewardT) String() string { return proto.CompactTextString(m) }
-func (*PveIngRewardT) ProtoMessage()    {}
-
-func (m *PveIngRewardT) GetMajorIdx() uint32 {
-	if m != nil && m.MajorIdx != nil {
-		return *m.MajorIdx
-	}
-	return 0
-}
-
-func (m *PveIngRewardT) GetMinorIdx() uint32 {
-	if m != nil && m.MinorIdx != nil {
-		return *m.MinorIdx
-	}
-	return 0
-}
-
-func (m *PveIngRewardT) GetItem() []*ItemT {
-	if m != nil {
-		return m.Item
-	}
-	return nil
-}
-
-func (m *PveIngRewardT) GetEquipment() []*EquipmentT {
-	if m != nil {
-		return m.Equipment
-	}
-	return nil
-}
-
-// 奖励
-type RewardT struct {
-	Item             []*ItemT      `protobuf:"bytes,1,rep,name=item" json:"item,omitempty"`
-	Equipment        []*EquipmentT `protobuf:"bytes,2,rep,name=equipment" json:"equipment,omitempty"`
-	Hero             []*HeroT      `protobuf:"bytes,3,rep,name=hero" json:"hero,omitempty"`
-	XXX_unrecognized []byte        `json:"-"`
-}
-
-func (m *RewardT) Reset()         { *m = RewardT{} }
-func (m *RewardT) String() string { return proto.CompactTextString(m) }
-func (*RewardT) ProtoMessage()    {}
-
-func (m *RewardT) GetItem() []*ItemT {
-	if m != nil {
-		return m.Item
-	}
-	return nil
-}
-
-func (m *RewardT) GetEquipment() []*EquipmentT {
-	if m != nil {
-		return m.Equipment
-	}
-	return nil
-}
-
-func (m *RewardT) GetHero() []*HeroT {
-	if m != nil {
-		return m.Hero
-	}
-	return nil
-}
-
-// 奖励
-type BuildingT struct {
-	BuildingId       *uint32 `protobuf:"varint,1,opt,name=building_id" json:"building_id,omitempty"`
-	BuildingLevel    *uint32 `protobuf:"varint,2,opt,name=building_level" json:"building_level,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *BuildingT) Reset()         { *m = BuildingT{} }
-func (m *BuildingT) String() string { return proto.CompactTextString(m) }
-func (*BuildingT) ProtoMessage()    {}
-
-func (m *BuildingT) GetBuildingId() uint32 {
-	if m != nil && m.BuildingId != nil {
-		return *m.BuildingId
-	}
-	return 0
-}
-
-func (m *BuildingT) GetBuildingLevel() uint32 {
-	if m != nil && m.BuildingLevel != nil {
-		return *m.BuildingLevel
-	}
-	return 0
-}
-
-// 布阵的结构(客户端用)
-type EmbattleT struct {
-	EmbattleId       *uint32         `protobuf:"varint,1,opt,name=embattle_id" json:"embattle_id,omitempty"`
-	PosList          []*EmbattlePosT `protobuf:"bytes,2,rep,name=posList" json:"posList,omitempty"`
-	XXX_unrecognized []byte          `json:"-"`
-}
-
-func (m *EmbattleT) Reset()         { *m = EmbattleT{} }
-func (m *EmbattleT) String() string { return proto.CompactTextString(m) }
-func (*EmbattleT) ProtoMessage()    {}
-
-func (m *EmbattleT) GetEmbattleId() uint32 {
-	if m != nil && m.EmbattleId != nil {
-		return *m.EmbattleId
-	}
-	return 0
-}
-
-func (m *EmbattleT) GetPosList() []*EmbattlePosT {
-	if m != nil {
-		return m.PosList
-	}
-	return nil
-}
-
-// 布阵的结构(客户端用)
-type EmbattlePosT struct {
-	Index            *uint32 `protobuf:"varint,1,opt,name=index" json:"index,omitempty"`
-	Id               *uint32 `protobuf:"varint,2,opt,name=id" json:"id,omitempty"`
-	Type             *uint32 `protobuf:"varint,3,opt,name=type" json:"type,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *EmbattlePosT) Reset()         { *m = EmbattlePosT{} }
-func (m *EmbattlePosT) String() string { return proto.CompactTextString(m) }
-func (*EmbattlePosT) ProtoMessage()    {}
-
-func (m *EmbattlePosT) GetIndex() uint32 {
-	if m != nil && m.Index != nil {
-		return *m.Index
-	}
-	return 0
-}
-
-func (m *EmbattlePosT) GetId() uint32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *EmbattlePosT) GetType() uint32 {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return 0
-}
-
 func init() {
 	proto.RegisterType((*ListServT)(nil), "common_msg.list_serv_t")
-	proto.RegisterType((*FengshentaiEventT)(nil), "common_msg.fengshentai_event_t")
-	proto.RegisterType((*ShilianchouEventT)(nil), "common_msg.shilianchou_event_t")
-	proto.RegisterType((*FriendT)(nil), "common_msg.friend_t")
-	proto.RegisterType((*MapT)(nil), "common_msg.map_t")
-	proto.RegisterType((*FairylandLineupT)(nil), "common_msg.fairyland_lineup_t")
-	proto.RegisterType((*UserLineupT)(nil), "common_msg.user_lineup_t")
-	proto.RegisterType((*ResourceLineupT)(nil), "common_msg.resource_lineup_t")
-	proto.RegisterType((*PrivateMapPosT)(nil), "common_msg.private_map_pos_t")
-	proto.RegisterType((*PrivateMapT)(nil), "common_msg.private_map_t")
-	proto.RegisterType((*LoadUserT)(nil), "common_msg.load_user_t")
+	proto.RegisterType((*UserT)(nil), "common_msg.user_t")
 	proto.RegisterType((*HeadT)(nil), "common_msg.head_t")
 	proto.RegisterType((*EventT)(nil), "common_msg.event_t")
-	proto.RegisterType((*MountT)(nil), "common_msg.mount_t")
-	proto.RegisterType((*MountCfgT)(nil), "common_msg.mount_cfg_t")
-	proto.RegisterType((*HeroT)(nil), "common_msg.hero_t")
-	proto.RegisterType((*HeroPowerT)(nil), "common_msg.hero_power_t")
-	proto.RegisterType((*OfflineUserPrivateMapT)(nil), "common_msg.offline_user_private_map_t")
-	proto.RegisterType((*SoldierPowerT)(nil), "common_msg.soldier_power_t")
-	proto.RegisterType((*SoldierLevelT)(nil), "common_msg.soldier_level_t")
-	proto.RegisterType((*LineupLevelT)(nil), "common_msg.lineup_level_t")
-	proto.RegisterType((*CliOfflineUserPrivateMapT)(nil), "common_msg.cli_offline_user_private_map_t")
-	proto.RegisterType((*NpcSellConfT)(nil), "common_msg.npc_sell_conf_t")
-	proto.RegisterType((*NpcSellPriceT)(nil), "common_msg.npc_sell_price_t")
-	proto.RegisterType((*NpcSellBuyCntT)(nil), "common_msg.npc_sell_buy_cnt_t")
-	proto.RegisterType((*MapUserT)(nil), "common_msg.map_user_t")
-	proto.RegisterType((*TaskT)(nil), "common_msg.task_t")
 	proto.RegisterType((*ItemT)(nil), "common_msg.item_t")
-	proto.RegisterType((*UserSellItemT)(nil), "common_msg.user_sell_item_t")
 	proto.RegisterType((*ItemCfgT)(nil), "common_msg.item_cfg_t")
-	proto.RegisterType((*EquipmentT)(nil), "common_msg.equipment_t")
-	proto.RegisterType((*MailBuyAttachmentT)(nil), "common_msg.mail_buy_attachment_t")
-	proto.RegisterType((*MailT)(nil), "common_msg.mail_t")
-	proto.RegisterType((*EquipmentCfgT)(nil), "common_msg.equipment_cfg_t")
-	proto.RegisterType((*EquipmentKindCfgT)(nil), "common_msg.equipment_kind_cfg_t")
-	proto.RegisterType((*PveIngRewardT)(nil), "common_msg.pve_ing_reward_t")
-	proto.RegisterType((*RewardT)(nil), "common_msg.reward_t")
-	proto.RegisterType((*BuildingT)(nil), "common_msg.building_t")
-	proto.RegisterType((*EmbattleT)(nil), "common_msg.embattle_t")
-	proto.RegisterType((*EmbattlePosT)(nil), "common_msg.embattle_pos_t")
 	proto.RegisterEnum("common_msg.E_ERROR_CODE", E_ERROR_CODE_name, E_ERROR_CODE_value)
 	proto.RegisterEnum("common_msg.USER_EVENT_TYPE", USER_EVENT_TYPE_name, USER_EVENT_TYPE_value)
 	proto.RegisterEnum("common_msg.E_PLATFORM", E_PLATFORM_name, E_PLATFORM_value)
 	proto.RegisterEnum("common_msg.E_CHAT_TYPE", E_CHAT_TYPE_name, E_CHAT_TYPE_value)
-	proto.RegisterEnum("common_msg.E_MAP_TYPE", E_MAP_TYPE_name, E_MAP_TYPE_value)
-	proto.RegisterEnum("common_msg.E_PRIVATE_MAP_POS_TYPE", E_PRIVATE_MAP_POS_TYPE_name, E_PRIVATE_MAP_POS_TYPE_value)
-	proto.RegisterEnum("common_msg.E_MOUNT_STATE", E_MOUNT_STATE_name, E_MOUNT_STATE_value)
-	proto.RegisterEnum("common_msg.E_TASK_STATE", E_TASK_STATE_name, E_TASK_STATE_value)
-	proto.RegisterEnum("common_msg.E_TASK_MAIN_TYPE", E_TASK_MAIN_TYPE_name, E_TASK_MAIN_TYPE_value)
-	proto.RegisterEnum("common_msg.E_TASK_MAIN_RANGE", E_TASK_MAIN_RANGE_name, E_TASK_MAIN_RANGE_value)
-	proto.RegisterEnum("common_msg.E_TASK_FUNC_TYPE", E_TASK_FUNC_TYPE_name, E_TASK_FUNC_TYPE_value)
 	proto.RegisterEnum("common_msg.E_MAIL_STATE", E_MAIL_STATE_name, E_MAIL_STATE_value)
 	proto.RegisterEnum("common_msg.E_COMMON_VAL", E_COMMON_VAL_name, E_COMMON_VAL_value)
-	proto.RegisterEnum("common_msg.E_EQUIPMENT_POSITION", E_EQUIPMENT_POSITION_name, E_EQUIPMENT_POSITION_value)
-	proto.RegisterEnum("common_msg.E_EQUIPMENT_QUALITY", E_EQUIPMENT_QUALITY_name, E_EQUIPMENT_QUALITY_value)
-	proto.RegisterEnum("common_msg.E_NPC_TYPE", E_NPC_TYPE_name, E_NPC_TYPE_value)
-	proto.RegisterEnum("common_msg.E_BUILDING", E_BUILDING_name, E_BUILDING_value)
-	proto.RegisterEnum("common_msg.E_FRIEND_STATE", E_FRIEND_STATE_name, E_FRIEND_STATE_value)
+	proto.RegisterEnum("common_msg.E_USER_ONLINE_STATE", E_USER_ONLINE_STATE_name, E_USER_ONLINE_STATE_value)
 }
