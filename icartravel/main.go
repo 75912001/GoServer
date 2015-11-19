@@ -11,6 +11,7 @@ import (
 	"zzcli"
 	"zzcommon"
 	//	"zzser"
+
 	"zztimer"
 )
 
@@ -134,6 +135,29 @@ func main() {
 	gzzserServer.OnCliPacket = onCliPacket
 	//运行
 	go gzzserServer.Run(gBenchFile.Ip, gBenchFile.Port, gBenchFile.PacketLengthMax, gBenchFile.Delay)
+
+	//////////////////////////////////////////////////////////////////
+	//作为HTTP CLIENT Weather
+	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
+	gHttpClientWeather.Get()
+	//////////////////////////////////////////////////////////////////
+	//作为HTTP SERVER
+	gHttpServer.Ip = gBenchFile.FileIni.Get("http_server", "ip", "999")
+	gHttpServer.Port = zzcommon.StringToUint16(gBenchFile.FileIni.Get("http_server", "port", "0"))
+	gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
+	gHttpServer.AddHandler(loginPattern, LoginHttpHandler)
+	go gHttpServer.Run()
+
+	//////////////////////////////////////////////////////////////////
+	//定时器
+	zztimer.Second(1, timerSecondTest)
+
+	for {
+		time.Sleep(10 * time.Second)
+		gLock.Lock()
+		gLock.Unlock()
+	}
+
 	//////////////////////////////////////////////////////////////////
 	//做为客户端
 	var gzzcliClient zzcli.Client
@@ -148,27 +172,6 @@ func main() {
 	if nil != err {
 		fmt.Println("######zzcliClient.Connect err:", err)
 	} else {
-	}
-
-	//////////////////////////////////////////////////////////////////
-	//作为HTTP CLIENT Weather
-	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
-	gHttpClientWeather.Get()
-	//////////////////////////////////////////////////////////////////
-	//作为HTTP SERVER
-	gHttpServer.Ip = gBenchFile.FileIni.Get("http_server", "ip", "999")
-	gHttpServer.Port = zzcommon.StringToUint16(gBenchFile.FileIni.Get("http_server", "port", "0"))
-	gHttpServer.AddHandler(pattern, WeatherHttpHandler)
-	go gHttpServer.Run()
-
-	//////////////////////////////////////////////////////////////////
-	//定时器
-	//zztimer.Second(10, timerSecondTest)
-
-	for {
-		time.Sleep(10 * time.Second)
-		gLock.Lock()
-		gLock.Unlock()
 	}
 
 	///////////////////////////////////////////////////////////////////
@@ -213,6 +216,9 @@ func main() {
 
 //定时器,秒,测试
 func timerSecondTest() {
-	fmt.Println("timerSecondTest...")
+	gLock.Lock()
+	defer gLock.Unlock()
+
+	//	fmt.Println("timerSecondTest...")
 	zztimer.Second(1, timerSecondTest)
 }
