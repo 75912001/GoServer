@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	//	"fmt"
+	"fmt"
 
 	"net/http"
 )
@@ -27,6 +27,13 @@ func LoginHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//	fmt.Println(cipherStr)
 	strMd5 = hex.EncodeToString(cipherStr)
 	//	fmt.Println(strMd5)
+
+	_, err := w.Write([]byte(strMd5))
+	if nil != err {
+		fmt.Println("######LoginHttpHandler...err:", err)
+	}
+
+	//	time.Sleep(10 * time.Second)
 
 	// 发送给login 服务器
 	//异步返回给客户端，要么客户端主动请求服务器（ajax）；要么采用WebSocket连接服务器
