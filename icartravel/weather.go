@@ -7,7 +7,7 @@ import (
 	//	"zztimer"
 )
 
-const weatherPattern string = "/weather/"
+const weatherPattern string = "/weather"
 
 func WeatherHttpHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(req)
