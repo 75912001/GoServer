@@ -146,6 +146,7 @@ func main() {
 	gHttpServer.Port = zzcommon.StringToUint16(gBenchFile.FileIni.Get("http_server", "port", "0"))
 	gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
 	gHttpServer.AddHandler(loginPattern, LoginHttpHandler)
+	gHttpServer.AddHandler(phoneRegisterPattern, PhoneRegisterHttpHandler)
 	go gHttpServer.Run()
 
 	//////////////////////////////////////////////////////////////////
