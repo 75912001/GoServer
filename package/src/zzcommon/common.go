@@ -112,6 +112,11 @@ func StringToUint16(s string) (value uint16) {
 	return uint16(vaule)
 }
 
+func StringSubstr(str string, length int) string {
+	rs := []rune(str)
+	return string(rs[0:length])
+}
+
 //////////////////////////////////////////////////////////////////////////////
 func IsWindows() bool {
 	return `windows` == runtime.GOOS

@@ -116,6 +116,12 @@ func onSerPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 }
 
 func main() {
+	fmt.Println("server runing...", time.Now())
+	//"2015-11-26 20:32:42"
+	var timeStamp string = time.Now().String()
+	var ss string = zzcommon.StringSubstr(timeStamp, 19)
+	fmt.Println(ss)
+	fmt.Println(timeStamp)
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	if zzcommon.IsWindows() {
