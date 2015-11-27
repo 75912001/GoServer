@@ -12,6 +12,8 @@ import (
 	"zzcommon"
 	//	"zzser"
 
+	"math/rand"
+	//	"strconv"
 	"zztimer"
 )
 
@@ -116,6 +118,8 @@ func onSerPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 }
 
 func main() {
+	rand.Seed(time.Now().Unix())
+
 	fmt.Println("server runing...", time.Now())
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
@@ -149,17 +153,7 @@ func main() {
 	gHttpServer.AddHandler(loginPattern, LoginHttpHandler)
 
 	{ //启动手机注册功能
-		gPhoneRegister.UrlPattern = gBenchFile.FileIni.Get("phone_register", "UrlPattern", " ")
-		gPhoneRegister.AppKey = gBenchFile.FileIni.Get("phone_register", "AppKey", " ")
-		gPhoneRegister.AppSecret = gBenchFile.FileIni.Get("phone_register", "AppSecret", " ")
-		gPhoneRegister.Method = gBenchFile.FileIni.Get("phone_register", "Method", " ")
-		gPhoneRegister.SignMethod = gBenchFile.FileIni.Get("phone_register", "SignMethod", " ")
-		gPhoneRegister.SmsFreeSignName = gBenchFile.FileIni.Get("phone_register", "SmsFreeSignName", " ")
-		gPhoneRegister.SmsTemplateCode = gBenchFile.FileIni.Get("phone_register", "SmsTemplateCode", " ")
-		gPhoneRegister.SmsType = gBenchFile.FileIni.Get("phone_register", "SmsType", " ")
-		gPhoneRegister.V = gBenchFile.FileIni.Get("phone_register", "Versions", " ")
-		fmt.Println(gPhoneRegister)
-		fmt.Println(gPhoneRegister.V)
+		gPhoneRegister.Init()
 		gHttpServer.AddHandler(phoneRegisterPattern, PhoneRegisterHttpHandler)
 	}
 

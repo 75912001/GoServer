@@ -45,7 +45,9 @@ SmsFreeSignName=注册验证
 SmsTemplateCode=SMS_2515091
 SmsType=normal
 Versions=2.0
-	
+SmsParamProduct=爱车旅
+
+#end
 	
 [log]
 #log path

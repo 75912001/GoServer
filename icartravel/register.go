@@ -4,7 +4,9 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 	//	"io/ioutil"
+	//	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -34,9 +36,11 @@ const phoneRegisterPattern string = "/phoneRegister"
 */
 func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//短信内容参数
-	const sms_paramCode = "123456"
-	const sms_paramProduct = "icartravel"
-	const smsParam = "{'code':'" + sms_paramCode + "','product':'" + sms_paramProduct + "'}"
+	const SmsParamCode = "123456"
+	fmt.Println(gPhoneRegister.SmsParamCode)
+	return
+
+	var smsParam = "{'code':'" + SmsParamCode + "','product':'" + gPhoneRegister.SmsParamProduct + "'}"
 
 	//解析手机号码
 	var recNum string
@@ -102,7 +106,33 @@ type PhoneRegister struct {
 	SmsFreeSignName string
 	SmsTemplateCode string
 	SmsType         string
-	V               string
+	Versions        string
+	SmsParamProduct string
+	SmsParamCode    [SmsParamCodeCnt]string
+}
+
+func (p *PhoneRegister) Init() {
+	p.UrlPattern = gBenchFile.FileIni.Get("phone_register", "UrlPattern", " ")
+	p.AppKey = gBenchFile.FileIni.Get("phone_register", "AppKey", " ")
+	p.AppSecret = gBenchFile.FileIni.Get("phone_register", "AppSecret", " ")
+	p.Method = gBenchFile.FileIni.Get("phone_register", "Method", " ")
+	p.SignMethod = gBenchFile.FileIni.Get("phone_register", "SignMethod", " ")
+	p.SmsFreeSignName = gBenchFile.FileIni.Get("phone_register", "SmsFreeSignName", " ")
+	p.SmsTemplateCode = gBenchFile.FileIni.Get("phone_register", "SmsTemplateCode", " ")
+	p.SmsType = gBenchFile.FileIni.Get("phone_register", "SmsType", " ")
+	p.Versions = gBenchFile.FileIni.Get("phone_register", "Versions", " ")
+	p.SmsParamProduct = gBenchFile.FileIni.Get("phone_register", "SmsParamProduct", " ")
+
+	p.genSmsParamCode()
+}
+
+//手机验证码个数(4位,[1000-9999] 一个9000个)
+const SmsParamCodeCnt int = 9000
+
+func (p *PhoneRegister) genSmsParamCode() {
+	for i := SmsParamCodeCnt; i <= 9999; i++ {
+		p.SmsParamCode[i-SmsParamCodeCnt] = strconv.Itoa(i)
+	}
 }
 
 //生成sign(MD5)
@@ -117,7 +147,7 @@ func (p *PhoneRegister) genSign(recNum string, smsParam string, timeStamp string
 		"sms_template_code" + p.SmsTemplateCode +
 		"sms_type" + p.SmsType +
 		"timestamp" + timeStamp +
-		"v" + p.V +
+		"v" + p.Versions +
 		p.AppSecret
 
 	var strMd5 string
@@ -141,7 +171,7 @@ func (p *PhoneRegister) genReqUrl(strMd5 string, timeStamp string, recNum string
 		"&sms_template_code=" + p.SmsTemplateCode +
 		"&sms_type=" + p.SmsType +
 		"&timestamp=" + timeStamp +
-		"&v=" + p.V
+		"&v=" + p.Versions
 
 	url, err := url.Parse(reqUrl)
 	if nil != err {
