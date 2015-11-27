@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	//	"io/ioutil"
-	//	"math/rand"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -19,6 +19,11 @@ import (
 const phoneRegisterPattern string = "/phoneRegister"
 
 //?number=17721027200
+
+//手机验证码个数(4位,[1000-9999] 一个9000个)
+const SmsParamCodeBegin = 1000
+const SmsParamCodeEnd = 9999
+const SmsParamCodeCnt = SmsParamCodeEnd - SmsParamCodeBegin + 1
 
 /*
 	http://gw.api.taobao.com/router/rest
@@ -36,9 +41,9 @@ const phoneRegisterPattern string = "/phoneRegister"
 */
 func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//短信内容参数
-	const SmsParamCode = "123456"
-	fmt.Println(gPhoneRegister.SmsParamCode)
-	return
+	index := rand.Int31n(SmsParamCodeCnt)
+	var SmsParamCode = gPhoneRegister.SmsParamCode[index]
+	fmt.Println(index, gPhoneRegister.SmsParamCode[index])
 
 	var smsParam = "{'code':'" + SmsParamCode + "','product':'" + gPhoneRegister.SmsParamProduct + "'}"
 
@@ -59,6 +64,9 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	fmt.Println(recNum)
+
+	//todo 检查是否有记录 来自redis
+	//1.有记录就返回，短信已发出，请收到后重试
 
 	//时间戳格式"2015-11-26 20:32:42"
 	var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
@@ -94,7 +102,7 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//		fmt.Println("######PhoneRegisterHttpHandler...err:", err)
 	//	}
 
-	fmt.Println("PhoneRegisterHttpHandler end")
+	//	fmt.Println("PhoneRegisterHttpHandler end")
 }
 
 type PhoneRegister struct {
@@ -126,12 +134,9 @@ func (p *PhoneRegister) Init() {
 	p.genSmsParamCode()
 }
 
-//手机验证码个数(4位,[1000-9999] 一个9000个)
-const SmsParamCodeCnt int = 9000
-
 func (p *PhoneRegister) genSmsParamCode() {
-	for i := SmsParamCodeCnt; i <= 9999; i++ {
-		p.SmsParamCode[i-SmsParamCodeCnt] = strconv.Itoa(i)
+	for i := SmsParamCodeBegin; i <= SmsParamCodeEnd; i++ {
+		p.SmsParamCode[i-SmsParamCodeBegin] = strconv.Itoa(i)
 	}
 }
 

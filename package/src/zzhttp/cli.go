@@ -18,7 +18,7 @@ type Book struct {
 	Price       float32
 }
 
-func (p *HttpClient) Get() {
+func (p *HttpClient) Get() (err error) {
 	resp, err := http.Get(p.Url)
 	if nil != err {
 		fmt.Println("######HttpClient.Get err:", err, p.Url)
@@ -31,7 +31,7 @@ func (p *HttpClient) Get() {
 	p.Result, err = ioutil.ReadAll(resp.Body)
 	if nil != err {
 		fmt.Println("######HttpClient.Get err:", err, resp.Body)
-		return
+		return err
 	}
 	//	var strResult string = string(p.Result)
 	//	fmt.Println("######")
@@ -45,4 +45,5 @@ func (p *HttpClient) Get() {
 	//gobook.Price = 9.99
 	//p.Result, err = json.Marshal(gobook)
 	//	fmt.Println(p.Result)
+	return err
 }
