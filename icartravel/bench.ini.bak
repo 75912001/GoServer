@@ -35,6 +35,18 @@ port=6379
 url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f6193555e3c5a08bb9df964cc8893b&format=json
 #url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f6193555e3c5a08bb9df964cc8893b&format=xml
 
+[phone_register]
+UrlPattern=http://gw.api.taobao.com/router/rest
+AppKey=23273583
+AppSecret=28409ec2fdac3a381fe7546f55493900
+Method=alibaba.aliqin.fc.sms.num.send
+SignMethod=md5
+SmsFreeSignName=注册验证
+SmsTemplateCode=SMS_2515091
+SmsType=normal
+Versions=2.0
+	
+	
 [log]
 #log path
 dir=./log

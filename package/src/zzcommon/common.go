@@ -112,9 +112,9 @@ func StringToUint16(s string) (value uint16) {
 	return uint16(vaule)
 }
 
-func StringSubstr(str string, length int) string {
-	rs := []rune(str)
-	return string(rs[0:length])
+func StringSubstr(s string, length int) (value string) {
+	r := []rune(s)
+	return string(r[0:length])
 }
 
 //////////////////////////////////////////////////////////////////////////////

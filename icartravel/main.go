@@ -117,11 +117,6 @@ func onSerPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 
 func main() {
 	fmt.Println("server runing...", time.Now())
-	//"2015-11-26 20:32:42"
-	var timeStamp string = time.Now().String()
-	var ss string = zzcommon.StringSubstr(timeStamp, 19)
-	fmt.Println(ss)
-	fmt.Println(timeStamp)
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	if zzcommon.IsWindows() {
@@ -152,8 +147,25 @@ func main() {
 	gHttpServer.Port = zzcommon.StringToUint16(gBenchFile.FileIni.Get("http_server", "port", "0"))
 	gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
 	gHttpServer.AddHandler(loginPattern, LoginHttpHandler)
-	gHttpServer.AddHandler(phoneRegisterPattern, PhoneRegisterHttpHandler)
+
+	{ //启动手机注册功能
+		gPhoneRegister.UrlPattern = gBenchFile.FileIni.Get("phone_register", "UrlPattern", " ")
+		gPhoneRegister.AppKey = gBenchFile.FileIni.Get("phone_register", "AppKey", " ")
+		gPhoneRegister.AppSecret = gBenchFile.FileIni.Get("phone_register", "AppSecret", " ")
+		gPhoneRegister.Method = gBenchFile.FileIni.Get("phone_register", "Method", " ")
+		gPhoneRegister.SignMethod = gBenchFile.FileIni.Get("phone_register", "SignMethod", " ")
+		gPhoneRegister.SmsFreeSignName = gBenchFile.FileIni.Get("phone_register", "SmsFreeSignName", " ")
+		gPhoneRegister.SmsTemplateCode = gBenchFile.FileIni.Get("phone_register", "SmsTemplateCode", " ")
+		gPhoneRegister.SmsType = gBenchFile.FileIni.Get("phone_register", "SmsType", " ")
+		gPhoneRegister.V = gBenchFile.FileIni.Get("phone_register", "Versions", " ")
+		fmt.Println(gPhoneRegister)
+		fmt.Println(gPhoneRegister.V)
+		gHttpServer.AddHandler(phoneRegisterPattern, PhoneRegisterHttpHandler)
+	}
+
 	go gHttpServer.Run()
+
+	//////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////
 	//定时器
