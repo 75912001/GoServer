@@ -35,8 +35,8 @@ port=6379
 url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f6193555e3c5a08bb9df964cc8893b&format=json
 #url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f6193555e3c5a08bb9df964cc8893b&format=xml
 
-[phone_register]
-Pattern=/phoneRegister
+[sms_phone_register]
+Pattern=/smsPhoneRegister
 #?number=17721027200
 UrlPattern=http://gw.api.taobao.com/router/rest
 AppKey=23273583
@@ -48,6 +48,12 @@ SmsTemplateCode=SMS_2515091
 SmsType=normal
 Versions=2.0
 SmsParamProduct=爱车旅
+#redis
+redis_ip=192.168.8.101
+redis_port=6379
+redis_databases=0
+redis_key_perfix=smsPhoneRegister_
+
 
 #end
 	

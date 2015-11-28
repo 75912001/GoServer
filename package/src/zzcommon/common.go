@@ -84,6 +84,13 @@ const (
 	ERROR int = -1
 	//断开对方的连接
 	ERROR_DISCONNECT_PEER int = -2
+
+	ERROR_SMS_SENDING int = 10000 //短信已发出，请收到后重试
+
+)
+const (
+
+//	ERROR_SMS_SENDING = 10000//短信已发出，请收到后重试
 )
 
 //////////////////////////////////////////////////////////////////////////////

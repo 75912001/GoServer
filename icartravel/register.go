@@ -4,12 +4,15 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"github.com/garyburd/redigo/redis"
 	"math/rand"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
+	"zzcliredis"
 	"zzcommon"
 )
 
@@ -35,55 +38,82 @@ const SmsParamCodeCnt = SmsParamCodeEnd - SmsParamCodeBegin + 1
 	&timestamp=2015-11-26+19%3A29%3A56
 	&v=2.0
 */
-func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
-	//短信内容参数
-	index := rand.Int31n(SmsParamCodeCnt)
-	var SmsParamCode = gPhoneRegister.SmsParamCode[index]
-	fmt.Println(index, gPhoneRegister.SmsParamCode[index])
+func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
+	var SmsParamCode string
+	{ //短信内容参数
+		index := rand.Int31n(SmsParamCodeCnt)
+		SmsParamCode = gSmsPhoneRegister.SmsParamCode[index]
+		fmt.Println(index, SmsParamCode)
+	}
 
-	var smsParam = "{'code':'" + SmsParamCode + "','product':'" + gPhoneRegister.SmsParamProduct + "'}"
+	var smsParam = "{'code':'" + SmsParamCode + "','product':'" + gSmsPhoneRegister.SmsParamProduct + "'}"
 
-	//解析手机号码
 	var recNum string
-	err := req.ParseForm()
-	if nil != err {
-		fmt.Println("######PhoneRegisterHttpHandler")
-		return
+	{ //解析手机号码
+		err := req.ParseForm()
+		if nil != err {
+			fmt.Println("######PhoneRegisterHttpHandler")
+			return
+		}
+		if len(req.Form["number"]) > 0 {
+			recNum = req.Form["number"][0]
+		}
+		//手机号码长度
+		const phoneNumberLen int = 11
+		if phoneNumberLen != len(recNum) {
+			fmt.Println("######PhoneRegisterHttpHandler", recNum)
+			return
+		}
+		fmt.Println(recNum)
 	}
-	if len(req.Form["number"]) > 0 {
-		recNum = req.Form["number"][0]
-	}
-	//手机号码长度
-	const phoneNumberLen int = 11
-	if phoneNumberLen != len(recNum) {
-		fmt.Println("######PhoneRegisterHttpHandler", recNum)
-		return
-	}
-	fmt.Println(recNum)
 
-	//todo 检查是否有记录 来自redis
-	//1.有记录就返回，短信已发出，请收到后重试
-
+	{ //检查是否有记录 来自redis
+		commandName := "get"
+		key := recNum
+		reply, err := gSmsPhoneRegister.Redis.Conn.Do(commandName, key)
+		if nil != err {
+			fmt.Println("######redis get err:", err)
+			return
+		}
+		if !reflect.DeepEqual(reply, nil) {
+			//有记录就返回，短信已发出，请收到后重试
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_SENDING)))
+			return
+		}
+	}
+	{ //设置到redis中
+		commandName := "setex"
+		key := recNum
+		timeout := "3600" //一小时超时时间
+		_, err := gSmsPhoneRegister.Redis.Conn.Do(commandName, key, timeout, SmsParamCode)
+		if nil != err {
+			fmt.Println("######redis setex err:", err)
+			return
+		}
+	}
 	//时间戳格式"2015-11-26 20:32:42"
 	var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
 
-	var strMd5 string = gPhoneRegister.genSign(recNum, smsParam, timeStamp)
+	var strMd5 string = gSmsPhoneRegister.smsGenSign(recNum, smsParam, timeStamp)
 
-	reqUrl, err := gPhoneRegister.genReqUrl(strMd5, timeStamp, recNum, smsParam)
+	reqUrl, err := gSmsPhoneRegister.smsGenReqUrl(strMd5, timeStamp, recNum, smsParam)
 	if nil != err {
 		fmt.Println("######gPhoneRegister.genReqUrl", err)
 		return
 	}
 	fmt.Println(reqUrl)
-	//发送消息到短信服务器
-	resp, err := http.Get(reqUrl)
-	if nil != err {
-		fmt.Println("######PhoneRegisterHttpHandler.Get err:", err, reqUrl)
-		return
+
+	{ //发送消息到短信服务器
+		resp, err := http.Get(reqUrl)
+		if nil != err {
+			fmt.Println("######PhoneRegisterHttpHandler.Get err:", err, reqUrl)
+			return
+		}
+		defer resp.Body.Close()
+		fmt.Println(resp)
+		fmt.Println(resp.Body)
 	}
-	defer resp.Body.Close()
-	fmt.Println(resp)
-	fmt.Println(resp.Body)
+
 	//	result := make([]byte, resp.ContentLength)
 
 	//	result, err = ioutil.ReadAll(resp.Body)
@@ -101,7 +131,7 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//	fmt.Println("PhoneRegisterHttpHandler end")
 }
 
-type PhoneRegister struct {
+type SmsPhoneRegister struct {
 	Pattern         string
 	UrlPattern      string
 	AppKey          string
@@ -114,32 +144,50 @@ type PhoneRegister struct {
 	Versions        string
 	SmsParamProduct string
 	SmsParamCode    [SmsParamCodeCnt]string
+	//redis
+	Redis          zzcliredis.ClientRedis
+	RedisKeyPerfix string
 }
 
-func (p *PhoneRegister) Init() {
-	p.Pattern = gBenchFile.FileIni.Get("phone_register", "Pattern", " ")
-	p.UrlPattern = gBenchFile.FileIni.Get("phone_register", "UrlPattern", " ")
-	p.AppKey = gBenchFile.FileIni.Get("phone_register", "AppKey", " ")
-	p.AppSecret = gBenchFile.FileIni.Get("phone_register", "AppSecret", " ")
-	p.Method = gBenchFile.FileIni.Get("phone_register", "Method", " ")
-	p.SignMethod = gBenchFile.FileIni.Get("phone_register", "SignMethod", " ")
-	p.SmsFreeSignName = gBenchFile.FileIni.Get("phone_register", "SmsFreeSignName", " ")
-	p.SmsTemplateCode = gBenchFile.FileIni.Get("phone_register", "SmsTemplateCode", " ")
-	p.SmsType = gBenchFile.FileIni.Get("phone_register", "SmsType", " ")
-	p.Versions = gBenchFile.FileIni.Get("phone_register", "Versions", " ")
-	p.SmsParamProduct = gBenchFile.FileIni.Get("phone_register", "SmsParamProduct", " ")
+func (p *SmsPhoneRegister) Init() {
+	p.Pattern = gBenchFile.FileIni.Get("sms_phone_register", "Pattern", " ")
+	p.UrlPattern = gBenchFile.FileIni.Get("sms_phone_register", "UrlPattern", " ")
+	p.AppKey = gBenchFile.FileIni.Get("sms_phone_register", "AppKey", " ")
+	p.AppSecret = gBenchFile.FileIni.Get("sms_phone_register", "AppSecret", " ")
+	p.Method = gBenchFile.FileIni.Get("sms_phone_register", "Method", " ")
+	p.SignMethod = gBenchFile.FileIni.Get("sms_phone_register", "SignMethod", " ")
+	p.SmsFreeSignName = gBenchFile.FileIni.Get("sms_phone_register", "SmsFreeSignName", " ")
+	p.SmsTemplateCode = gBenchFile.FileIni.Get("sms_phone_register", "SmsTemplateCode", " ")
+	p.SmsType = gBenchFile.FileIni.Get("sms_phone_register", "SmsType", " ")
+	p.Versions = gBenchFile.FileIni.Get("sms_phone_register", "Versions", " ")
+	p.SmsParamProduct = gBenchFile.FileIni.Get("sms_phone_register", "SmsParamProduct", " ")
+	//redis
+	p.Redis.RedisIp = gBenchFile.FileIni.Get("sms_phone_register", "redis_ip", " ")
+	p.Redis.RedisPort = zzcommon.StringToUint16(gBenchFile.FileIni.Get("sms_phone_register", "redis_port", " "))
+	p.Redis.RedisDatabases = zzcommon.StringToInt(gBenchFile.FileIni.Get("sms_phone_register", "redis_databases", " "))
+	p.RedisKeyPerfix = gBenchFile.FileIni.Get("sms_phone_register", "redis_key_perfix", " ")
 
-	p.genSmsParamCode()
+	p.smsGenParamCode()
+
+	//链接redis
+	dialOption := redis.DialDatabase(p.Redis.RedisDatabases)
+	var addrRedis = p.Redis.RedisIp + ":" + strconv.Itoa(int(p.Redis.RedisPort))
+	var err error
+	p.Redis.Conn, err = redis.Dial("tcp", addrRedis, dialOption)
+	if nil != err {
+		fmt.Println("######redis.Dial err:", err)
+	}
+	//	defer conn.Close()
 }
 
-func (p *PhoneRegister) genSmsParamCode() {
+func (p *SmsPhoneRegister) smsGenParamCode() {
 	for i := SmsParamCodeBegin; i <= SmsParamCodeEnd; i++ {
 		p.SmsParamCode[i-SmsParamCodeBegin] = strconv.Itoa(i)
 	}
 }
 
 //生成sign(MD5)
-func (p *PhoneRegister) genSign(recNum string, smsParam string, timeStamp string) (value string) {
+func (p *SmsPhoneRegister) smsGenSign(recNum string, smsParam string, timeStamp string) (value string) {
 	var signSource = p.AppSecret +
 		"app_key" + p.AppKey +
 		"method" + p.Method +
@@ -162,7 +210,7 @@ func (p *PhoneRegister) genSign(recNum string, smsParam string, timeStamp string
 	return strMd5
 }
 
-func (p *PhoneRegister) genReqUrl(strMd5 string, timeStamp string, recNum string, smsParam string) (value string, err error) {
+func (p *SmsPhoneRegister) smsGenReqUrl(strMd5 string, timeStamp string, recNum string, smsParam string) (value string, err error) {
 	var reqUrl = p.UrlPattern +
 		"?sign=" + strMd5 +
 		"&app_key=" + p.AppKey +

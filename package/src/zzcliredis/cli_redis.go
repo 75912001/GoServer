@@ -4,17 +4,21 @@ import (
 	//	"fmt"
 	"github.com/garyburd/redigo/redis"
 	//	"net"
-	"strconv"
+	//	"strconv"
 	//	"zzcommon"
 )
 
 //己方作为客户端
 type ClientRedis struct {
-	conn redis.Conn
+	Conn           redis.Conn
+	RedisIp        string
+	RedisPort      uint16
+	RedisDatabases int
 }
 
 //连接
-func (p *ClientRedis) Connect(ip string, port uint16, recvBufMax int) (err error) {
+/*
+func (p *ClientRedis) Connect(ip string, port uint16) (err error) {
 
 	var addr = ip + ":" + strconv.Itoa(int(port))
 	p.conn, err = redis.Dial("tcp", addr)
@@ -25,3 +29,4 @@ func (p *ClientRedis) Connect(ip string, port uint16, recvBufMax int) (err error
 
 	return err
 }
+*/
