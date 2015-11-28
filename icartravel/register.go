@@ -4,11 +4,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"strconv"
-	//	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 	"zzcommon"
@@ -16,9 +15,6 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 //手机注册
-const phoneRegisterPattern string = "/phoneRegister"
-
-//?number=17721027200
 
 //手机验证码个数(4位,[1000-9999] 一个9000个)
 const SmsParamCodeBegin = 1000
@@ -106,6 +102,7 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 type PhoneRegister struct {
+	Pattern         string
 	UrlPattern      string
 	AppKey          string
 	AppSecret       string
@@ -120,6 +117,7 @@ type PhoneRegister struct {
 }
 
 func (p *PhoneRegister) Init() {
+	p.Pattern = gBenchFile.FileIni.Get("phone_register", "Pattern", " ")
 	p.UrlPattern = gBenchFile.FileIni.Get("phone_register", "UrlPattern", " ")
 	p.AppKey = gBenchFile.FileIni.Get("phone_register", "AppKey", " ")
 	p.AppSecret = gBenchFile.FileIni.Get("phone_register", "AppSecret", " ")

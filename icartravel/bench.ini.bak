@@ -36,6 +36,8 @@ url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f619
 #url=http://api.k780.com:88/?app=weather.future&weaid=1&&appkey=16059&sign=05f6193555e3c5a08bb9df964cc8893b&format=xml
 
 [phone_register]
+Pattern=/phoneRegister
+#?number=17721027200
 UrlPattern=http://gw.api.taobao.com/router/rest
 AppKey=23273583
 AppSecret=28409ec2fdac3a381fe7546f55493900

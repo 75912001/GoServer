@@ -154,7 +154,7 @@ func main() {
 
 	{ //启动手机注册功能
 		gPhoneRegister.Init()
-		gHttpServer.AddHandler(phoneRegisterPattern, PhoneRegisterHttpHandler)
+		gHttpServer.AddHandler(gPhoneRegister.Pattern, PhoneRegisterHttpHandler)
 	}
 
 	go gHttpServer.Run()
