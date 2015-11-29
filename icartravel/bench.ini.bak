@@ -52,8 +52,19 @@ SmsParamProduct=爱车旅
 redis_ip=192.168.8.101
 redis_port=6379
 redis_databases=0
-redis_key_perfix=smsPhoneRegister_
+#[0,9][a,z]
+redis_key_perfix=100_
 
+[phone_register]
+Pattern=/PhoneRegister
+#?number=17721027200&pwd=md5
+#redis
+redis_ip=192.168.8.101
+redis_port=6379
+redis_databases=0
+#[0,9][a,z]
+redis_key_perfix=200_
+redis_key_incr_uid=001_uid
 
 #end
 	

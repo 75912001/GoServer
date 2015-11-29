@@ -153,8 +153,16 @@ func main() {
 	gHttpServer.AddHandler(loginPattern, LoginHttpHandler)
 
 	{ //启动手机注册功能
-		gSmsPhoneRegister.Init()
+		err := gSmsPhoneRegister.Init()
+		if nil != err {
+			return
+		}
 		gHttpServer.AddHandler(gSmsPhoneRegister.Pattern, SmsPhoneRegisterHttpHandler)
+		err = gPhoneRegister.Init()
+		if nil != err {
+			return
+		}
+		gHttpServer.AddHandler(gPhoneRegister.Pattern, PhoneRegisterHttpHandler)
 	}
 
 	go gHttpServer.Run()
@@ -164,7 +172,7 @@ func main() {
 	//////////////////////////////////////////////////////////////////
 	//定时器
 	zztimer.Second(1, timerSecondTest)
-
+	fmt.Println("OK")
 	for {
 		time.Sleep(10 * time.Second)
 		gLock.Lock()
