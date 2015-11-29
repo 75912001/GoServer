@@ -57,7 +57,7 @@ redis_key_perfix=100_
 
 [phone_register]
 Pattern=/PhoneRegister
-#?number=17721027200&pwd=md5
+#?number=17721027200&pwd=xxx&sms_code=xxx
 #redis
 redis_ip=192.168.8.101
 redis_port=6379

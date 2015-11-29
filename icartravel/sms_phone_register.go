@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -41,7 +40,6 @@ const SmsParamCodeEnd = 99999 + 1
 	&v=2.0
 */
 func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
-
 	var recNum string
 	{ //解析手机号码
 		err := req.ParseForm()
@@ -49,8 +47,9 @@ func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 			fmt.Println("######PhoneRegisterHttpHandler")
 			return
 		}
-		if len(req.Form["number"]) > 0 {
-			recNum = req.Form["number"][0]
+		const paraNumber string = "number"
+		if len(req.Form[paraNumber]) > 0 {
+			recNum = req.Form[paraNumber][0]
 		}
 		//手机号码长度
 		const phoneNumberLen int = 11
@@ -69,10 +68,22 @@ func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 			fmt.Println("######redis get err:", err)
 			return
 		}
-		if !reflect.DeepEqual(reply, nil) {
+		if nil != reply {
 			//有记录就返回，短信已发出，请收到后重试
 			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_SENDING)))
 			return
+		}
+	}
+
+	{ //检查手机号是否绑定
+		hasUid, err := gPhoneRegister.IsPhoneNumBind(recNum)
+		if nil != err {
+			return
+		} else {
+			if hasUid {
+				w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
+				return
+			}
 		}
 	}
 
@@ -91,7 +102,7 @@ func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	{ //设置到redis中
 		commandName := "setex"
 		key := gSmsPhoneRegister.SmsGenRedisKey(recNum)
-		timeout := "3600" //一小时超时时间
+		timeout := "300" //5分钟
 		_, err := gSmsPhoneRegister.Redis.Conn.Do(commandName, key, timeout, SmsParamCode)
 		if nil != err {
 			fmt.Println("######redis setex err:", err)
@@ -120,22 +131,6 @@ func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(resp)
 		//fmt.Println(resp.Body)
 	}
-
-	//	result := make([]byte, resp.ContentLength)
-
-	//	result, err = ioutil.ReadAll(resp.Body)
-	//	if nil != err {
-	//		fmt.Println("######PhoneRegisterHttpHandler.Get err:", err, resp.Body)
-	//		return
-	//	}
-	//	fmt.Println(resp)
-	//	fmt.Println(result)
-	//	_, err = w.Write(result)
-	//	if nil != err {
-	//		fmt.Println("######PhoneRegisterHttpHandler...err:", err)
-	//	}
-
-	//	fmt.Println("PhoneRegisterHttpHandler end")
 }
 
 type SmsPhoneRegister struct {

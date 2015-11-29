@@ -85,8 +85,10 @@ const (
 	//断开对方的连接
 	ERROR_DISCONNECT_PEER int = -2
 
-	ERROR_SMS_SENDING int = 10000 //短信已发出，请收到后重试
-
+	ERROR_SMS_SENDING       int = 10000 //短信已发出,请收到后重试
+	ERROR_SMS_REGISTER_CODE int = 10001 // 短信注册码失败,请重新请求短信注册
+	ERROR_USER_EXIST        int = 10002 //用户已存在
+	ERROR_PHONE_NUM_BIND    int = 10003 //手机号已绑定
 )
 const (
 

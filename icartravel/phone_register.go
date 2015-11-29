@@ -1,17 +1,11 @@
 package main
 
 import (
-	//	"crypto/md5"
-	//	"encoding/hex"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
-	//	"math/rand"
 	"net/http"
-	//	"net/url"
 	"reflect"
 	"strconv"
-	//	"strings"
-	//	"time"
 	"zzcliredis"
 	"zzcommon"
 )
@@ -20,86 +14,80 @@ import (
 //手机注册
 
 func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
-	/*
-		var recNum string
-		{ //解析手机号码
-			err := req.ParseForm()
-			if nil != err {
-				fmt.Println("######PhoneRegisterHttpHandler")
-				return
-			}
-			if len(req.Form["number"]) > 0 {
-				recNum = req.Form["number"][0]
-			}
-			//手机号码长度
-			const phoneNumberLen int = 11
-			if phoneNumberLen != len(recNum) {
-				fmt.Println("######PhoneRegisterHttpHandler", recNum)
-				return
-			}
-			fmt.Println(recNum)
-		}
+	var recNum string
+	var pwd string
+	var smsCode string
 
-		{ //检查是否有记录 来自redis
-			commandName := "get"
-			key := gSmsPhoneRegister.SmsGenRedisKey(recNum)
-			reply, err := gSmsPhoneRegister.Redis.Conn.Do(commandName, key)
-			if nil != err {
-				fmt.Println("######redis get err:", err)
-				return
-			}
-			if !reflect.DeepEqual(reply, nil) {
-				//有记录就返回，短信已发出，请收到后重试
-				w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_SENDING)))
-				return
-			}
-		}
-
-		var SmsParamCode string
-		{ //短信内容参数
-			index := rand.Intn(SmsParamCodeEnd)
-			if index < SmsParamCodeBegin {
-				index += SmsParamCodeBegin
-			}
-			SmsParamCode = strconv.Itoa(index)
-			fmt.Println(SmsParamCode)
-		}
-
-		var smsParam = "{'code':'" + SmsParamCode + "','product':'" + gSmsPhoneRegister.SmsParamProduct + "'}"
-
-		{ //设置到redis中
-			commandName := "setex"
-			key := gSmsPhoneRegister.SmsGenRedisKey(recNum)
-			timeout := "3600" //一小时超时时间
-			_, err := gSmsPhoneRegister.Redis.Conn.Do(commandName, key, timeout, SmsParamCode)
-			if nil != err {
-				fmt.Println("######redis setex err:", err)
-				return
-			}
-		}
-		//时间戳格式"2015-11-26 20:32:42"
-		var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
-
-		var strMd5 string = gSmsPhoneRegister.smsGenSign(recNum, smsParam, timeStamp)
-
-		reqUrl, err := gSmsPhoneRegister.smsGenReqUrl(strMd5, timeStamp, recNum, smsParam)
+	{ //解析参数
+		err := req.ParseForm()
 		if nil != err {
-			fmt.Println("######gPhoneRegister.genReqUrl", err)
+			fmt.Println("######PhoneRegisterHttpHandler")
 			return
 		}
-		fmt.Println(reqUrl)
+		const paraRecNumName string = "number"
+		const paraPwdName string = "pwd"
+		const paraSmsCodeName string = "sms_code"
 
-		{ //发送消息到短信服务器
-			resp, err := http.Get(reqUrl)
-			if nil != err {
-				fmt.Println("######PhoneRegisterHttpHandler.Get err:", err, reqUrl)
+		//手机号码
+		if len(req.Form[paraRecNumName]) > 0 {
+			recNum = req.Form[paraRecNumName][0]
+		} else {
+			fmt.Println("######PhoneRegisterHttpHandler")
+			return
+		}
+		//原始密码
+		if len(req.Form[paraPwdName]) > 0 {
+			pwd = req.Form[paraPwdName][0]
+		} else {
+			fmt.Println("######PhoneRegisterHttpHandler")
+			return
+		}
+		//sms code
+		if len(req.Form[paraSmsCodeName]) > 0 {
+			smsCode = req.Form[paraSmsCodeName][0]
+		} else {
+			fmt.Println("######PhoneRegisterHttpHandler")
+			return
+		}
+
+		fmt.Println(recNum, pwd, smsCode)
+	}
+
+	{ //检查是否有短信验证码记录 来自redis
+		commandName := "get"
+		key := gSmsPhoneRegister.SmsGenRedisKey(recNum)
+		reply, err := gSmsPhoneRegister.Redis.Conn.Do(commandName, key)
+
+		if nil != err {
+			fmt.Println("######redis get err:", err)
+			return
+		}
+		if nil == reply {
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_REGISTER_CODE)))
+			return
+		}
+		getRecNum, err := redis.String(reply, err)
+		if smsCode != getRecNum {
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_REGISTER_CODE)))
+			return
+		}
+	}
+	{ //检查手机号是否绑定
+		hasUid, err := gPhoneRegister.IsPhoneNumBind(recNum)
+		if nil != err {
+			return
+		} else {
+			if hasUid {
+				w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
 				return
 			}
-			defer resp.Body.Close()
-			fmt.Println(resp)
-			//fmt.Println(resp.Body)
 		}
-	*/
+	}
+	//todo
+	//注册用户。。。
+	//生成uid
+	//插入用户数据
+
 }
 
 type PhoneRegister struct {
@@ -154,6 +142,23 @@ func (p *PhoneRegister) Init() (err error) {
 	}
 	return err
 
+}
+
+//手机号是否绑定
+//todo 前缀 ， 获取方法
+func (p *PhoneRegister) IsPhoneNumBind(recNum string) (bind bool, err error) {
+	commandName := "get"
+	key := p.GenRedisKey(recNum)
+	reply, err := p.Redis.Conn.Do(commandName, key)
+
+	if nil != err {
+		fmt.Println("######HasUid err:", err)
+		return false, err
+	}
+	if nil == reply {
+		return false, err
+	}
+	return true, err
 }
 
 //生成redis的键值

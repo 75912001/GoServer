@@ -143,8 +143,8 @@ func main() {
 
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP CLIENT Weather
-	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
-	gHttpClientWeather.Get()
+	//	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
+	//	gHttpClientWeather.Get()
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP SERVER
 	gHttpServer.Ip = gBenchFile.FileIni.Get("http_server", "ip", "999")
