@@ -163,6 +163,16 @@ func main() {
 			return
 		}
 		gHttpServer.AddHandler(gPhoneRegister.Pattern, PhoneRegisterHttpHandler)
+
+		err = gUserRegister.Init()
+		if nil != err {
+			return
+		}
+
+		err = gUid.Init()
+		if nil != err {
+			return
+		}
 	}
 
 	go gHttpServer.Run()

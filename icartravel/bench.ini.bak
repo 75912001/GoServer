@@ -55,6 +55,7 @@ redis_databases=0
 #[0,9][a,z]
 redis_key_perfix=100_
 
+#手机注册
 [phone_register]
 Pattern=/PhoneRegister
 #?number=17721027200&pwd=xxx&sms_code=xxx
@@ -64,7 +65,21 @@ redis_port=6379
 redis_databases=0
 #[0,9][a,z]
 redis_key_perfix=200_
+
+＃用户id
+[uid]
+redis_ip=192.168.8.101
+redis_port=6379
+redis_databases=0
 redis_key_incr_uid=001_uid
+
+＃用户注册信息
+[user_register]
+redis_ip=192.168.8.101
+redis_port=6379
+redis_databases=0
+redis_key_perfix=201_
+
 
 #end
 	

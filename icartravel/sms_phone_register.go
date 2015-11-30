@@ -40,6 +40,8 @@ const SmsParamCodeEnd = 99999 + 1
 	&v=2.0
 */
 func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
+	const paraNumber string = "number"
+
 	var recNum string
 	{ //解析手机号码
 		err := req.ParseForm()
@@ -47,7 +49,6 @@ func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 			fmt.Println("######PhoneRegisterHttpHandler")
 			return
 		}
-		const paraNumber string = "number"
 		if len(req.Form[paraNumber]) > 0 {
 			recNum = req.Form[paraNumber][0]
 		}
@@ -88,7 +89,7 @@ func SmsPhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var SmsParamCode string
-	{ //短信内容参数
+	{ //生成短信内容参数
 		index := rand.Intn(SmsParamCodeEnd)
 		if index < SmsParamCodeBegin {
 			index += SmsParamCodeBegin
