@@ -1,32 +1,36 @@
 package zzcliredis
 
 import (
-	//	"fmt"
+	"fmt"
 	"github.com/garyburd/redigo/redis"
-	//	"net"
-	//	"strconv"
-	//	"zzcommon"
+	//"net"
+	"strconv"
+	//"zzcommon"
 )
 
 //己方作为客户端
 type ClientRedis struct {
 	Conn           redis.Conn
-	RedisIp        string
-	RedisPort      uint16
-	RedisDatabases int
+	redisIp        string
+	redisPort      uint16
+	redisDatabases int
 }
 
 //连接
-/*
-func (p *ClientRedis) Connect(ip string, port uint16) (err error) {
+func (p *ClientRedis) Connect(ip string, port uint16, redisDatabases int) (err error) {
+	p.redisIp = ip
+	p.redisPort = port
+	p.redisDatabases = redisDatabases
 
 	var addr = ip + ":" + strconv.Itoa(int(port))
-	p.conn, err = redis.Dial("tcp", addr)
+	dialOption := redis.DialDatabase(redisDatabases)
+
+	p.Conn, err = redis.Dial("tcp", addr, dialOption)
 	if nil != err {
 		// handle error
+		fmt.Println("######redis.Dial err:", err, ip, port, redisDatabases)
+		return err
 	}
 	//	defer conn.Close()
-
 	return err
 }
-*/

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"ict_bench_file"
-	"strconv"
 	"zzcliredis"
 	"zzcommon"
 )
@@ -26,20 +25,17 @@ func (p *uidMgr) Init() (err error) {
 	const uidBegin int = 100000
 
 	//redis
-	p.Redis.RedisIp = ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_ip", " ")
-	p.Redis.RedisPort = zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_port", " "))
-	p.Redis.RedisDatabases = zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_databases", " "))
-	p.RedisKeyIncrUid = ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_key_incr_uid", " ")
+	ip := ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_ip", " ")
+	port := zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_port", " "))
+	redisDatabases := zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_databases", " "))
+	p.RedisKeyIncrUid = ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_key_incr_uid", " ")
 
 	//链接redis
-	dialOption := redis.DialDatabase(p.Redis.RedisDatabases)
-	var addrRedis = p.Redis.RedisIp + ":" + strconv.Itoa(int(p.Redis.RedisPort))
-	p.Redis.Conn, err = redis.Dial("tcp", addrRedis, dialOption)
+	err = p.Redis.Connect(ip, port, redisDatabases)
 	if nil != err {
 		fmt.Println("######redis.Dial err:", err)
 		return err
 	}
-	//	defer conn.Close()
 
 	{ //检查是否有记录 来自redis
 		commandName := "get"

@@ -67,14 +67,14 @@ redis_databases=0
 redis_key_perfix=200_
 
 #用户id
-[uid]
+[ict_user_uid]
 redis_ip=192.168.8.101
 redis_port=6379
 redis_databases=0
 redis_key_incr_uid=001_uid
 
 #用户注册信息
-[user_register]
+[ict_user_base]
 redis_ip=192.168.8.101
 redis_port=6379
 redis_databases=0

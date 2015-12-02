@@ -30,3 +30,9 @@ package/pkg/windows_amd64/zzcli.a
 icartravel/pkg/darwin_amd64/common_msg.a
 
 package/pkg/darwin_amd64/zzproto.a
+
+icartravel/pkg/darwin_amd64/ict_bench_file.a
+
+icartravel/pkg/darwin_amd64/ict_user.a
+
+package/pkg/darwin_amd64/zzcliredis.a

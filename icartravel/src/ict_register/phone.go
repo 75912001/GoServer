@@ -71,7 +71,7 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 
 	{ //检查是否有短信验证码记录 来自redis
 		commandName := "get"
-		key := GPhoneSms.GenRedisKey(recNum)
+		key := GphoneSms.GenRedisKey(recNum)
 		reply, err := GPhoneSms.Redis.Conn.Do(commandName, key)
 		if nil != err {
 			fmt.Println("######redis get err:", err)

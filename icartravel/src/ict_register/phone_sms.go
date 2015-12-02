@@ -13,7 +13,7 @@ import (
 	"zzcommon"
 )
 
-var GPhoneSms phoneSms
+var GphoneSms phoneSms
 
 ////////////////////////////////////////////////////////////////////////////////
 //手机短信注册(发送手机号,接收验证码)
@@ -61,14 +61,8 @@ func PhoneSmsHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	{ //检查是否有记录 来自redis
-		commandName := "get"
-		key := GPhoneSms.genRedisKey(recNum)
-		reply, err := GPhoneSms.Redis.Conn.Do(commandName, key)
-		if nil != err {
-			fmt.Println("######redis get err:", err)
-			return
-		}
-		if nil != reply {
+		isExist := GphoneSms.IsExist(recNum)
+		if isExist {
 			//有记录就返回，短信已发出，请收到后重试
 			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_SENDING)))
 			return
@@ -76,34 +70,30 @@ func PhoneSmsHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	{ //检查手机号是否绑定
-		hasUid, err := GPhoneRegister.IsPhoneNumBind(recNum)
+		hasUid, err := GphoneRegister.IsPhoneNumBind(recNum)
 		if nil != err {
 			return
-		} else {
-			if hasUid {
-				w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
-				return
-			}
+		}
+		if hasUid {
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
+			return
 		}
 	}
 
-	var SmsParamCode string
+	var smsParamCode string
 	{ //生成短信内容参数
 		index := rand.Intn(SmsParamCodeEnd)
 		if index < SmsParamCodeBegin {
 			index += SmsParamCodeBegin
 		}
-		SmsParamCode = strconv.Itoa(index)
-		fmt.Println(SmsParamCode)
+		smsParamCode = strconv.Itoa(index)
+		fmt.Println(smsParamCode)
 	}
 
-	var smsParam = "{'code':'" + SmsParamCode + "','product':'" + gPhoneSms.SmsParamProduct + "'}"
+	var smsParam = "{'code':'" + smsParamCode + "','product':'" + GphoneSms.SmsParamProduct + "'}"
 
 	{ //设置到redis中
-		commandName := "setex"
-		key := gPhoneSms.GenRedisKey(recNum)
-		timeout := "300" //5分钟
-		_, err := gPhoneSms.Redis.Conn.Do(commandName, key, timeout, SmsParamCode)
+		err = GphoneSms.InsertSmsCode(recNum, smsParamCode)
 		if nil != err {
 			fmt.Println("######redis setex err:", err)
 			return
@@ -133,7 +123,7 @@ func PhoneSmsHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-type PhoneSms struct {
+type phoneSms struct {
 	Pattern         string
 	UrlPattern      string
 	AppKey          string
@@ -151,7 +141,7 @@ type PhoneSms struct {
 }
 
 //初始化
-func (p *PhoneSms) Init() (err error) {
+func (p *phoneSms) Init() (err error) {
 	p.Pattern = gBenchFile.FileIni.Get("sms_phone_register", "Pattern", " ")
 	p.UrlPattern = gBenchFile.FileIni.Get("sms_phone_register", "UrlPattern", " ")
 	p.AppKey = gBenchFile.FileIni.Get("sms_phone_register", "AppKey", " ")
@@ -182,7 +172,7 @@ func (p *PhoneSms) Init() (err error) {
 }
 
 //生成sign(MD5)
-func (p *PhoneSms) genSign(recNum string, smsParam string, timeStamp string) (value string) {
+func (p *phoneSms) genSign(recNum string, smsParam string, timeStamp string) (value string) {
 	var signSource = p.AppSecret +
 		"app_key" + p.AppKey +
 		"method" + p.Method +
@@ -201,7 +191,7 @@ func (p *PhoneSms) genSign(recNum string, smsParam string, timeStamp string) (va
 }
 
 //生成短信请求url
-func (p *PhoneSms) genReqUrl(strMd5 string, timeStamp string, recNum string, smsParam string) (value string, err error) {
+func (p *phoneSms) genReqUrl(strMd5 string, timeStamp string, recNum string, smsParam string) (value string, err error) {
 	var reqUrl = p.UrlPattern +
 		"?sign=" + strMd5 +
 		"&app_key=" + p.AppKey +
@@ -225,23 +215,36 @@ func (p *PhoneSms) genReqUrl(strMd5 string, timeStamp string, recNum string, sms
 }
 
 //生成redis的键值
-func (p *PhoneSms) genRedisKey(key string) (value string) {
+func (p *phoneSms) genRedisKey(key string) (value string) {
 	return p.RedisKeyPerfix + key
 }
 
-func (p *PhoneSms) IsExist(recNum string) (value bool) {
+func (p *phoneSms) IsExist(recNum string) (value bool) {
 	{ //检查是否有记录 来自redis
 		commandName := "get"
 		key := p.genRedisKey(recNum)
 		reply, err := p.Redis.Conn.Do(commandName, key)
 		if nil != err {
 			fmt.Println("######redis get err:", err)
-			return
+			return false
 		}
-		if nil != reply {
-			//有记录就返回，短信已发出，请收到后重试
-			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_SENDING)))
-			return
+		if nil == reply {
+			return false
 		}
 	}
+	return true
+}
+
+func (p *phoneSms) InsertSmsCode(recNum string, smsParamCode string) (err error) {
+	{ //设置到redis中
+		commandName := "setex"
+		key := p.genRedisKey(recNum)
+		timeout := "300" //5分钟
+		_, err := p.Redis.Conn.Do(commandName, key, timeout, smsParamCode)
+		if nil != err {
+			fmt.Println("######redis setex err:", err)
+		}
+	}
+	return err
+
 }
