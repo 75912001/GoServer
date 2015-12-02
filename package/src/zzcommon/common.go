@@ -2,7 +2,9 @@ package zzcommon
 
 import (
 	"bytes"
+	"crypto/md5"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"net"
@@ -124,6 +126,16 @@ func StringToUint16(s string) (value uint16) {
 func StringSubstr(s string, length int) (value string) {
 	r := []rune(s)
 	return string(r[0:length])
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//md5
+func GenMd5(s string) (value string) {
+	md5Ctx := md5.New()
+	md5Ctx.Write([]byte(value))
+	cipherStr := md5Ctx.Sum(nil)
+	value = hex.EncodeToString(cipherStr)
+	return value
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -1,34 +1,35 @@
-package main
+package ict_user
 
 import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
-	//	"net/http"
-	//	"reflect"
+	"ict_bench_file"
 	"strconv"
 	"zzcliredis"
 	"zzcommon"
 )
 
+var GUidMgr uidMgr
+
 ////////////////////////////////////////////////////////////////////////////////
 //USER ID 管理
 
-type Uid struct {
+type uidMgr struct {
 	//redis
 	Redis           zzcliredis.ClientRedis
 	RedisKeyIncrUid string
 }
 
 //初始化
-func (p *Uid) Init() (err error) {
+func (p *uidMgr) Init() (err error) {
 	//设置uid自增起始点100000   10w
 	const uidBegin int = 100000
 
 	//redis
-	p.Redis.RedisIp = gBenchFile.FileIni.Get("uid", "redis_ip", " ")
-	p.Redis.RedisPort = zzcommon.StringToUint16(gBenchFile.FileIni.Get("uid", "redis_port", " "))
-	p.Redis.RedisDatabases = zzcommon.StringToInt(gBenchFile.FileIni.Get("uid", "redis_databases", " "))
-	p.RedisKeyIncrUid = gBenchFile.FileIni.Get("uid", "redis_key_incr_uid", " ")
+	p.Redis.RedisIp = ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_ip", " ")
+	p.Redis.RedisPort = zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_port", " "))
+	p.Redis.RedisDatabases = zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_databases", " "))
+	p.RedisKeyIncrUid = ict_bench_file.GBenchFile.FileIni.Get("uid", "redis_key_incr_uid", " ")
 
 	//链接redis
 	dialOption := redis.DialDatabase(p.Redis.RedisDatabases)
@@ -61,7 +62,21 @@ func (p *Uid) Init() (err error) {
 	return err
 }
 
-//生成uid todo
-func (p *Uid) GenUid() (value string) {
-	return value
+//生成uid
+func (p *uidMgr) GenUid() (uid string, err error) {
+	{ //检查是否有记录 来自redis
+		commandName := "incr"
+		key := p.RedisKeyIncrUid
+		reply, err := p.Redis.Conn.Do(commandName, key)
+		if nil != err {
+			fmt.Println("######redis incr err:", err)
+			return uid, err
+		}
+		if nil == reply {
+			fmt.Println("######redis incr err:", err)
+			return uid, err
+		}
+		uid, err = redis.String(reply, err)
+	}
+	return uid, err
 }

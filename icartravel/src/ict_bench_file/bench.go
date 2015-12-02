@@ -1,4 +1,4 @@
-package main
+package ict_bench_file
 
 import (
 	"runtime"
@@ -7,10 +7,10 @@ import (
 	"zzini"
 )
 
-var gBenchFile BenchFile
+var GBenchFile benchFile
 
 //bench.ini配置文件
-type BenchFile struct {
+type benchFile struct {
 	FileIni         zzini.ZZIni //ini配置文件
 	Ip              string
 	Port            uint16
@@ -20,7 +20,7 @@ type BenchFile struct {
 }
 
 //加载配置文件
-func (p *BenchFile) Load() (err error) {
+func (p *benchFile) Load() (err error) {
 	err = p.FileIni.Load()
 	if nil != err {
 		return err

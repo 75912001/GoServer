@@ -7,13 +7,10 @@ import (
 	//	"game_msg"
 	//	"github.com/golang/protobuf/proto"
 	//	"strconv"
+	"math/rand"
 	"time"
 	"zzcli"
 	"zzcommon"
-	//	"zzser"
-
-	"math/rand"
-	//	"strconv"
 	"zztimer"
 )
 

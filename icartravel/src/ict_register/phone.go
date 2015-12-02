@@ -1,19 +1,21 @@
-package main
+package ict_register
 
 import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
+	"ict_user"
 	"net/http"
-	//	"reflect"
 	"strconv"
 	"zzcliredis"
 	"zzcommon"
 )
 
+var GPhone Phone
+
 ////////////////////////////////////////////////////////////////////////////////
 //手机注册
 
-func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
+func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 	const paraRecNumName string = "number"
 	const paraPwdName string = "pwd"
 	const paraSmsCodeName string = "sms_code"
@@ -55,7 +57,7 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	{ //检查手机号是否绑定
-		hasUid, err := gPhoneRegister.IsPhoneNumBind(recNum)
+		hasUid, err := GPhone.IsPhoneNumBind(recNum)
 		if nil != err {
 			//w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
 			return
@@ -69,8 +71,8 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 
 	{ //检查是否有短信验证码记录 来自redis
 		commandName := "get"
-		key := gSmsPhoneRegister.SmsGenRedisKey(recNum)
-		reply, err := gSmsPhoneRegister.Redis.Conn.Do(commandName, key)
+		key := GPhoneSms.GenRedisKey(recNum)
+		reply, err := GPhoneSms.Redis.Conn.Do(commandName, key)
 		if nil != err {
 			fmt.Println("######redis get err:", err)
 			return
@@ -87,30 +89,47 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	//生成uid
-	uid := gUid.GenUid()
+	uid, err := ict_user.GUid.GenUid()
+	if nil != err {
+		w.Write([]byte(strconv.Itoa(zzcommon.ERROR)))
+		return
+	}
 
 	{ //插入用户数据
 		commandName := "set"
-		key := gPhoneRegister.GenRedisKey(recNum)
-		_, err := gPhoneRegister.Redis.Conn.Do(commandName, key, uid)
+		key := GPhone.GenRedisKey(recNum)
+		_, err := GPhone.Redis.Conn.Do(commandName, key, uid)
 		if nil != err {
 			fmt.Println("######gPhoneRegister err:", err, uid, recNum)
 			return
 		}
 	}
-	{ //todo 注册用户。。。
 
+	{ //注册用户。。。
+		//md5
+		var pwd1 string = pwd + "icartravel"
+		var pwd2 string = pwd + "ict"
+		pwd1 = zzcommon.GenMd5(pwd1)
+		pwd2 = zzcommon.GenMd5(pwd2)
+
+		commandName := "hmset"
+		key := ict_user.GregisterInfo.GenRedisKey(recNum)
+		_, err := ict_user.GregisterInfo.Redis.Conn.Do(commandName, key, "pid", recNum, "pwd1", pwd1, "pwd2", pwd2)
+		if nil != err {
+			fmt.Println("######gUserRegister hmset err:", err, uid, recNum, pwd1, pwd2)
+			return
+		}
 	}
 
 	{ //删除有短信验证码记录 来自redis
 		commandName := "del"
-		key := gSmsPhoneRegister.SmsGenRedisKey(recNum)
-		gSmsPhoneRegister.Redis.Conn.Do(commandName, key)
+		key := gUserRegister.GenRedisKey(uid)
+		gUserRegister.Redis.Conn.Do(commandName, key)
 	}
 
 }
 
-type PhoneRegister struct {
+type Phone struct {
 	Pattern string
 	//redis
 	Redis          zzcliredis.ClientRedis
@@ -118,7 +137,7 @@ type PhoneRegister struct {
 }
 
 //初始化
-func (p *PhoneRegister) Init() (err error) {
+func (p *Phone) Init() (err error) {
 	p.Pattern = gBenchFile.FileIni.Get("phone_register", "Pattern", " ")
 	//redis
 	p.Redis.RedisIp = gBenchFile.FileIni.Get("phone_register", "redis_ip", " ")
@@ -139,12 +158,12 @@ func (p *PhoneRegister) Init() (err error) {
 }
 
 //生成redis的键值
-func (p *PhoneRegister) GenRedisKey(key string) (value string) {
+func (p *Phone) GenRedisKey(key string) (value string) {
 	return p.RedisKeyPerfix + key
 }
 
 //手机号是否绑定
-func (p *PhoneRegister) IsPhoneNumBind(recNum string) (bind bool, err error) {
+func (p *Phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	commandName := "get"
 	key := p.GenRedisKey(recNum)
 	reply, err := p.Redis.Conn.Do(commandName, key)
