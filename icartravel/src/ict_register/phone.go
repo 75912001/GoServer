@@ -10,7 +10,7 @@ import (
 	"zzcommon"
 )
 
-var GPhone Phone
+var Gphone phone
 
 ////////////////////////////////////////////////////////////////////////////////
 //手机注册
@@ -57,12 +57,12 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	{ //检查手机号是否绑定
-		hasUid, err := GPhone.IsPhoneNumBind(recNum)
+		bind, err := Gphone.IsPhoneNumBind(recNum)
 		if nil != err {
-			//w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
 			return
 		} else {
-			if hasUid {
+			if bind {
 				w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
 				return
 			}
@@ -129,7 +129,7 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 
 }
 
-type Phone struct {
+type phone struct {
 	Pattern string
 	//redis
 	Redis          zzcliredis.ClientRedis
@@ -137,7 +137,7 @@ type Phone struct {
 }
 
 //初始化
-func (p *Phone) Init() (err error) {
+func (p *phone) Init() (err error) {
 	p.Pattern = gBenchFile.FileIni.Get("phone_register", "Pattern", " ")
 	//redis
 	p.Redis.RedisIp = gBenchFile.FileIni.Get("phone_register", "redis_ip", " ")
@@ -158,12 +158,12 @@ func (p *Phone) Init() (err error) {
 }
 
 //生成redis的键值
-func (p *Phone) GenRedisKey(key string) (value string) {
+func (p *phone) GenRedisKey(key string) (value string) {
 	return p.RedisKeyPerfix + key
 }
 
 //手机号是否绑定
-func (p *Phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
+func (p *phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	commandName := "get"
 	key := p.GenRedisKey(recNum)
 	reply, err := p.Redis.Conn.Do(commandName, key)

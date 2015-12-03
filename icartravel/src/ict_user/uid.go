@@ -8,15 +8,15 @@ import (
 	"zzcommon"
 )
 
-var GUidMgr uidMgr
+var GuidMgr uidMgr
 
 ////////////////////////////////////////////////////////////////////////////////
 //USER ID 管理
 
 type uidMgr struct {
 	//redis
-	Redis           zzcliredis.ClientRedis
-	RedisKeyIncrUid string
+	redis           zzcliredis.ClientRedis
+	redisKeyIncrUid string
 }
 
 //初始化
@@ -28,10 +28,10 @@ func (p *uidMgr) Init() (err error) {
 	ip := ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_ip", " ")
 	port := zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_port", " "))
 	redisDatabases := zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_databases", " "))
-	p.RedisKeyIncrUid = ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_key_incr_uid", " ")
+	p.redisKeyIncrUid = ict_bench_file.GBenchFile.FileIni.Get("ict_user_uid", "redis_key_incr_uid", " ")
 
 	//链接redis
-	err = p.Redis.Connect(ip, port, redisDatabases)
+	err = p.redis.Connect(ip, port, redisDatabases)
 	if nil != err {
 		fmt.Println("######redis.Dial err:", err)
 		return err
@@ -39,16 +39,16 @@ func (p *uidMgr) Init() (err error) {
 
 	{ //检查是否有记录 来自redis
 		commandName := "get"
-		key := p.RedisKeyIncrUid
-		reply, err := p.Redis.Conn.Do(commandName, key)
+		key := p.redisKeyIncrUid
+		reply, err := p.redis.Conn.Do(commandName, key)
 		if nil != err {
 			fmt.Println("######redis get err:", err)
 			return err
 		}
 		if nil == reply {
 			commandName := "set"
-			key := p.RedisKeyIncrUid
-			_, err := p.Redis.Conn.Do(commandName, key, uidBegin)
+			key := p.redisKeyIncrUid
+			_, err := p.redis.Conn.Do(commandName, key, uidBegin)
 			if nil != err {
 				fmt.Println("######redis set err:", err)
 				return err
@@ -62,8 +62,8 @@ func (p *uidMgr) Init() (err error) {
 func (p *uidMgr) GenUid() (uid string, err error) {
 	{ //检查是否有记录 来自redis
 		commandName := "incr"
-		key := p.RedisKeyIncrUid
-		reply, err := p.Redis.Conn.Do(commandName, key)
+		key := p.redisKeyIncrUid
+		reply, err := p.redis.Conn.Do(commandName, key)
 		if nil != err {
 			fmt.Println("######redis incr err:", err)
 			return uid, err

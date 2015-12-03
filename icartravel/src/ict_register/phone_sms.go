@@ -2,7 +2,6 @@ package ict_register
 
 import (
 	"fmt"
-	"github.com/garyburd/redigo/redis"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -70,11 +69,11 @@ func PhoneSmsHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	{ //检查手机号是否绑定
-		hasUid, err := GphoneRegister.IsPhoneNumBind(recNum)
+		bind, err := Gphone.IsPhoneNumBind(recNum)
 		if nil != err {
 			return
 		}
-		if hasUid {
+		if bind {
 			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
 			return
 		}
@@ -102,9 +101,9 @@ func PhoneSmsHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//时间戳格式"2015-11-26 20:32:42"
 	var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
 
-	var strMd5 string = gPhoneSms.genSign(recNum, smsParam, timeStamp)
+	var strMd5 string = GphoneSms.genSign(recNum, smsParam, timeStamp)
 
-	reqUrl, err := gPhoneSms.genReqUrl(strMd5, timeStamp, recNum, smsParam)
+	reqUrl, err := GphoneSms.genReqUrl(strMd5, timeStamp, recNum, smsParam)
 	if nil != err {
 		fmt.Println("######gPhoneRegister.genReqUrl", err)
 		return
@@ -136,38 +135,35 @@ type phoneSms struct {
 	Versions        string
 	SmsParamProduct string
 	//redis
-	Redis          zzcliredis.ClientRedis
-	RedisKeyPerfix string
+	redis          zzcliredis.ClientRedis
+	redisKeyPerfix string
 }
 
 //初始化
 func (p *phoneSms) Init() (err error) {
-	p.Pattern = gBenchFile.FileIni.Get("sms_phone_register", "Pattern", " ")
-	p.UrlPattern = gBenchFile.FileIni.Get("sms_phone_register", "UrlPattern", " ")
-	p.AppKey = gBenchFile.FileIni.Get("sms_phone_register", "AppKey", " ")
-	p.AppSecret = gBenchFile.FileIni.Get("sms_phone_register", "AppSecret", " ")
-	p.Method = gBenchFile.FileIni.Get("sms_phone_register", "Method", " ")
-	p.SignMethod = gBenchFile.FileIni.Get("sms_phone_register", "SignMethod", " ")
-	p.SmsFreeSignName = gBenchFile.FileIni.Get("sms_phone_register", "SmsFreeSignName", " ")
-	p.SmsTemplateCode = gBenchFile.FileIni.Get("sms_phone_register", "SmsTemplateCode", " ")
-	p.SmsType = gBenchFile.FileIni.Get("sms_phone_register", "SmsType", " ")
-	p.Versions = gBenchFile.FileIni.Get("sms_phone_register", "Versions", " ")
-	p.SmsParamProduct = gBenchFile.FileIni.Get("sms_phone_register", "SmsParamProduct", " ")
+	p.Pattern = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "Pattern", " ")
+	p.UrlPattern = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "UrlPattern", " ")
+	p.AppKey = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "AppKey", " ")
+	p.AppSecret = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "AppSecret", " ")
+	p.Method = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "Method", " ")
+	p.SignMethod = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SignMethod", " ")
+	p.SmsFreeSignName = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsFreeSignName", " ")
+	p.SmsTemplateCode = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsTemplateCode", " ")
+	p.SmsType = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsType", " ")
+	p.Versions = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "Versions", " ")
+	p.SmsParamProduct = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsParamProduct", " ")
 	//redis
-	p.Redis.RedisIp = gBenchFile.FileIni.Get("sms_phone_register", "redis_ip", " ")
-	p.Redis.RedisPort = zzcommon.StringToUint16(gBenchFile.FileIni.Get("sms_phone_register", "redis_port", " "))
-	p.Redis.RedisDatabases = zzcommon.StringToInt(gBenchFile.FileIni.Get("sms_phone_register", "redis_databases", " "))
-	p.RedisKeyPerfix = gBenchFile.FileIni.Get("sms_phone_register", "redis_key_perfix", " ")
+	ip := ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_ip", " ")
+	port := zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_port", " "))
+	redisDatabases := zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_databases", " "))
+	p.redisKeyPerfix = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_key_perfix", " ")
 
 	//链接redis
-	dialOption := redis.DialDatabase(p.Redis.RedisDatabases)
-	var addrRedis = p.Redis.RedisIp + ":" + strconv.Itoa(int(p.Redis.RedisPort))
-	p.Redis.Conn, err = redis.Dial("tcp", addrRedis, dialOption)
+	err = p.redis.Connect(ip, port, redisDatabases)
 	if nil != err {
 		fmt.Println("######redis.Dial err:", err)
 		return err
 	}
-	//	defer conn.Close()
 	return err
 }
 

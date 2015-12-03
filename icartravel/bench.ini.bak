@@ -56,7 +56,7 @@ redis_databases=0
 redis_key_perfix=100_
 
 #手机注册
-[phone_register]
+[ict_register_phone_sms]
 Pattern=/PhoneRegister
 #?number=17721027200&pwd=xxx&sms_code=xxx
 #redis
