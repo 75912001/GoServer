@@ -7,6 +7,8 @@ import (
 	//	"game_msg"
 	//	"github.com/golang/protobuf/proto"
 	//	"strconv"
+	//	"ict_register"
+	"ict_user"
 	"math/rand"
 	"time"
 	"zzcli"
@@ -18,7 +20,7 @@ func onInit() (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	gUserMgr.Init()
+	ict_user.GuserMgr.Init()
 	fmt.Println("onInit")
 	return 0
 }
@@ -37,9 +39,9 @@ func onCliConn(peerConn *zzcommon.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	var user User
+	var user ict_user.User
 	user.PeerConn = peerConn
-	gUserMgr.UserMap[user.PeerConn] = user
+	ict_user.GuserMgr.UserMap[user.PeerConn] = user
 
 	fmt.Println("onCliConn")
 	return 0
@@ -49,7 +51,7 @@ func onCliConnClosed(peerConn *zzcommon.PeerConn) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	delete(gUserMgr.UserMap, peerConn)
+	delete(ict_user.GuserMgr.UserMap, peerConn)
 	fmt.Println("onCliConnClosed")
 	return 0
 }

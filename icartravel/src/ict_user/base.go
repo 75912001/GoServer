@@ -40,3 +40,22 @@ func (p *base) Init() (err error) {
 func (p *base) genRedisKey(key string) (value string) {
 	return p.redisKeyPerfix + key
 }
+
+func (p *base) Insert(uid string, recNum string, pwd string) (err error) {
+	{ //注册用户。。。
+		//md5
+		var pwd1 string = pwd + "icartravel"
+		var pwd2 string = pwd + "ict"
+		pwd1 = zzcommon.GenMd5(pwd1)
+		pwd2 = zzcommon.GenMd5(pwd2)
+
+		commandName := "hmset"
+		key := p.genRedisKey(uid)
+		_, err := p.redis.Conn.Do(commandName, key, "pid", recNum, "pwd1", pwd1, "pwd2", pwd2)
+		if nil != err {
+			fmt.Println("######gUserRegister hmset err:", err, uid, recNum, pwd1, pwd2)
+			return err
+		}
+	}
+	return err
+}

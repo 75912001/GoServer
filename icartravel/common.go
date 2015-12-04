@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ict_register"
+	//	"ict_register"
 	"sync"
 	"zzhttp"
 	"zzser"

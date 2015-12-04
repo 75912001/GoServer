@@ -1,4 +1,4 @@
-package main
+package ict_login
 
 import (
 	"crypto/md5"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"zzcommon"
+	//	"zzcommon"
 )
 
 const loginPattern string = "/login"

@@ -2,7 +2,9 @@ package ict_register
 
 import (
 	"fmt"
-	"github.com/garyburd/redigo/redis"
+	//	"github.com/garyburd/redigo/redis"
+	//	"ict_register"
+	"ict_bench_file"
 	"ict_user"
 	"net/http"
 	"strconv"
@@ -69,62 +71,37 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	{ //检查是否有短信验证码记录 来自redis
-		commandName := "get"
-		key := GphoneSms.GenRedisKey(recNum)
-		reply, err := GPhoneSms.Redis.Conn.Do(commandName, key)
+	{ //检查是否有短信验证码记录
+		err := GphoneSms.IsExistSmsCode(recNum, smsCode)
 		if nil != err {
-			fmt.Println("######redis get err:", err)
-			return
-		}
-		if nil == reply {
-			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_REGISTER_CODE)))
-			return
-		}
-		getRecNum, _ := redis.String(reply, err)
-		if smsCode != getRecNum {
 			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_REGISTER_CODE)))
 			return
 		}
 	}
 
 	//生成uid
-	uid, err := ict_user.GUid.GenUid()
+	uid, err := ict_user.GuidMgr.GenUid()
 	if nil != err {
 		w.Write([]byte(strconv.Itoa(zzcommon.ERROR)))
 		return
 	}
 
 	{ //插入用户数据
-		commandName := "set"
-		key := GPhone.GenRedisKey(recNum)
-		_, err := GPhone.Redis.Conn.Do(commandName, key, uid)
+		err := Gphone.Insert(recNum, uid)
 		if nil != err {
-			fmt.Println("######gPhoneRegister err:", err, uid, recNum)
 			return
 		}
 	}
 
-	{ //注册用户。。。
-		//md5
-		var pwd1 string = pwd + "icartravel"
-		var pwd2 string = pwd + "ict"
-		pwd1 = zzcommon.GenMd5(pwd1)
-		pwd2 = zzcommon.GenMd5(pwd2)
-
-		commandName := "hmset"
-		key := ict_user.GregisterInfo.GenRedisKey(recNum)
-		_, err := ict_user.GregisterInfo.Redis.Conn.Do(commandName, key, "pid", recNum, "pwd1", pwd1, "pwd2", pwd2)
+	{
+		err := ict_user.Gbase.Insert(uid, recNum, pwd)
 		if nil != err {
-			fmt.Println("######gUserRegister hmset err:", err, uid, recNum, pwd1, pwd2)
 			return
 		}
 	}
 
 	{ //删除有短信验证码记录 来自redis
-		commandName := "del"
-		key := gUserRegister.GenRedisKey(uid)
-		gUserRegister.Redis.Conn.Do(commandName, key)
+		GphoneSms.Del(recNum)
 	}
 
 }
@@ -132,23 +109,21 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 type phone struct {
 	Pattern string
 	//redis
-	Redis          zzcliredis.ClientRedis
-	RedisKeyPerfix string
+	redis          zzcliredis.ClientRedis
+	redisKeyPerfix string
 }
 
 //初始化
 func (p *phone) Init() (err error) {
-	p.Pattern = gBenchFile.FileIni.Get("phone_register", "Pattern", " ")
+	p.Pattern = ict_bench_file.GBenchFile.FileIni.Get("phone_register", "Pattern", " ")
 	//redis
-	p.Redis.RedisIp = gBenchFile.FileIni.Get("phone_register", "redis_ip", " ")
-	p.Redis.RedisPort = zzcommon.StringToUint16(gBenchFile.FileIni.Get("phone_register", "redis_port", " "))
-	p.Redis.RedisDatabases = zzcommon.StringToInt(gBenchFile.FileIni.Get("phone_register", "redis_databases", " "))
-	p.RedisKeyPerfix = gBenchFile.FileIni.Get("phone_register", "redis_key_perfix", " ")
+	ip := ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_ip", " ")
+	port := zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_port", " "))
+	redisDatabases := zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_databases", " "))
+	p.redisKeyPerfix = ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_key_perfix", " ")
 
 	//链接redis
-	dialOption := redis.DialDatabase(p.Redis.RedisDatabases)
-	var addrRedis = p.Redis.RedisIp + ":" + strconv.Itoa(int(p.Redis.RedisPort))
-	p.Redis.Conn, err = redis.Dial("tcp", addrRedis, dialOption)
+	err = p.redis.Connect(ip, port, redisDatabases)
 	if nil != err {
 		fmt.Println("######redis.Dial err:", err)
 		return err
@@ -158,15 +133,15 @@ func (p *phone) Init() (err error) {
 }
 
 //生成redis的键值
-func (p *phone) GenRedisKey(key string) (value string) {
-	return p.RedisKeyPerfix + key
+func (p *phone) genRedisKey(key string) (value string) {
+	return p.redisKeyPerfix + key
 }
 
 //手机号是否绑定
 func (p *phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	commandName := "get"
-	key := p.GenRedisKey(recNum)
-	reply, err := p.Redis.Conn.Do(commandName, key)
+	key := p.genRedisKey(recNum)
+	reply, err := p.redis.Conn.Do(commandName, key)
 
 	if nil != err {
 		fmt.Println("######HasUid err:", err)
@@ -176,4 +151,17 @@ func (p *phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
 		return false, err
 	}
 	return true, err
+}
+
+func (p *phone) Insert(recNum string, uid string) (err error) {
+	//插入用户数据
+	commandName := "set"
+	key := p.genRedisKey(recNum)
+	_, err = p.redis.Conn.Do(commandName, key, uid)
+
+	if nil != err {
+		fmt.Println("######gPhoneRegister err:", err, uid, recNum)
+		return err
+	}
+	return err
 }

@@ -2,6 +2,8 @@ package ict_register
 
 import (
 	"fmt"
+	"github.com/garyburd/redigo/redis"
+	"ict_bench_file"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -81,9 +83,9 @@ func PhoneSmsHttpHandler(w http.ResponseWriter, req *http.Request) {
 
 	var smsParamCode string
 	{ //生成短信内容参数
-		index := rand.Intn(SmsParamCodeEnd)
-		if index < SmsParamCodeBegin {
-			index += SmsParamCodeBegin
+		index := rand.Intn(smsParamCodeEnd)
+		if index < smsParamCodeBegin {
+			index += smsParamCodeBegin
 		}
 		smsParamCode = strconv.Itoa(index)
 		fmt.Println(smsParamCode)
@@ -92,7 +94,7 @@ func PhoneSmsHttpHandler(w http.ResponseWriter, req *http.Request) {
 	var smsParam = "{'code':'" + smsParamCode + "','product':'" + GphoneSms.SmsParamProduct + "'}"
 
 	{ //设置到redis中
-		err = GphoneSms.InsertSmsCode(recNum, smsParamCode)
+		err := GphoneSms.InsertSmsCode(recNum, smsParamCode)
 		if nil != err {
 			fmt.Println("######redis setex err:", err)
 			return
@@ -212,14 +214,14 @@ func (p *phoneSms) genReqUrl(strMd5 string, timeStamp string, recNum string, sms
 
 //生成redis的键值
 func (p *phoneSms) genRedisKey(key string) (value string) {
-	return p.RedisKeyPerfix + key
+	return p.redisKeyPerfix + key
 }
 
 func (p *phoneSms) IsExist(recNum string) (value bool) {
-	{ //检查是否有记录 来自redis
+	{ //检查是否有记录
 		commandName := "get"
 		key := p.genRedisKey(recNum)
-		reply, err := p.Redis.Conn.Do(commandName, key)
+		reply, err := p.redis.Conn.Do(commandName, key)
 		if nil != err {
 			fmt.Println("######redis get err:", err)
 			return false
@@ -236,11 +238,37 @@ func (p *phoneSms) InsertSmsCode(recNum string, smsParamCode string) (err error)
 		commandName := "setex"
 		key := p.genRedisKey(recNum)
 		timeout := "300" //5分钟
-		_, err := p.Redis.Conn.Do(commandName, key, timeout, smsParamCode)
+		_, err := p.redis.Conn.Do(commandName, key, timeout, smsParamCode)
 		if nil != err {
 			fmt.Println("######redis setex err:", err)
 		}
 	}
 	return err
 
+}
+func (p *phoneSms) IsExistSmsCode(recNum string, smsCode string) (err error) {
+	{ //检查是否有短信验证码记录
+		commandName := "get"
+		key := p.genRedisKey(recNum)
+		reply, err := p.redis.Conn.Do(commandName, key)
+		if nil != err {
+			return err
+		}
+		if nil == reply {
+			return err
+		}
+		getRecNum, _ := redis.String(reply, err)
+		if smsCode != getRecNum {
+			return err
+		}
+	}
+	return err
+}
+
+func (p *phoneSms) Del(recNum string) {
+	{ //删除有短信验证码记录
+		commandName := "del"
+		key := p.genRedisKey(recNum)
+		p.redis.Conn.Do(commandName, key)
+	}
 }

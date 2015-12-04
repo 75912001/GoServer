@@ -4,7 +4,7 @@ import (
 	"zzcommon"
 )
 
-var gUserMgr UserMgr
+var GuserMgr userMgr
 
 type User struct {
 	PeerConn *zzcommon.PeerConn
@@ -14,11 +14,11 @@ type User struct {
 
 type USER_MAP map[*zzcommon.PeerConn]User
 
-type UserMgr struct {
+type userMgr struct {
 	UserMap USER_MAP
 }
 
-func (p *UserMgr) Init() {
+func (p *userMgr) Init() {
 	p.UserMap = make(USER_MAP)
 }
 
