@@ -4,12 +4,12 @@ import (
 	"fmt"
 	//	"github.com/garyburd/redigo/redis"
 	//	"ict_register"
-	"ict_bench_file"
+	"ict_cfg"
 	"ict_user"
 	"net/http"
 	"strconv"
-	"zzcliredis"
 	"zzcommon"
+	"zzredis"
 )
 
 var Gphone phone
@@ -109,18 +109,18 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 type phone struct {
 	Pattern string
 	//redis
-	redis          zzcliredis.ClientRedis
+	redis          zzredis.Client
 	redisKeyPerfix string
 }
 
 //初始化
 func (p *phone) Init() (err error) {
-	p.Pattern = ict_bench_file.GBenchFile.FileIni.Get("phone_register", "Pattern", " ")
+	p.Pattern = ict_cfg.Gbench.FileIni.Get("ict_register_phone", "Pattern", " ")
 	//redis
-	ip := ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_ip", " ")
-	port := zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_port", " "))
-	redisDatabases := zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_databases", " "))
-	p.redisKeyPerfix = ict_bench_file.GBenchFile.FileIni.Get("phone_register", "redis_key_perfix", " ")
+	ip := ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_ip", " ")
+	port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_port", " "))
+	redisDatabases := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_databases", " "))
+	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_key_perfix", " ")
 
 	//链接redis
 	err = p.redis.Connect(ip, port, redisDatabases)

@@ -9,7 +9,7 @@ import (
 	//	"zzcommon"
 )
 
-const loginPattern string = "/login"
+const LoginPattern string = "/login"
 
 func LoginHttpHandler(w http.ResponseWriter, req *http.Request) {
 	var passWord string = "test md5 encrypto"

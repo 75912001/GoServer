@@ -31,10 +31,10 @@ import (
 )
 
 //加载文件
-func (p *ZZIni) Load() (err error) {
+func (p *Ini) Load(path string) (err error) {
 	p.init()
 
-	file, err := os.Open(p.Path)
+	file, err := os.Open(path)
 
 	if nil != err {
 		return err
@@ -73,7 +73,7 @@ func (p *ZZIni) Load() (err error) {
 }
 
 //获取对应的值
-func (p *ZZIni) Get(section string, key string, defaultValue string) (value string) {
+func (p *Ini) Get(section string, key string, defaultValue string) (value string) {
 	sectionValue, valid := p.sectionMap[section]
 	if valid {
 		keyValue, valid := sectionValue[key]
@@ -84,28 +84,27 @@ func (p *ZZIni) Get(section string, key string, defaultValue string) (value stri
 	return defaultValue
 }
 
-type KEY_MAP map[string]string
-type SECTION_MAP map[string]KEY_MAP
+type key_map map[string]string
+type section_map map[string]key_map
 
 //ini文件
-type ZZIni struct {
-	Path       string      //文件的路径
-	sectionMap SECTION_MAP //存取配置文件
+type Ini struct {
+	sectionMap section_map //存取配置文件
 }
 
 //加载文件到内存中
-func (p *ZZIni) load(section string, key string, value string) {
+func (p *Ini) load(section string, key string, value string) {
 	_, valid := p.sectionMap[section]
 	if valid {
 		p.sectionMap[section][key] = value
 	} else {
-		keyMap := make(KEY_MAP)
+		keyMap := make(key_map)
 		keyMap[key] = value
 		p.sectionMap[section] = keyMap
 	}
 }
 
 //初始化
-func (p *ZZIni) init() {
-	p.sectionMap = make(SECTION_MAP)
+func (p *Ini) init() {
+	p.sectionMap = make(section_map)
 }

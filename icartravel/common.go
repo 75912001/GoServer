@@ -1,14 +1,13 @@
 package main
 
 import (
-	//	"ict_register"
 	"sync"
 	"zzhttp"
-	"zzser"
+	"zztcp"
 )
 
 var gLock = &sync.Mutex{}
-var gHttpClientWeather zzhttp.HttpClient
-var gHttpServer zzhttp.HttpServer
+var gHttpClientWeather zzhttp.Client
+var gHttpServer zzhttp.Server
 
-var gzzserServer zzser.Server
+var gTcpServer zztcp.Server

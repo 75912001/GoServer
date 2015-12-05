@@ -3,15 +3,15 @@ package ict_register
 import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
-	"ict_bench_file"
+	"ict_cfg"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
-	"zzcliredis"
 	"zzcommon"
+	"zzredis"
 )
 
 var GphoneSms phoneSms
@@ -137,28 +137,28 @@ type phoneSms struct {
 	Versions        string
 	SmsParamProduct string
 	//redis
-	redis          zzcliredis.ClientRedis
+	redis          zzredis.Client
 	redisKeyPerfix string
 }
 
 //初始化
 func (p *phoneSms) Init() (err error) {
-	p.Pattern = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "Pattern", " ")
-	p.UrlPattern = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "UrlPattern", " ")
-	p.AppKey = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "AppKey", " ")
-	p.AppSecret = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "AppSecret", " ")
-	p.Method = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "Method", " ")
-	p.SignMethod = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SignMethod", " ")
-	p.SmsFreeSignName = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsFreeSignName", " ")
-	p.SmsTemplateCode = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsTemplateCode", " ")
-	p.SmsType = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsType", " ")
-	p.Versions = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "Versions", " ")
-	p.SmsParamProduct = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "SmsParamProduct", " ")
+	p.Pattern = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "Pattern", " ")
+	p.UrlPattern = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "UrlPattern", " ")
+	p.AppKey = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "AppKey", " ")
+	p.AppSecret = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "AppSecret", " ")
+	p.Method = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "Method", " ")
+	p.SignMethod = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "SignMethod", " ")
+	p.SmsFreeSignName = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "SmsFreeSignName", " ")
+	p.SmsTemplateCode = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "SmsTemplateCode", " ")
+	p.SmsType = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "SmsType", " ")
+	p.Versions = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "Versions", " ")
+	p.SmsParamProduct = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "SmsParamProduct", " ")
 	//redis
-	ip := ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_ip", " ")
-	port := zzcommon.StringToUint16(ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_port", " "))
-	redisDatabases := zzcommon.StringToInt(ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_databases", " "))
-	p.redisKeyPerfix = ict_bench_file.GBenchFile.FileIni.Get("ict_register_phone_sms", "redis_key_perfix", " ")
+	ip := ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "redis_ip", " ")
+	port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "redis_port", " "))
+	redisDatabases := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "redis_databases", " "))
+	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get("ict_register_phone_sms", "redis_key_perfix", " ")
 
 	//链接redis
 	err = p.redis.Connect(ip, port, redisDatabases)

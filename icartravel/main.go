@@ -7,12 +7,16 @@ import (
 	//	"game_msg"
 	//	"github.com/golang/protobuf/proto"
 	//	"strconv"
-	//	"ict_register"
+	"ict_cfg"
+	"ict_login"
+	"ict_register"
 	"ict_user"
 	"math/rand"
+	"runtime"
+	"strconv"
 	"time"
-	"zzcli"
 	"zzcommon"
+	"zztcp"
 	"zztimer"
 )
 
@@ -122,60 +126,74 @@ func main() {
 	fmt.Println("server runing...", time.Now())
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
-	if zzcommon.IsWindows() {
-		gBenchFile.FileIni.Path = "./bench.ini"
-	} else {
-		gBenchFile.FileIni.Path = "/Users/mlc/Desktop/GoServer/icartravel/bench.ini"
+	{
+		if zzcommon.IsWindows() {
+			ict_cfg.Gbench.Load("./bench.ini")
+		} else {
+			ict_cfg.Gbench.Load("/Users/mlc/Desktop/GoServer/icartravel/bench.ini.bak")
+		}
 	}
-	gBenchFile.Load()
+
 	//////////////////////////////////////////////////////////////////
 	//做为服务端
 	//设置回调函数
-	gzzserServer.OnInit = onInit
-	gzzserServer.OnFini = onFini
-	gzzserServer.OnCliConnClosed = onCliConnClosed
-	gzzserServer.OnCliConn = onCliConn
-	gzzserServer.OnCliGetPacketLength = onCliGetPacketLen
-	gzzserServer.OnCliPacket = onCliPacket
-	//运行
-	go gzzserServer.Run(gBenchFile.Ip, gBenchFile.Port, gBenchFile.PacketLengthMax, gBenchFile.Delay)
+	{
+		gTcpServer.OnInit = onInit
+		gTcpServer.OnFini = onFini
+		gTcpServer.OnCliConnClosed = onCliConnClosed
+		gTcpServer.OnCliConn = onCliConn
+		gTcpServer.OnCliGetPacketLength = onCliGetPacketLen
+		gTcpServer.OnCliPacket = onCliPacket
+
+		//运行
+		delay := true
+		ip := ict_cfg.Gbench.FileIni.Get("server", "ip", "")
+		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("server", "port", "0"))
+		packetLengthMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("common", "packet_length_max", "81920"))
+		str_num_cpu := strconv.Itoa(runtime.NumCPU())
+		goProcessMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("common", "go_process_max", str_num_cpu))
+		runtime.GOMAXPROCS(goProcessMax)
+		go gTcpServer.Run(ip, port, packetLengthMax, delay)
+	}
 
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP CLIENT Weather
-	//	gHttpClientWeather.Url = gBenchFile.FileIni.Get("weather", "url", " ")
+	//	gHttpClientWeather.Url = ict_bench_file.GbenchFile.FileIni.Get("weather", "url", " ")
 	//	gHttpClientWeather.Get()
 	//////////////////////////////////////////////////////////////////
 	//作为HTTP SERVER
-	gHttpServer.Ip = gBenchFile.FileIni.Get("http_server", "ip", "999")
-	gHttpServer.Port = zzcommon.StringToUint16(gBenchFile.FileIni.Get("http_server", "port", "0"))
-	gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
-	gHttpServer.AddHandler(loginPattern, LoginHttpHandler)
+	{
+		ip := ict_cfg.Gbench.FileIni.Get("http_server", "ip", "999")
+		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("http_server", "port", "0"))
+		gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
+		gHttpServer.AddHandler(ict_login.LoginPattern, ict_login.LoginHttpHandler)
 
-	{ //启动手机注册功能
-		err := gSmsPhoneRegister.Init()
-		if nil != err {
-			return
-		}
-		gHttpServer.AddHandler(gSmsPhoneRegister.Pattern, SmsPhoneRegisterHttpHandler)
-		err = gPhoneRegister.Init()
-		if nil != err {
-			return
-		}
-		gHttpServer.AddHandler(gPhoneRegister.Pattern, PhoneRegisterHttpHandler)
+		{ //启动手机注册功能
+			err := ict_register.GphoneSms.Init()
+			if nil != err {
+				return
+			}
+			gHttpServer.AddHandler(ict_register.GphoneSms.Pattern, ict_register.PhoneSmsHttpHandler)
 
-		err = gUserRegister.Init()
-		if nil != err {
-			return
+			err = ict_register.Gphone.Init()
+			if nil != err {
+				return
+			}
+			gHttpServer.AddHandler(ict_register.Gphone.Pattern, ict_register.PhoneHttpHandler)
+
+			//			err = ict_register.Gphone.Init()
+			//			if nil != err {
+			//				return
+			//			}
+
+			err = ict_user.GuidMgr.Init()
+			if nil != err {
+				return
+			}
 		}
 
-		err = gUid.Init()
-		if nil != err {
-			return
-		}
+		go gHttpServer.Run(ip, port)
 	}
-
-	go gHttpServer.Run()
-
 	//////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////
@@ -190,18 +208,21 @@ func main() {
 
 	//////////////////////////////////////////////////////////////////
 	//做为客户端
-	var gzzcliClient zzcli.Client
-	gzzcliClient.OnSerConn = onSerConn
-	gzzcliClient.OnSerConnClosed = onSerConnClosed
-	gzzcliClient.OnSerGetPacketLen = onSerGetPacketLen
-	gzzcliClient.OnSerPacket = onSerPacket
+	{
+		var gzztcpClient zztcp.Client
+		gzztcpClient.OnSerConn = onSerConn
+		gzztcpClient.OnSerConnClosed = onSerConnClosed
+		gzztcpClient.OnSerGetPacketLen = onSerGetPacketLen
+		gzztcpClient.OnSerPacket = onSerPacket
 
-	gameServerIp := gBenchFile.FileIni.Get("game_server", "ip", "999")
-	gameServerPort := zzcommon.StringToUint16(gBenchFile.FileIni.Get("game_server", "port", "0"))
-	err := gzzcliClient.Connect(gameServerIp, gameServerPort, gBenchFile.PacketLengthMax)
-	if nil != err {
-		fmt.Println("######zzcliClient.Connect err:", err)
-	} else {
+		ip := ict_cfg.Gbench.FileIni.Get("game_server", "ip", "999")
+		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("game_server", "port", "0"))
+		packetLengthMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("game_server", "packet_length_max", "81920"))
+		err := gzztcpClient.Connect(ip, port, packetLengthMax)
+		if nil != err {
+			fmt.Println("######zzcliClient.Connect err:", err)
+		} else {
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////

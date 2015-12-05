@@ -13,6 +13,21 @@ import (
 )
 
 //////////////////////////////////////////////////////////////////////////////
+const (
+	//成功
+	SUCC int = 0
+	//错误
+	ERROR int = -1
+	//断开对方的连接
+	ERROR_DISCONNECT_PEER int = -2
+
+	ERROR_SMS_SENDING       int = 10000 //短信已发出,请收到后重试
+	ERROR_SMS_REGISTER_CODE int = 10001 // 短信注册码失败,请重新请求短信注册
+	ERROR_USER_EXIST        int = 10002 //用户已存在
+	ERROR_PHONE_NUM_BIND    int = 10003 //手机号已绑定
+)
+
+//////////////////////////////////////////////////////////////////////////////
 //消息包头
 type PACKET_LENGTH uint32
 type MESSAGE_ID uint32
@@ -63,6 +78,7 @@ func (p *PeerConn) Send(messageId MESSAGE_ID, req proto.Message, sessionId SESSI
 		err := binary.Write(headBuf, binary.LittleEndian, v)
 		if nil != err {
 			fmt.Println("######binary.Write failed:", err)
+			return err
 		}
 	}
 
@@ -77,25 +93,6 @@ func (p *PeerConn) Send(messageId MESSAGE_ID, req proto.Message, sessionId SESSI
 	headBuf = nil
 	return err
 }
-
-//////////////////////////////////////////////////////////////////////////////
-const (
-	//成功
-	SUCC int = 0
-	//错误
-	ERROR int = -1
-	//断开对方的连接
-	ERROR_DISCONNECT_PEER int = -2
-
-	ERROR_SMS_SENDING       int = 10000 //短信已发出,请收到后重试
-	ERROR_SMS_REGISTER_CODE int = 10001 // 短信注册码失败,请重新请求短信注册
-	ERROR_USER_EXIST        int = 10002 //用户已存在
-	ERROR_PHONE_NUM_BIND    int = 10003 //手机号已绑定
-)
-const (
-
-//	ERROR_SMS_SENDING = 10000//短信已发出，请收到后重试
-)
 
 //////////////////////////////////////////////////////////////////////////////
 //字符串转

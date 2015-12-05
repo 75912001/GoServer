@@ -1,4 +1,4 @@
-package zzser
+package zztcp
 
 import (
 	"fmt"
@@ -60,7 +60,7 @@ func (p *Server) Run(ip string, port uint16, packetLengthMax int, delay bool) (e
 	p.OnInit()
 	defer p.OnFini()
 
-	go handleAccept(listen, p, packetLengthMax, delay)
+	go p.handleAccept(listen, packetLengthMax, delay)
 
 	for p.IsRun {
 		time.Sleep(60 * time.Second)
@@ -72,23 +72,23 @@ func (p *Server) Run(ip string, port uint16, packetLengthMax int, delay bool) (e
 	return err
 }
 
-func handleAccept(listen *net.TCPListener, server *Server, packetLengthMax int, delay bool) {
+func (p *Server) handleAccept(listen *net.TCPListener, packetLengthMax int, delay bool) {
 	for {
 		conn, err := listen.AcceptTCP()
 		if nil != err {
 			fmt.Println("######listen.Accept err:", err)
-			server.IsRun = false
+			p.IsRun = false
 			return
 		}
 
 		conn.SetNoDelay(delay)
 		conn.SetReadBuffer(packetLengthMax)
 		conn.SetWriteBuffer(packetLengthMax)
-		go handleConnection(server, conn, packetLengthMax)
+		go p.handleConnection(conn, packetLengthMax)
 	}
 }
 
-func handleConnection(server *Server, conn *net.TCPConn, packetLengthMax int) {
+func (p *Server) handleConnection(conn *net.TCPConn, packetLengthMax int) {
 	var peerIp = conn.RemoteAddr().String()
 	fmt.Println("connection from:", peerIp)
 
@@ -97,8 +97,8 @@ func handleConnection(server *Server, conn *net.TCPConn, packetLengthMax int) {
 
 	defer peerConn.Conn.Close()
 
-	server.OnCliConn(&peerConn)
-	defer server.OnCliConnClosed(&peerConn)
+	p.OnCliConn(&peerConn)
+	defer p.OnCliConnClosed(&peerConn)
 
 	//优化[消耗内存过大]
 	peerConn.RecvBuf = make([]byte, packetLengthMax)
@@ -112,9 +112,9 @@ func handleConnection(server *Server, conn *net.TCPConn, packetLengthMax int) {
 		}
 
 		readIndex = readIndex + readNum
-		packetLength := server.OnCliGetPacketLength(&peerConn, readIndex)
+		packetLength := p.OnCliGetPacketLength(&peerConn, readIndex)
 		if packetLength > 0 { //有完整的包
-			ret := server.OnCliPacket(&peerConn, packetLength)
+			ret := p.OnCliPacket(&peerConn, packetLength)
 			if zzcommon.ERROR_DISCONNECT_PEER == ret {
 				break
 			}

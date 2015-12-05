@@ -1,4 +1,4 @@
-package zzcli
+package zztcp
 
 import (
 	"fmt"
@@ -32,7 +32,6 @@ type Client struct {
 
 //连接
 func (p *Client) Connect(ip string, port uint16, recvBufMax int) (err error) {
-
 	var addr = ip + ":" + strconv.Itoa(int(port))
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
 	if nil != err {

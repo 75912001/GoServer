@@ -1,15 +1,13 @@
-package zzcliredis
+package zzredis
 
 import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
-	//"net"
 	"strconv"
-	//"zzcommon"
 )
 
 //己方作为客户端
-type ClientRedis struct {
+type Client struct {
 	Conn           redis.Conn
 	redisIp        string
 	redisPort      uint16
@@ -17,7 +15,7 @@ type ClientRedis struct {
 }
 
 //连接
-func (p *ClientRedis) Connect(ip string, port uint16, redisDatabases int) (err error) {
+func (p *Client) Connect(ip string, port uint16, redisDatabases int) (err error) {
 	p.redisIp = ip
 	p.redisPort = port
 	p.redisDatabases = redisDatabases

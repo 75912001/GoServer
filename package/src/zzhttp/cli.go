@@ -1,27 +1,26 @@
 package zzhttp
 
 import (
-	//	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 )
 
-type HttpClient struct {
-	Url    string
+type Client struct {
 	Result []byte
 }
-type Book struct {
-	Title       string
-	Publisher   string
-	IsPublished bool
-	Price       float32
-}
 
-func (p *HttpClient) Get() (err error) {
-	resp, err := http.Get(p.Url)
+//type Book struct {
+//	Title       string
+//	Publisher   string
+//	IsPublished bool
+//	Price       float32
+//}
+
+func (p *Client) Get(url string) (err error) {
+	resp, err := http.Get(url)
 	if nil != err {
-		fmt.Println("######HttpClient.Get err:", err, p.Url)
+		fmt.Println("######HttpClient.Get err:", err, url)
 		return
 	}
 	defer resp.Body.Close()
