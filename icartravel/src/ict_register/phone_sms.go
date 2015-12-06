@@ -185,6 +185,8 @@ func (p *phoneSms) genSign(recNum string, smsParam string, timeStamp string) (va
 		p.AppSecret
 	strMd5 := zzcommon.GenMd5(signSource)
 	strMd5 = strings.ToUpper(strMd5)
+	fmt.Println(signSource)
+	fmt.Println(strMd5)
 	return strMd5
 }
 
@@ -237,7 +239,7 @@ func (p *phoneSms) InsertSmsCode(recNum string, smsParamCode string) (err error)
 	{ //设置到redis中
 		commandName := "setex"
 		key := p.genRedisKey(recNum)
-		timeout := "300" //5分钟
+		timeout := "3600" //60分钟
 		_, err := p.redis.Conn.Do(commandName, key, timeout, smsParamCode)
 		if nil != err {
 			fmt.Println("######redis setex err:", err)

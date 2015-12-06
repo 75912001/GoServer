@@ -129,7 +129,7 @@ func StringSubstr(s string, length int) (value string) {
 //md5
 func GenMd5(s string) (value string) {
 	md5Ctx := md5.New()
-	md5Ctx.Write([]byte(value))
+	md5Ctx.Write([]byte(s))
 	cipherStr := md5Ctx.Sum(nil)
 	value = hex.EncodeToString(cipherStr)
 	return value
