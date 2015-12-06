@@ -12,6 +12,14 @@ go_process_max=100
 #send/recv max len(byte), def:81920
 packet_length_max=81920
 
+#用户id
+[ict_user_uid]
+redis_ip=127.0.0.1
+redis_port=6379
+redis_databases=0
+redis_key_incr_uid=001_uid
+
+#手机注册短信
 [ict_register_phone_sms]
 Pattern=/RegisterPhoneSms
 #?number=17721027200
@@ -41,19 +49,22 @@ redis_port=6379
 redis_databases=0
 redis_key_perfix=200_
 
-#用户id
-[ict_user_uid]
-redis_ip=127.0.0.1
-redis_port=6379
-redis_databases=0
-redis_key_incr_uid=001_uid
-
 #用户注册信息
 [ict_user_base]
 redis_ip=127.0.0.1
 redis_port=6379
 redis_databases=0
 redis_key_perfix=201_
+
+#登录
+[ict_login]
+Pattern=/Login
+#?uid=100001&pwd=xxx
+#redis
+redis_ip=127.0.0.1
+redis_port=6379
+redis_databases=0
+redis_key_perfix=300_
 
 #end
 
