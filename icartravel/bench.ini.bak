@@ -13,7 +13,7 @@ go_process_max=100
 packet_length_max=81920
 
 [ict_register_phone_sms]
-Pattern=/smsPhoneRegister
+Pattern=/RegisterPhoneSms
 #?number=17721027200
 UrlPattern=http://gw.api.taobao.com/router/rest
 AppKey=23273583
@@ -33,7 +33,7 @@ redis_key_perfix=100_
 
 #手机注册
 [ict_register_phone]
-Pattern=/PhoneRegister
+Pattern=/RegisterPhone
 #?number=17721027200&pwd=xxx&sms_code=xxx
 #redis
 redis_ip=127.0.0.1

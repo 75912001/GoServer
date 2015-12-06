@@ -50,6 +50,7 @@ func (p *base) genRedisKey(key string) (value string) {
 }
 
 func (p *base) Insert(uid string, recNum string, pwd string) (err error) {
+	fmt.Println(uid, recNum, pwd)
 	{ //注册用户。。。
 		//md5
 		var pwd1 string = pwd + md5_pwd1_suffix
@@ -59,7 +60,8 @@ func (p *base) Insert(uid string, recNum string, pwd string) (err error) {
 
 		commandName := "hmset"
 		key := p.genRedisKey(uid)
-		_, err := p.redis.Conn.Do(commandName, key, field_phone_id, recNum, field_pwd1, pwd1, field_pwd2, pwd2)
+
+		_, err = p.redis.Conn.Do(commandName, key, field_phone_id, recNum, field_pwd1, pwd1, field_pwd2, pwd2)
 		if nil != err {
 			fmt.Println("######gUserRegister hmset err:", err, uid, recNum, pwd1, pwd2)
 			return err

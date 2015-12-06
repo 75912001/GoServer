@@ -62,18 +62,25 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 		bind, err := Gphone.IsPhoneNumBind(recNum)
 		if nil != err {
 			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
+			fmt.Println(err)
 			return
 		} else {
 			if bind {
 				w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
+				fmt.Println(err)
 				return
 			}
 		}
 	}
 
 	{ //检查是否有短信验证码记录
-		err := GphoneSms.IsExistSmsCode(recNum, smsCode)
+		exist, err := GphoneSms.IsExistSmsCode(recNum, smsCode)
 		if nil != err {
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_REGISTER_CODE)))
+			fmt.Println(err)
+			return
+		}
+		if !exist {
 			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_REGISTER_CODE)))
 			return
 		}
@@ -83,12 +90,14 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 	uid, err := ict_user.GuidMgr.GenUid()
 	if nil != err {
 		w.Write([]byte(strconv.Itoa(zzcommon.ERROR)))
+		fmt.Println(err)
 		return
 	}
 
 	{ //插入用户数据
 		err := Gphone.Insert(recNum, uid)
 		if nil != err {
+			fmt.Println(err)
 			return
 		}
 	}
@@ -96,10 +105,10 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 	{
 		err := ict_user.Gbase.Insert(uid, recNum, pwd)
 		if nil != err {
+			fmt.Println(err)
 			return
 		}
 	}
-
 	{ //删除有短信验证码记录 来自redis
 		GphoneSms.Del(recNum)
 	}
@@ -144,7 +153,7 @@ func (p *phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	reply, err := p.redis.Conn.Do(commandName, key)
 
 	if nil != err {
-		fmt.Println("######HasUid err:", err)
+		fmt.Println("######IsPhoneNumBind err:", err)
 		return false, err
 	}
 	if nil == reply {

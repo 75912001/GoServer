@@ -248,23 +248,24 @@ func (p *phoneSms) InsertSmsCode(recNum string, smsParamCode string) (err error)
 	return err
 
 }
-func (p *phoneSms) IsExistSmsCode(recNum string, smsCode string) (err error) {
+func (p *phoneSms) IsExistSmsCode(recNum string, smsCode string) (exist bool, err error) {
 	{ //检查是否有短信验证码记录
 		commandName := "get"
 		key := p.genRedisKey(recNum)
 		reply, err := p.redis.Conn.Do(commandName, key)
 		if nil != err {
-			return err
+			return false, err
 		}
 		if nil == reply {
-			return err
+			return false, err
 		}
 		getRecNum, _ := redis.String(reply, err)
 		if smsCode != getRecNum {
-			return err
+			fmt.Println("IsExistSmsCode,", recNum, smsCode, getRecNum)
+			return false, err
 		}
 	}
-	return err
+	return true, err
 }
 
 func (p *phoneSms) Del(recNum string) {

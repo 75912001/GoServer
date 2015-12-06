@@ -181,10 +181,10 @@ func main() {
 			}
 			gHttpServer.AddHandler(ict_register.Gphone.Pattern, ict_register.PhoneHttpHandler)
 
-			//			err = ict_register.Gphone.Init()
-			//			if nil != err {
-			//				return
-			//			}
+			err = ict_user.Gbase.Init()
+			if nil != err {
+				return
+			}
 
 			err = ict_user.GuidMgr.Init()
 			if nil != err {
