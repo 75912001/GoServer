@@ -40,3 +40,8 @@ package/pkg/darwin_amd64/zzcliredis.a
 icartravel/pkg/darwin_amd64/ict_cfg.a
 
 package/pkg/darwin_amd64/zzredis.a
+package/pkg/windows_amd64/zzredis.a
+icartravel/pkg/windows_amd64/ict_cfg.a
+icartravel/pkg/windows_amd64/ict_user.a
+icartravel/pkg/windows_amd64/ict_common.a
+icartravel/pkg/windows_amd64/ict_phone_sms.a

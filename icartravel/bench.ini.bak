@@ -12,17 +12,13 @@ go_process_max=100
 #send/recv max len(byte), def:81920
 packet_length_max=81920
 
-#用户id
-[ict_user_uid]
-redis_ip=127.0.0.1
-redis_port=6379
-redis_databases=0
-redis_key_incr_uid=001_uid
+[redis_server]
+ip=127.0.0.1
+port=6379
+databases=0
 
-#手机注册短信
-[ict_register_phone_sms]
-Pattern=/RegisterPhoneSms
-#?number=17721027200
+#手机短信
+[ict_phone_sms]
 UrlPattern=http://gw.api.taobao.com/router/rest
 AppKey=23273583
 AppSecret=28409ec2fdac3a381fe7546f55493900
@@ -33,29 +29,33 @@ SmsTemplateCode=SMS_2515091
 SmsType=normal
 Versions=2.0
 SmsParamProduct=爱车旅
-#redis
-redis_ip=127.0.0.1
-redis_port=6379
-redis_databases=0
-redis_key_perfix=100_
 
-#手机注册
-[ict_register_phone]
-Pattern=/RegisterPhone
+#帐号
+[ict_account]
+#使用手机号获取注册,短信码
+#PhoneSmsRegister
+PhoneSmsRegisterHttpHandlerPattern=/PhoneSmsRegister
+#?number=17721027200
+redis_key_perfix_phone_sms_register=100_
+
+#使用手机号获取修改密码,短信码todo
+PhoneSmsChangePwdHttpHandlerPattern=/PhoneSmsChangePwd
+#?number=17721027200
+#redis
+redis_key_change_pwd_perfix=101_
+
+#使用获取的短信注册码,注册帐号
+#PhoneRegister
+PhoneRegisterHttpHandlerPattern=/PhoneRegister
 #?number=17721027200&pwd=xxx&sms_code=xxx
-#redis
-redis_ip=127.0.0.1
-redis_port=6379
-redis_databases=0
-redis_key_perfix=200_
+redis_key_perfix_phone_register=200_
 
-#用户注册信息
-[ict_user_base]
-redis_ip=127.0.0.1
-redis_port=6379
-redis_databases=0
-redis_key_perfix=201_
+#用户
+[ict_user]
+redis_key_perfix_base=201_
+redis_key_incr_uid=001_uid
 
+###############################################################################
 #登录
 [ict_login]
 Pattern=/Login

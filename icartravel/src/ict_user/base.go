@@ -3,8 +3,8 @@ package ict_user
 import (
 	"fmt"
 	"ict_cfg"
+	"ict_common"
 	"zzcommon"
-	"zzredis"
 )
 
 var Gbase base
@@ -22,24 +22,14 @@ const (
 
 type base struct {
 	//redis
-	redis          zzredis.Client
 	redisKeyPerfix string
 }
 
 //初始化
 func (p *base) Init() (err error) {
+	const benchFileSection string = "ict_user"
 	//redis
-	ip := ict_cfg.Gbench.FileIni.Get("ict_user_base", "redis_ip", " ")
-	port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("ict_user_base", "redis_port", " "))
-	redisDatabases := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("ict_user_base", "redis_databases", " "))
-	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get("ict_user_base", "redis_key_perfix", " ")
-
-	//链接redis
-	err = p.redis.Connect(ip, port, redisDatabases)
-	if nil != err {
-		fmt.Println("######redis.Dial err:", err)
-		return err
-	}
+	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get(benchFileSection, "redis_key_perfix_base", " ")
 
 	return err
 }
@@ -61,7 +51,7 @@ func (p *base) Insert(uid string, recNum string, pwd string) (err error) {
 		commandName := "hmset"
 		key := p.genRedisKey(uid)
 
-		_, err = p.redis.Conn.Do(commandName, key, field_phone_id, recNum, field_pwd1, pwd1, field_pwd2, pwd2)
+		_, err = ict_common.GRedisClient.Conn.Do(commandName, key, field_phone_id, recNum, field_pwd1, pwd1, field_pwd2, pwd2)
 		if nil != err {
 			fmt.Println("######gUserRegister hmset err:", err, uid, recNum, pwd1, pwd2)
 			return err

@@ -2,14 +2,13 @@
 package main
 
 import (
-	//"common_msg"
 	"fmt"
-	//	"game_msg"
 	//	"github.com/golang/protobuf/proto"
-	//	"strconv"
+	"ict_account"
 	"ict_cfg"
+	"ict_common"
 	"ict_login"
-	"ict_register"
+	"ict_phone_sms"
 	"ict_user"
 	"math/rand"
 	"runtime"
@@ -128,10 +127,83 @@ func main() {
 	//加载配置文件bench.ini
 	{
 		if zzcommon.IsWindows() {
-			ict_cfg.Gbench.Load("./bench.ini")
+			ict_cfg.Gbench.Load("./bench.ini.bak")
 		} else {
 			ict_cfg.Gbench.Load("/Users/mlc/Desktop/GoServer/icartravel/bench.ini.bak")
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////
+	//redis
+	{
+		const benchFileSection string = "redis_server"
+		ip := ict_cfg.Gbench.FileIni.Get(benchFileSection, "ip", " ")
+		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get(benchFileSection, "port", " "))
+		redisDatabases := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get(benchFileSection, "databases", " "))
+
+		//链接redis
+		err := ict_common.GRedisClient.Connect(ip, port, redisDatabases)
+		if nil != err {
+			fmt.Println("######ict_common.GRedisClient.Connect(ip, port, redisDatabases) err:", err)
+			return
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////
+	//phome sms
+	{
+		err := ict_phone_sms.GphoneSms.Init()
+		if nil != err {
+			fmt.Println("######ict_phone_sms.GphoneSms.Init()")
+			return
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////
+	//作为HTTP SERVER
+	{
+		gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
+		gHttpServer.AddHandler(ict_login.LoginPattern, ict_login.LoginHttpHandler)
+
+		{ //启动手机注册功能
+			err := ict_account.GphoneSmsRegister.Init()
+			if nil != err {
+				return
+			}
+			gHttpServer.AddHandler(ict_account.GphoneSmsRegister.Pattern, ict_account.PhoneSmsRegisterHttpHandler)
+			//			gHttpServer.AddHandler(ict_register.GphoneSms.PatternChangePwd, ict_register.PhoneChangePwdSmsHttpHandler)
+
+			err = ict_account.GphoneRegister.Init()
+			if nil != err {
+				return
+			}
+			gHttpServer.AddHandler(ict_account.GphoneRegister.Pattern, ict_account.PhoneRegisterHttpHandler)
+
+			err = ict_user.Gbase.Init()
+			if nil != err {
+				return
+			}
+
+			err = ict_user.GuidMgr.Init()
+			if nil != err {
+				return
+			}
+		}
+
+		ip := ict_cfg.Gbench.FileIni.Get("http_server", "ip", "999")
+		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("http_server", "port", "0"))
+
+		go gHttpServer.Run(ip, port)
+	}
+
+	//////////////////////////////////////////////////////////////////
+	//定时器
+	zztimer.Second(1, timerSecondTest)
+	fmt.Println("OK")
+	for {
+		time.Sleep(10 * time.Second)
+		gLock.Lock()
+		gLock.Unlock()
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -160,51 +232,6 @@ func main() {
 	//作为HTTP CLIENT Weather
 	//	gHttpClientWeather.Url = ict_bench_file.GbenchFile.FileIni.Get("weather", "url", " ")
 	//	gHttpClientWeather.Get()
-	//////////////////////////////////////////////////////////////////
-	//作为HTTP SERVER
-	{
-		ip := ict_cfg.Gbench.FileIni.Get("http_server", "ip", "999")
-		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("http_server", "port", "0"))
-		gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
-		gHttpServer.AddHandler(ict_login.LoginPattern, ict_login.LoginHttpHandler)
-
-		{ //启动手机注册功能
-			err := ict_register.GphoneSms.Init()
-			if nil != err {
-				return
-			}
-			gHttpServer.AddHandler(ict_register.GphoneSms.Pattern, ict_register.PhoneSmsHttpHandler)
-
-			err = ict_register.Gphone.Init()
-			if nil != err {
-				return
-			}
-			gHttpServer.AddHandler(ict_register.Gphone.Pattern, ict_register.PhoneHttpHandler)
-
-			err = ict_user.Gbase.Init()
-			if nil != err {
-				return
-			}
-
-			err = ict_user.GuidMgr.Init()
-			if nil != err {
-				return
-			}
-		}
-
-		go gHttpServer.Run(ip, port)
-	}
-	//////////////////////////////////////////////////////////////////
-
-	//////////////////////////////////////////////////////////////////
-	//定时器
-	zztimer.Second(1, timerSecondTest)
-	fmt.Println("OK")
-	for {
-		time.Sleep(10 * time.Second)
-		gLock.Lock()
-		gLock.Unlock()
-	}
 
 	//////////////////////////////////////////////////////////////////
 	//做为客户端

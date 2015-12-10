@@ -1,23 +1,21 @@
-package ict_register
+package ict_account
 
 import (
 	"fmt"
-	//	"github.com/garyburd/redigo/redis"
-	//	"ict_register"
 	"ict_cfg"
+	"ict_common"
 	"ict_user"
 	"net/http"
 	"strconv"
 	"zzcommon"
-	"zzredis"
 )
 
-var Gphone phone
+var GphoneRegister phoneRegister
 
 ////////////////////////////////////////////////////////////////////////////////
 //手机注册
 
-func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
+func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	const paraRecNumName string = "number"
 	const paraPwdName string = "pwd"
 	const paraSmsCodeName string = "sms_code"
@@ -30,6 +28,7 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 		err := req.ParseForm()
 		if nil != err {
 			fmt.Println("######PhoneRegisterHttpHandler")
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PARAM)))
 			return
 		}
 
@@ -38,6 +37,7 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 			recNum = req.Form[paraRecNumName][0]
 		} else {
 			fmt.Println("######PhoneRegisterHttpHandler")
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PARAM)))
 			return
 		}
 		//原始密码
@@ -45,6 +45,7 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 			pwd = req.Form[paraPwdName][0]
 		} else {
 			fmt.Println("######PhoneRegisterHttpHandler")
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PARAM)))
 			return
 		}
 		//sms code
@@ -52,6 +53,7 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 			smsCode = req.Form[paraSmsCodeName][0]
 		} else {
 			fmt.Println("######PhoneRegisterHttpHandler")
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PARAM)))
 			return
 		}
 
@@ -59,9 +61,9 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	{ //检查手机号是否绑定
-		bind, err := Gphone.IsPhoneNumBind(recNum)
+		bind, err := GphoneRegister.IsPhoneNumBind(recNum)
 		if nil != err {
-			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_PHONE_NUM_BIND)))
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 			fmt.Println(err)
 			return
 		} else {
@@ -74,9 +76,9 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	{ //检查是否有短信验证码记录
-		exist, err := GphoneSms.IsExistSmsCode(recNum, smsCode)
+		exist, err := GphoneSmsRegister.IsExistSmsCode(recNum, smsCode)
 		if nil != err {
-			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SMS_REGISTER_CODE)))
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 			fmt.Println(err)
 			return
 		}
@@ -89,15 +91,16 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//生成uid
 	uid, err := ict_user.GuidMgr.GenUid()
 	if nil != err {
-		w.Write([]byte(strconv.Itoa(zzcommon.ERROR)))
+		w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 		fmt.Println(err)
 		return
 	}
 
 	{ //插入用户数据
-		err := Gphone.Insert(recNum, uid)
+		err := GphoneRegister.Insert(recNum, uid)
 		if nil != err {
 			fmt.Println(err)
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 			return
 		}
 	}
@@ -106,51 +109,40 @@ func PhoneHttpHandler(w http.ResponseWriter, req *http.Request) {
 		err := ict_user.Gbase.Insert(uid, recNum, pwd)
 		if nil != err {
 			fmt.Println(err)
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 			return
 		}
 	}
 	{ //删除有短信验证码记录 来自redis
-		GphoneSms.Del(recNum)
+		GphoneSmsRegister.Del(recNum)
 	}
-
 }
 
-type phone struct {
+type phoneRegister struct {
 	Pattern string
 	//redis
-	redis          zzredis.Client
 	redisKeyPerfix string
 }
 
 //初始化
-func (p *phone) Init() (err error) {
-	p.Pattern = ict_cfg.Gbench.FileIni.Get("ict_register_phone", "Pattern", " ")
+func (p *phoneRegister) Init() (err error) {
+	const benchFileSection string = "ict_account"
+	p.Pattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "PhoneRegisterHttpHandlerPattern", " ")
 	//redis
-	ip := ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_ip", " ")
-	port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_port", " "))
-	redisDatabases := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_databases", " "))
-	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get("ict_register_phone", "redis_key_perfix", " ")
-
-	//链接redis
-	err = p.redis.Connect(ip, port, redisDatabases)
-	if nil != err {
-		fmt.Println("######redis.Dial err:", err)
-		return err
-	}
-	//	defer conn.Close()
+	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get(benchFileSection, "redis_key_perfix_phone_register", " ")
 	return err
 }
 
 //生成redis的键值
-func (p *phone) genRedisKey(key string) (value string) {
+func (p *phoneRegister) genRedisKey(key string) (value string) {
 	return p.redisKeyPerfix + key
 }
 
 //手机号是否绑定
-func (p *phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
+func (p *phoneRegister) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	commandName := "get"
 	key := p.genRedisKey(recNum)
-	reply, err := p.redis.Conn.Do(commandName, key)
+	reply, err := ict_common.GRedisClient.Conn.Do(commandName, key)
 
 	if nil != err {
 		fmt.Println("######IsPhoneNumBind err:", err)
@@ -162,11 +154,11 @@ func (p *phone) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	return true, err
 }
 
-func (p *phone) Insert(recNum string, uid string) (err error) {
+func (p *phoneRegister) Insert(recNum string, uid string) (err error) {
 	//插入用户数据
 	commandName := "set"
 	key := p.genRedisKey(recNum)
-	_, err = p.redis.Conn.Do(commandName, key, uid)
+	_, err = ict_common.GRedisClient.Conn.Do(commandName, key, uid)
 
 	if nil != err {
 		fmt.Println("######gPhoneRegister err:", err, uid, recNum)
