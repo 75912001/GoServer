@@ -3,6 +3,7 @@ package ict_phone_sms
 import (
 	"fmt"
 	"ict_cfg"
+	"math/rand"
 	"net/url"
 	"strings"
 	"zzcommon"
@@ -85,4 +86,20 @@ func (p *phoneSms) genReqUrl(strMd5 string, timeStamp string, recNum string, sms
 	}
 	reqUrl = p.UrlPattern + "?" + url.Query().Encode()
 	return reqUrl, err
+}
+
+func (p *phoneSms) GenSmsCode() (value string) {
+	//手机验证码个数 5位,[10000-100000)
+	//手机上5位数字 会有下划线，可以长按复制，方便用户使用
+	const smsParamCodeBegin = 10000
+	const smsParamCodeEnd = 99999 + 1
+	{ //生成短信内容参数
+		index := rand.Intn(smsParamCodeEnd)
+		if index < smsParamCodeBegin {
+			index += smsParamCodeBegin
+		}
+		smsParamCode = strconv.Itoa(index)
+		fmt.Println(smsParamCode)
+	}
+
 }

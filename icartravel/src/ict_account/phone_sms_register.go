@@ -76,6 +76,7 @@ func PhoneSmsRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	{ //检查手机号是否绑定
 		bind, err := GphoneRegister.IsPhoneNumBind(recNum)
 		if nil != err {
+			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 			return
 		}
 		if bind {

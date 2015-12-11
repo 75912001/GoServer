@@ -1,23 +1,9 @@
-[server]
-ip=127.0.0.1
-port=11000
-
-[http_server]
-ip=127.0.0.1
-port=18000
-
-[common]
-#set cpu max, def:cpu number
-go_process_max=100
-#send/recv max len(byte), def:81920
-packet_length_max=81920
-
 [redis_server]
 ip=127.0.0.1
 port=6379
 databases=0
 
-#手机短信
+#手机短信相关参数
 [ict_phone_sms]
 UrlPattern=http://gw.api.taobao.com/router/rest
 AppKey=23273583
@@ -52,10 +38,28 @@ redis_key_perfix_phone_register=200_
 
 #用户
 [ict_user]
+#用户基础信息
 redis_key_perfix_base=201_
+#全局用户目前最大UID(自增)
 redis_key_incr_uid=001_uid
 
-###############################################################################
+#end
+
+[server]
+ip=127.0.0.1
+port=11000
+
+[http_server]
+ip=127.0.0.1
+port=18000
+
+[common]
+#set cpu max, def:cpu number
+go_process_max=100
+#send/recv max len(byte), def:81920
+packet_length_max=81920
+
+
 #登录
 [ict_login]
 Pattern=/Login
