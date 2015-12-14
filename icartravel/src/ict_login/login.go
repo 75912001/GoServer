@@ -9,6 +9,8 @@ import (
 	//	"zzcommon"
 )
 
+var Glogin login
+
 const LoginPattern string = "/login"
 
 func LoginHttpHandler(w http.ResponseWriter, req *http.Request) {
@@ -37,10 +39,14 @@ func LoginHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//异步返回给客户端，要么客户端主动请求服务器（ajax）；要么采用WebSocket连接服务器
 }
 
-type Login struct {
+type login struct {
 }
 
-//登录服务器的返回包
-func LoginCallBack() {
-	//发送给请求登录的客户端
+//初始化
+func (p *login) Init() (err error) {
+	//	const benchFileSection string = "ict_account"
+	//	p.Pattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "PhoneSmsRegisterHttpHandlerPattern", " ")
+	//redis
+	//	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get(benchFileSection, "redis_key_perfix_phone_sms_register", " ")
+	return err
 }

@@ -5,7 +5,9 @@ import (
 	"ict_cfg"
 	"math/rand"
 	"net/url"
+	"strconv"
 	"strings"
+	"time"
 	"zzcommon"
 )
 
@@ -24,6 +26,9 @@ type phoneSms struct {
 	SmsType         string
 	Versions        string
 	SmsParamProduct string
+
+	SmsFreeSignNameChangePwd string
+	SmsTemplateCodeChangePwd string
 }
 
 //初始化
@@ -40,41 +45,44 @@ func (p *phoneSms) Init() (err error) {
 	p.SmsType = ict_cfg.Gbench.FileIni.Get(benchFileSection, "SmsType", " ")
 	p.Versions = ict_cfg.Gbench.FileIni.Get(benchFileSection, "Versions", " ")
 	p.SmsParamProduct = ict_cfg.Gbench.FileIni.Get(benchFileSection, "SmsParamProduct", " ")
+
+	p.SmsFreeSignNameChangePwd = ict_cfg.Gbench.FileIni.Get(benchFileSection, "SmsFreeSignNameChangePwd", " ")
+	p.SmsTemplateCodeChangePwd = ict_cfg.Gbench.FileIni.Get(benchFileSection, "SmsTemplateCodeChangePwd", " ")
 	return err
 }
 
-//生成sign(MD5)
-func (p *phoneSms) genSign(recNum string, smsParam string, timeStamp string) (value string) {
-	var signSource = p.AppSecret +
-		"app_key" + p.AppKey +
-		"method" + p.Method +
-		"rec_num" + recNum +
-		"sign_method" + p.SignMethod +
-		"sms_free_sign_name" + p.SmsFreeSignName +
-		"sms_param" + smsParam +
-		"sms_template_code" + p.SmsTemplateCode +
-		"sms_type" + p.SmsType +
-		"timestamp" + timeStamp +
-		"v" + p.Versions +
-		p.AppSecret
-	strMd5 := zzcommon.GenMd5(signSource)
-	strMd5 = strings.ToUpper(strMd5)
-	fmt.Println(signSource)
-	fmt.Println(strMd5)
-	return strMd5
+func (p *phoneSms) GenSmsCode() (value string) {
+	//手机验证码个数 5位,[10000-100000)
+	//手机上5位数字 会有下划线，可以长按复制，方便用户使用
+	const smsParamCodeBegin = 10000
+	const smsParamCodeEnd = 99999 + 1
+	{ //生成短信内容参数
+		index := rand.Intn(smsParamCodeEnd)
+		if index < smsParamCodeBegin {
+			index += smsParamCodeBegin
+		}
+		value = strconv.Itoa(index)
+		fmt.Println(value)
+	}
+	return value
 }
 
 //生成短信请求url
-func (p *phoneSms) genReqUrl(strMd5 string, timeStamp string, recNum string, smsParam string) (value string, err error) {
+func (p *phoneSms) GenReqUrl(recNum string, smsParam string, SmsFreeSignName string, SmsTemplateCode string) (value string, err error) {
+	//时间戳格式"2015-11-26 20:32:42"
+	var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
+
+	var strMd5 string = p.genSign(recNum, smsParam, timeStamp, SmsFreeSignName, SmsTemplateCode)
+
 	var reqUrl = p.UrlPattern +
 		"?sign=" + strMd5 +
 		"&app_key=" + p.AppKey +
 		"&method=" + p.Method +
 		"&rec_num=" + recNum +
 		"&sign_method=" + p.SignMethod +
-		"&sms_free_sign_name=" + p.SmsFreeSignName +
+		"&sms_free_sign_name=" + SmsFreeSignName +
 		"&sms_param=" + smsParam +
-		"&sms_template_code=" + p.SmsTemplateCode +
+		"&sms_template_code=" + SmsTemplateCode +
 		"&sms_type=" + p.SmsType +
 		"&timestamp=" + timeStamp +
 		"&v=" + p.Versions
@@ -88,18 +96,23 @@ func (p *phoneSms) genReqUrl(strMd5 string, timeStamp string, recNum string, sms
 	return reqUrl, err
 }
 
-func (p *phoneSms) GenSmsCode() (value string) {
-	//手机验证码个数 5位,[10000-100000)
-	//手机上5位数字 会有下划线，可以长按复制，方便用户使用
-	const smsParamCodeBegin = 10000
-	const smsParamCodeEnd = 99999 + 1
-	{ //生成短信内容参数
-		index := rand.Intn(smsParamCodeEnd)
-		if index < smsParamCodeBegin {
-			index += smsParamCodeBegin
-		}
-		smsParamCode = strconv.Itoa(index)
-		fmt.Println(smsParamCode)
-	}
-
+//生成sign(MD5)
+func (p *phoneSms) genSign(recNum string, smsParam string, timeStamp string, SmsFreeSignName string, SmsTemplateCode string) (value string) {
+	var signSource = p.AppSecret +
+		"app_key" + p.AppKey +
+		"method" + p.Method +
+		"rec_num" + recNum +
+		"sign_method" + p.SignMethod +
+		"sms_free_sign_name" + SmsFreeSignName +
+		"sms_param" + smsParam +
+		"sms_template_code" + SmsTemplateCode +
+		"sms_type" + p.SmsType +
+		"timestamp" + timeStamp +
+		"v" + p.Versions +
+		p.AppSecret
+	strMd5 := zzcommon.GenMd5(signSource)
+	strMd5 = strings.ToUpper(strMd5)
+	fmt.Println(signSource)
+	fmt.Println(strMd5)
+	return strMd5
 }

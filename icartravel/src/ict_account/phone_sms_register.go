@@ -6,12 +6,8 @@ import (
 	"ict_cfg"
 	"ict_common"
 	"ict_phone_sms"
-	"math/rand"
 	"net/http"
-	"net/url"
 	"strconv"
-	"strings"
-	"time"
 	"zzcommon"
 )
 
@@ -84,16 +80,8 @@ func PhoneSmsRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-
-	var smsParamCode string
-	{ //生成短信内容参数
-		index := rand.Intn(smsParamCodeEnd)
-		if index < smsParamCodeBegin {
-			index += smsParamCodeBegin
-		}
-		smsParamCode = strconv.Itoa(index)
-		fmt.Println(smsParamCode)
-	}
+	//生成短信内容参数
+	var smsParamCode string = ict_phone_sms.GphoneSms.GenSmsCode()
 
 	var smsParam = "{'code':'" + smsParamCode + "','product':'" + ict_phone_sms.GphoneSms.SmsParamProduct + "'}"
 
@@ -105,12 +93,8 @@ func PhoneSmsRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-	//时间戳格式"2015-11-26 20:32:42"
-	var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
 
-	var strMd5 string = GphoneSmsRegister.genSign(recNum, smsParam, timeStamp)
-
-	reqUrl, err := GphoneSmsRegister.genReqUrl(strMd5, timeStamp, recNum, smsParam)
+	reqUrl, err := ict_phone_sms.GphoneSms.GenReqUrl(recNum, smsParam, ict_phone_sms.GphoneSms.SmsFreeSignName, ict_phone_sms.GphoneSms.SmsTemplateCode)
 	if nil != err {
 		fmt.Println("######gPhoneRegister.genReqUrl", err)
 		w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
@@ -147,51 +131,6 @@ func (p *phoneSmsRegister) Init() (err error) {
 	return err
 }
 
-//生成sign(MD5)
-func (p *phoneSmsRegister) genSign(recNum string, smsParam string, timeStamp string) (value string) {
-	var signSource = ict_phone_sms.GphoneSms.AppSecret +
-		"app_key" + ict_phone_sms.GphoneSms.AppKey +
-		"method" + ict_phone_sms.GphoneSms.Method +
-		"rec_num" + recNum +
-		"sign_method" + ict_phone_sms.GphoneSms.SignMethod +
-		"sms_free_sign_name" + ict_phone_sms.GphoneSms.SmsFreeSignName +
-		"sms_param" + smsParam +
-		"sms_template_code" + ict_phone_sms.GphoneSms.SmsTemplateCode +
-		"sms_type" + ict_phone_sms.GphoneSms.SmsType +
-		"timestamp" + timeStamp +
-		"v" + ict_phone_sms.GphoneSms.Versions +
-		ict_phone_sms.GphoneSms.AppSecret
-	strMd5 := zzcommon.GenMd5(signSource)
-	strMd5 = strings.ToUpper(strMd5)
-	fmt.Println(signSource)
-	fmt.Println(strMd5)
-	return strMd5
-}
-
-//生成短信请求url
-func (p *phoneSmsRegister) genReqUrl(strMd5 string, timeStamp string, recNum string, smsParam string) (value string, err error) {
-	var reqUrl = ict_phone_sms.GphoneSms.UrlPattern +
-		"?sign=" + strMd5 +
-		"&app_key=" + ict_phone_sms.GphoneSms.AppKey +
-		"&method=" + ict_phone_sms.GphoneSms.Method +
-		"&rec_num=" + recNum +
-		"&sign_method=" + ict_phone_sms.GphoneSms.SignMethod +
-		"&sms_free_sign_name=" + ict_phone_sms.GphoneSms.SmsFreeSignName +
-		"&sms_param=" + smsParam +
-		"&sms_template_code=" + ict_phone_sms.GphoneSms.SmsTemplateCode +
-		"&sms_type=" + ict_phone_sms.GphoneSms.SmsType +
-		"&timestamp=" + timeStamp +
-		"&v=" + ict_phone_sms.GphoneSms.Versions
-
-	url, err := url.Parse(reqUrl)
-	if nil != err {
-		fmt.Println("######PhoneRegister.genReqUrl err:", reqUrl, err)
-		return reqUrl, err
-	}
-	reqUrl = ict_phone_sms.GphoneSms.UrlPattern + "?" + url.Query().Encode()
-	return reqUrl, err
-}
-
 //生成redis的键值
 func (p *phoneSmsRegister) genRedisKey(key string) (value string) {
 	return p.redisKeyPerfix + key
@@ -224,7 +163,6 @@ func (p *phoneSmsRegister) InsertSmsCode(recNum string, smsParamCode string) (er
 	}
 
 	return err
-
 }
 func (p *phoneSmsRegister) IsExistSmsCode(recNum string, smsCode string) (exist bool, err error) {
 	//检查是否有短信验证码记录

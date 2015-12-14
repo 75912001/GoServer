@@ -171,7 +171,7 @@ func main() {
 				return
 			}
 			gHttpServer.AddHandler(ict_account.GphoneSmsRegister.Pattern, ict_account.PhoneSmsRegisterHttpHandler)
-			//			gHttpServer.AddHandler(ict_register.GphoneSms.PatternChangePwd, ict_register.PhoneChangePwdSmsHttpHandler)
+			gHttpServer.AddHandler(ict_account.GphoneSmsChangePwd.Pattern, ict_account.PhoneSmsChangePwdHttpHandler)
 
 			err = ict_account.GphoneRegister.Init()
 			if nil != err {
@@ -185,6 +185,11 @@ func main() {
 			}
 
 			err = ict_user.GuidMgr.Init()
+			if nil != err {
+				return
+			}
+
+			err = ict_login.Glogin.Init()
 			if nil != err {
 				return
 			}

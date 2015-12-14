@@ -16,6 +16,9 @@ SmsType=normal
 Versions=2.0
 SmsParamProduct=爱车旅
 
+SmsFreeSignNameChangePwd=变更验证
+SmsTemplateCodeChangePwd=SMS_2515089
+
 #帐号
 [ict_account]
 #使用手机号获取注册,短信码

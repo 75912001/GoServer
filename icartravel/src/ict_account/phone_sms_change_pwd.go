@@ -1,15 +1,16 @@
 package ict_account
 
 import (
-	//	"fmt"
-	//	"math/rand"
+	"fmt"
+	"ict_common"
+	"ict_phone_sms"
 	"net/http"
-	//"strconv"
-	//"time"
-	//"zzcommon"
+	"strconv"
+	"zzcommon"
 )
 
-GphoneSmsChangePwd phoneSmsChangePwd
+var GphoneSmsChangePwd phoneSmsChangePwd
+
 ////////////////////////////////////////////////////////////////////////////////
 //请求改变密码,短信码
 
@@ -58,34 +59,23 @@ func PhoneSmsChangePwdHttpHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	var smsParamCode string
-	{ //生成短信内容参数
-		index := rand.Intn(smsParamCodeEnd)
-		if index < smsParamCodeBegin {
-			index += smsParamCodeBegin
-		}
-		smsParamCode = strconv.Itoa(index)
-		fmt.Println(smsParamCode)
-	}
+	//生成短信内容参数
+	var smsParamCode string = ict_phone_sms.GphoneSms.GenSmsCode()
 
 	var smsParam = "{'code':'" + smsParamCode + "','product':'" + ict_phone_sms.GphoneSms.SmsParamProduct + "'}"
 
 	{ //设置到redis中
-		err := GphoneSmsRegister.InsertSmsCode(recNum, smsParamCode)
+		err := GphoneSmsChangePwd.InsertSmsCode(recNum, smsParamCode)
 		if nil != err {
 			fmt.Println("######redis setex err:", err)
 			w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 			return
 		}
 	}
-	//时间戳格式"2015-11-26 20:32:42"
-	var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
 
-	var strMd5 string = GphoneSmsRegister.genSign(recNum, smsParam, timeStamp)
-
-	reqUrl, err := GphoneSmsRegister.genReqUrl(strMd5, timeStamp, recNum, smsParam)
+	reqUrl, err := ict_phone_sms.GphoneSms.GenReqUrl(recNum, smsParam, ict_phone_sms.GphoneSms.SmsFreeSignNameChangePwd, ict_phone_sms.GphoneSms.SmsTemplateCodeChangePwd)
 	if nil != err {
-		fmt.Println("######gPhoneRegister.genReqUrl", err)
+		fmt.Println("######GphoneSmsChangePwd.genReqUrl", err)
 		w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
 		return
 	}
@@ -103,4 +93,44 @@ func PhoneSmsChangePwdHttpHandler(w http.ResponseWriter, req *http.Request) {
 		//fmt.Println(resp.Body)
 	}
 	w.Write([]byte(strconv.Itoa(zzcommon.SUCC)))
+}
+
+type phoneSmsChangePwd struct {
+	Pattern string
+	//redis
+	redisKeyPerfix string
+}
+
+func (p *phoneSmsChangePwd) IsExist(recNum string) (value bool) {
+	//检查是否有记录
+	commandName := "get"
+	key := p.genRedisKey(recNum)
+	reply, err := ict_common.GRedisClient.Conn.Do(commandName, key)
+	if nil != err {
+		fmt.Println("######redis get err:", err)
+		return false
+	}
+	if nil == reply {
+		return false
+	}
+
+	return true
+}
+
+func (p *phoneSmsChangePwd) InsertSmsCode(recNum string, smsParamCode string) (err error) {
+	//设置到redis中
+	commandName := "setex"
+	key := p.genRedisKey(recNum)
+	timeout := "3600" //60分钟
+	_, err = ict_common.GRedisClient.Conn.Do(commandName, key, timeout, smsParamCode)
+	if nil != err {
+		fmt.Println("######redis setex err:", err)
+	}
+
+	return err
+}
+
+//生成redis的键值
+func (p *phoneSmsChangePwd) genRedisKey(key string) (value string) {
+	return p.redisKeyPerfix + key
 }
