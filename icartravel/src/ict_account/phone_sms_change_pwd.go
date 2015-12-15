@@ -2,6 +2,7 @@ package ict_account
 
 import (
 	"fmt"
+	"ict_cfg"
 	"ict_common"
 	"ict_phone_sms"
 	"net/http"
@@ -73,7 +74,8 @@ func PhoneSmsChangePwdHttpHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	reqUrl, err := ict_phone_sms.GphoneSms.GenReqUrl(recNum, smsParam, ict_phone_sms.GphoneSms.SmsFreeSignNameChangePwd, ict_phone_sms.GphoneSms.SmsTemplateCodeChangePwd)
+	reqUrl, err := ict_phone_sms.GphoneSms.GenReqUrl(recNum, smsParam,
+		ict_phone_sms.GphoneSms.SmsFreeSignNameChangePwd, ict_phone_sms.GphoneSms.SmsTemplateCodeChangePwd)
 	if nil != err {
 		fmt.Println("######GphoneSmsChangePwd.genReqUrl", err)
 		w.Write([]byte(strconv.Itoa(zzcommon.ERROR_SYS)))
@@ -127,6 +129,15 @@ func (p *phoneSmsChangePwd) InsertSmsCode(recNum string, smsParamCode string) (e
 		fmt.Println("######redis setex err:", err)
 	}
 
+	return err
+}
+
+//初始化
+func (p *phoneSmsChangePwd) Init() (err error) {
+	const benchFileSection string = "ict_account"
+	p.Pattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "PhoneSmsChangePwdHttpHandlerPattern", " ")
+	//redis
+	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get(benchFileSection, "redis_key_change_pwd_perfix", " ")
 	return err
 }
 

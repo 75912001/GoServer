@@ -168,29 +168,40 @@ func main() {
 		{ //启动手机注册功能
 			err := ict_account.GphoneSmsRegister.Init()
 			if nil != err {
+				fmt.Println("错误ict_account.GphoneSmsRegister.Init()")
 				return
 			}
 			gHttpServer.AddHandler(ict_account.GphoneSmsRegister.Pattern, ict_account.PhoneSmsRegisterHttpHandler)
+
+			err = ict_account.GphoneSmsChangePwd.Init()
+			if nil != err {
+				fmt.Println("错误ict_account.GphoneSmsChangePwd.Init()")
+				return
+			}
 			gHttpServer.AddHandler(ict_account.GphoneSmsChangePwd.Pattern, ict_account.PhoneSmsChangePwdHttpHandler)
 
 			err = ict_account.GphoneRegister.Init()
 			if nil != err {
+				fmt.Println("错误ict_account.GphoneRegister.Init()")
 				return
 			}
 			gHttpServer.AddHandler(ict_account.GphoneRegister.Pattern, ict_account.PhoneRegisterHttpHandler)
 
 			err = ict_user.Gbase.Init()
 			if nil != err {
+				fmt.Println("错误ict_user.Gbase.Init()")
 				return
 			}
 
 			err = ict_user.GuidMgr.Init()
 			if nil != err {
+				fmt.Println("错误ict_user.GuidMgr.Init()")
 				return
 			}
 
 			err = ict_login.Glogin.Init()
 			if nil != err {
+				fmt.Println("错误ict_login.Glogin.Init()")
 				return
 			}
 		}
