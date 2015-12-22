@@ -2,6 +2,7 @@ package ict_account
 
 import (
 	"fmt"
+	"github.com/garyburd/redigo/redis"
 	"ict_cfg"
 	"ict_common"
 	"ict_user"
@@ -116,6 +117,7 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	{ //删除有短信验证码记录 来自redis
 		GphoneSmsRegister.Del(recNum)
 	}
+	w.Write([]byte(strconv.Itoa(zzcommon.SUCC)))
 }
 
 type phoneRegister struct {
@@ -152,6 +154,19 @@ func (p *phoneRegister) IsPhoneNumBind(recNum string) (bind bool, err error) {
 		return false, err
 	}
 	return true, err
+}
+
+func (p *phoneRegister) Uid(recNum string) (uid string, err error) {
+	commandName := "get"
+	key := p.genRedisKey(recNum)
+	reply, err := ict_common.GRedisClient.Conn.Do(commandName, key)
+
+	if nil != err {
+		fmt.Println("######IsPhoneNumBind err:", err)
+		return "", err
+	}
+	uid, err = redis.String(reply, err)
+	return uid, err
 }
 
 func (p *phoneRegister) Insert(recNum string, uid string) (err error) {

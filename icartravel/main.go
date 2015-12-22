@@ -180,6 +180,13 @@ func main() {
 			}
 			gHttpServer.AddHandler(ict_account.GphoneSmsChangePwd.Pattern, ict_account.PhoneSmsChangePwdHttpHandler)
 
+			err = ict_account.GphoneChangePwd.Init()
+			if nil != err {
+				fmt.Println("错误ict_account.GphoneChangePwd.Init()")
+				return
+			}
+			gHttpServer.AddHandler(ict_account.GphoneChangePwd.Pattern, ict_account.PhoneChangePwdHttpHandler)
+
 			err = ict_account.GphoneRegister.Init()
 			if nil != err {
 				fmt.Println("错误ict_account.GphoneRegister.Init()")

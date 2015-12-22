@@ -27,11 +27,15 @@ PhoneSmsRegisterHttpHandlerPattern=/PhoneSmsRegister
 #?number=17721027200
 redis_key_perfix_phone_sms_register=100_
 
-#使用手机号获取修改密码,短信码todo
+#使用手机号获取修改密码,短信码
 PhoneSmsChangePwdHttpHandlerPattern=/PhoneSmsChangePwd
 #?number=17721027200
 #redis
 redis_key_change_pwd_perfix=101_
+
+#使用获取的短信码,修改帐号密码
+PhoneChangePwdHttpHandlerPattern=/PhoneChangePwd
+#?number=17721027200&pwd=xxx&sms_code=xxx
 
 #使用获取的短信注册码,注册帐号
 #PhoneRegister

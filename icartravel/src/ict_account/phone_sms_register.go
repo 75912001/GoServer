@@ -164,6 +164,7 @@ func (p *phoneSmsRegister) InsertSmsCode(recNum string, smsParamCode string) (er
 
 	return err
 }
+
 func (p *phoneSmsRegister) IsExistSmsCode(recNum string, smsCode string) (exist bool, err error) {
 	//检查是否有短信验证码记录
 	commandName := "get"

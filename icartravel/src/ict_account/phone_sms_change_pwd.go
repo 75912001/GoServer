@@ -2,6 +2,7 @@ package ict_account
 
 import (
 	"fmt"
+	"github.com/garyburd/redigo/redis"
 	"ict_cfg"
 	"ict_common"
 	"ict_phone_sms"
@@ -144,4 +145,31 @@ func (p *phoneSmsChangePwd) Init() (err error) {
 //生成redis的键值
 func (p *phoneSmsChangePwd) genRedisKey(key string) (value string) {
 	return p.redisKeyPerfix + key
+}
+
+func (p *phoneSmsChangePwd) IsExistSmsCode(recNum string, smsCode string) (exist bool, err error) {
+	//检查是否有短信验证码记录
+	commandName := "get"
+	key := p.genRedisKey(recNum)
+	reply, err := ict_common.GRedisClient.Conn.Do(commandName, key)
+	if nil != err {
+		return false, err
+	}
+	if nil == reply {
+		return false, err
+	}
+	getRecNum, _ := redis.String(reply, err)
+	if smsCode != getRecNum {
+		fmt.Println("IsExistSmsCode,", recNum, smsCode, getRecNum)
+		return false, err
+	}
+
+	return true, err
+}
+
+func (p *phoneSmsChangePwd) Del(recNum string) {
+	//删除有短信验证码记录
+	commandName := "del"
+	key := p.genRedisKey(recNum)
+	ict_common.GRedisClient.Conn.Do(commandName, key)
 }
