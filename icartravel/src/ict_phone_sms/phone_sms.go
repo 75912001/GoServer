@@ -13,9 +13,9 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 //手机短信
-var GphoneSms phoneSms
+var GphoneSms phoneSms_t
 
-type phoneSms struct {
+type phoneSms_t struct {
 	UrlPattern      string
 	AppKey          string
 	AppSecret       string
@@ -32,7 +32,7 @@ type phoneSms struct {
 }
 
 //初始化
-func (p *phoneSms) Init() (err error) {
+func (p *phoneSms_t) Init() (err error) {
 	const benchFileSection string = "ict_phone_sms"
 
 	p.UrlPattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "UrlPattern", " ")
@@ -51,7 +51,7 @@ func (p *phoneSms) Init() (err error) {
 	return err
 }
 
-func (p *phoneSms) GenSmsCode() (value string) {
+func (p *phoneSms_t) GenSmsCode() (value string) {
 	//手机验证码个数 5位,[10000-100000)
 	//手机上5位数字 会有下划线，可以长按复制，方便用户使用
 	const smsParamCodeBegin = 10000
@@ -68,7 +68,7 @@ func (p *phoneSms) GenSmsCode() (value string) {
 }
 
 //生成短信请求url
-func (p *phoneSms) GenReqUrl(recNum string, smsParam string, SmsFreeSignName string, SmsTemplateCode string) (value string, err error) {
+func (p *phoneSms_t) GenReqUrl(recNum string, smsParam string, SmsFreeSignName string, SmsTemplateCode string) (value string, err error) {
 	//时间戳格式"2015-11-26 20:32:42"
 	var timeStamp = zzcommon.StringSubstr(time.Now().String(), 19)
 
@@ -97,7 +97,7 @@ func (p *phoneSms) GenReqUrl(recNum string, smsParam string, SmsFreeSignName str
 }
 
 //生成sign(MD5)
-func (p *phoneSms) genSign(recNum string, smsParam string, timeStamp string, SmsFreeSignName string, SmsTemplateCode string) (value string) {
+func (p *phoneSms_t) genSign(recNum string, smsParam string, timeStamp string, SmsFreeSignName string, SmsTemplateCode string) (value string) {
 	var signSource = p.AppSecret +
 		"app_key" + p.AppKey +
 		"method" + p.Method +

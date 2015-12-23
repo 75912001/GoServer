@@ -10,7 +10,7 @@ import (
 	"zzcommon"
 )
 
-var GphoneChangePwd phoneChangePwd
+var GphoneChangePwd phoneChangePwd_t
 
 ////////////////////////////////////////////////////////////////////////////////
 //手机修改密码
@@ -107,12 +107,12 @@ func PhoneChangePwdHttpHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-type phoneChangePwd struct {
+type phoneChangePwd_t struct {
 	Pattern string
 }
 
 //初始化
-func (p *phoneChangePwd) Init() (err error) {
+func (p *phoneChangePwd_t) Init() (err error) {
 	const benchFileSection string = "ict_account"
 	p.Pattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "PhoneChangePwdHttpHandlerPattern", " ")
 	return err

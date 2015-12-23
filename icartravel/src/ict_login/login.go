@@ -9,7 +9,7 @@ import (
 	//	"zzcommon"
 )
 
-var Glogin login
+var Glogin login_t
 
 const LoginPattern string = "/login"
 
@@ -39,11 +39,11 @@ func LoginHttpHandler(w http.ResponseWriter, req *http.Request) {
 	//异步返回给客户端，要么客户端主动请求服务器（ajax）；要么采用WebSocket连接服务器
 }
 
-type login struct {
+type login_t struct {
 }
 
 //初始化
-func (p *login) Init() (err error) {
+func (p *login_t) Init() (err error) {
 	//	const benchFileSection string = "ict_account"
 	//	p.Pattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "PhoneSmsRegisterHttpHandlerPattern", " ")
 	//redis

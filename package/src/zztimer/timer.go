@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Timer struct {
+type Timer_t struct {
 }
 
 //定时器,秒

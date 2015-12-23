@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-var GuidMgr uidMgr
+var GuidMgr uidMgr_t
 
 //设置uid自增起始点100000   10w
 const uidBegin int = 100000
@@ -16,13 +16,13 @@ const uidBegin int = 100000
 ////////////////////////////////////////////////////////////////////////////////
 //USER ID 管理
 
-type uidMgr struct {
+type uidMgr_t struct {
 	//redis
 	redisKeyIncrUid string
 }
 
 //初始化
-func (p *uidMgr) Init() (err error) {
+func (p *uidMgr_t) Init() (err error) {
 	const benchFileSection string = "ict_user"
 	//redis
 	p.redisKeyIncrUid = ict_cfg.Gbench.FileIni.Get(benchFileSection, "redis_key_incr_uid", " ")
@@ -49,7 +49,7 @@ func (p *uidMgr) Init() (err error) {
 }
 
 //生成uid
-func (p *uidMgr) GenUid() (uid string, err error) {
+func (p *uidMgr_t) GenUid() (uid string, err error) {
 	//检查是否有记录 来自redis
 	commandName := "incr"
 	key := p.redisKeyIncrUid

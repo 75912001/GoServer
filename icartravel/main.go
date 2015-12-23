@@ -2,8 +2,10 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	//	"github.com/golang/protobuf/proto"
+	"bytes"
 	"ict_account"
 	"ict_cfg"
 	"ict_common"
@@ -38,11 +40,11 @@ func onFini() (ret int) {
 
 ////////////////////////////////////////////////////////////////////////////////
 //客户端相关的回调函数
-func onCliConn(peerConn *zzcommon.PeerConn) (ret int) {
+func onCliConn(peerConn *zzcommon.PeerConn_t) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	var user ict_user.User
+	var user ict_user.User_t
 	user.PeerConn = peerConn
 	ict_user.GuserMgr.UserMap[user.PeerConn] = user
 
@@ -50,7 +52,7 @@ func onCliConn(peerConn *zzcommon.PeerConn) (ret int) {
 	return 0
 }
 
-func onCliConnClosed(peerConn *zzcommon.PeerConn) (ret int) {
+func onCliConnClosed(peerConn *zzcommon.PeerConn_t) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -59,22 +61,34 @@ func onCliConnClosed(peerConn *zzcommon.PeerConn) (ret int) {
 	return 0
 }
 
-func onCliGetPacketLen(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
-	gLock.Lock()
-	defer gLock.Unlock()
-
+func onCliGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	//	fmt.Println("onCliGetPacketLen")
-	return packetLength
-	return 0
+	if (uint32)(packetLength) < zzcommon.ProtoHeadLength { //长度不足一个包头中的长度大小
+		return 0
+	}
+	peerConn.ParseProtoHead()
+	if (uint32)(peerConn.RecvProtoHead.PacketLength) < zzcommon.ProtoHeadLength {
+		return zzcommon.ERROR_DISCONNECT_PEER
+	}
+	fmt.Print(peerConn.RecvProtoHead)
+	if gTcpServer.PacketLengthMax <= (uint32)(peerConn.RecvProtoHead.PacketLength) {
+		return zzcommon.ERROR_DISCONNECT_PEER
+	}
+	if packetLength < int(peerConn.RecvProtoHead.PacketLength) {
+		return 0
+	}
+	fmt.Println(peerConn)
+	return int(peerConn.RecvProtoHead.PacketLength)
 }
 
-func onCliPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
+func onCliPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
 	//fmt.Println("on_cli_conn")
 	//	peer_conn.conn.Write("123")
 	//	peer_conn.Conn.Write([]byte("123"))
+
 	return 0
 }
 
@@ -82,7 +96,7 @@ func onCliPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
 //服务器相关回调函数
 
 //服务器连接成功
-func onSerConn(peerConn *zzcommon.PeerConn) (ret int) {
+func onSerConn(peerConn *zzcommon.PeerConn_t) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -91,7 +105,7 @@ func onSerConn(peerConn *zzcommon.PeerConn) (ret int) {
 }
 
 //服务端连接关闭
-func onSerConnClosed(peerConn *zzcommon.PeerConn) (ret int) {
+func onSerConnClosed(peerConn *zzcommon.PeerConn_t) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -101,9 +115,9 @@ func onSerConnClosed(peerConn *zzcommon.PeerConn) (ret int) {
 
 //获取消息的长度,0表示消息还未接受完成,
 //ERROR_DISCONNECT_PEER表示长度有误,服务端断开
-func onSerGetPacketLen(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
-	gLock.Lock()
-	defer gLock.Unlock()
+func onSerGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
+	//	gLock.Lock()
+	//	defer gLock.Unlock()
 
 	fmt.Println("onSerGetPacketLen packetLength:", packetLength)
 	return 0
@@ -111,7 +125,7 @@ func onSerGetPacketLen(peerConn *zzcommon.PeerConn, packetLength int) (ret int) 
 
 //服务端消息
 //返回ERROR_DISCONNECT_PEER断开服务端
-func onSerPacket(peerConn *zzcommon.PeerConn, packetLength int) (ret int) {
+func onSerPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -123,6 +137,17 @@ func main() {
 	rand.Seed(time.Now().Unix())
 
 	fmt.Println("server runing...", time.Now())
+
+	///////////////////////////////////////////////////////////////////
+	//测试
+	var protoHead zzcommon.ProtoHead_t
+	//	peerConn.RecvBuf
+	b := []byte{0x00, 0x00, 0x03, 0xe8}
+	b_buf := bytes.NewBuffer(b)
+
+	binary.Read(b_buf, binary.LittleEndian, &protoHead.PacketLength)
+	fmt.Println(protoHead.PacketLength)
+	///////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	{
@@ -150,22 +175,22 @@ func main() {
 	}
 
 	//////////////////////////////////////////////////////////////////
-	//phome sms
-	{
-		err := ict_phone_sms.GphoneSms.Init()
-		if nil != err {
-			fmt.Println("######ict_phone_sms.GphoneSms.Init()")
-			return
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////
 	//作为HTTP SERVER
 	{
+		//phome sms
+		{
+			err := ict_phone_sms.GphoneSms.Init()
+			if nil != err {
+				fmt.Println("######ict_phone_sms.GphoneSms.Init()")
+				return
+			}
+		}
+
 		gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
 		gHttpServer.AddHandler(ict_login.LoginPattern, ict_login.LoginHttpHandler)
 
-		{ //启动手机注册功能
+		//启动手机注册功能
+		{
 			err := ict_account.GphoneSmsRegister.Init()
 			if nil != err {
 				fmt.Println("错误ict_account.GphoneSmsRegister.Init()")
@@ -220,19 +245,8 @@ func main() {
 	}
 
 	//////////////////////////////////////////////////////////////////
-	//定时器
-	zztimer.Second(1, timerSecondTest)
-	fmt.Println("OK")
-	for {
-		time.Sleep(10 * time.Second)
-		gLock.Lock()
-		gLock.Unlock()
-	}
-
-	//////////////////////////////////////////////////////////////////
 	//做为服务端
-	//设置回调函数
-	{
+	{ //设置回调函数
 		gTcpServer.OnInit = onInit
 		gTcpServer.OnFini = onFini
 		gTcpServer.OnCliConnClosed = onCliConnClosed
@@ -244,11 +258,21 @@ func main() {
 		delay := true
 		ip := ict_cfg.Gbench.FileIni.Get("server", "ip", "")
 		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("server", "port", "0"))
-		packetLengthMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("common", "packet_length_max", "81920"))
+		gTcpServer.PacketLengthMax = zzcommon.StringToUint32(ict_cfg.Gbench.FileIni.Get("common", "packet_length_max", "81920"))
 		str_num_cpu := strconv.Itoa(runtime.NumCPU())
 		goProcessMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("common", "go_process_max", str_num_cpu))
 		runtime.GOMAXPROCS(goProcessMax)
-		go gTcpServer.Run(ip, port, packetLengthMax, delay)
+		go gTcpServer.Run(ip, port, delay)
+	}
+
+	//////////////////////////////////////////////////////////////////
+	//定时器
+	zztimer.Second(1, timerSecondTest)
+	fmt.Println("OK")
+	for {
+		time.Sleep(10 * time.Second)
+		gLock.Lock()
+		gLock.Unlock()
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -259,7 +283,7 @@ func main() {
 	//////////////////////////////////////////////////////////////////
 	//做为客户端
 	{
-		var gzztcpClient zztcp.Client
+		var gzztcpClient zztcp.Client_t
 		gzztcpClient.OnSerConn = onSerConn
 		gzztcpClient.OnSerConnClosed = onSerConnClosed
 		gzztcpClient.OnSerGetPacketLen = onSerGetPacketLen

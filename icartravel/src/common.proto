@@ -115,13 +115,6 @@ message user_t
 	optional uint32 last_logout_time = 3;//下线时间
 }
 
-//头像
-message head_t
-{
-	optional string face = 1;//脸id
-	optional uint32 frame = 2;//框ID
-}
-
 //事件
 message event_t
 {
@@ -138,11 +131,5 @@ message item_t
 {
 	optional uint32 id = 1;//ID
 	optional uint32 cnt = 3;//数量
-}
-
-//道具,配置表
-message item_cfg_t
-{
-	optional uint32 id = 1;//ID
 }
 

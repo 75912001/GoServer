@@ -31,7 +31,7 @@ import (
 )
 
 //加载文件
-func (p *Ini) Load(path string) (err error) {
+func (p *Ini_t) Load(path string) (err error) {
 	p.init()
 
 	file, err := os.Open(path)
@@ -73,7 +73,7 @@ func (p *Ini) Load(path string) (err error) {
 }
 
 //获取对应的值
-func (p *Ini) Get(section string, key string, defaultValue string) (value string) {
+func (p *Ini_t) Get(section string, key string, defaultValue string) (value string) {
 	sectionValue, valid := p.sectionMap[section]
 	if valid {
 		keyValue, valid := sectionValue[key]
@@ -88,12 +88,12 @@ type key_map map[string]string
 type section_map map[string]key_map
 
 //ini文件
-type Ini struct {
+type Ini_t struct {
 	sectionMap section_map //存取配置文件
 }
 
 //加载文件到内存中
-func (p *Ini) load(section string, key string, value string) {
+func (p *Ini_t) load(section string, key string, value string) {
 	_, valid := p.sectionMap[section]
 	if valid {
 		p.sectionMap[section][key] = value
@@ -105,6 +105,6 @@ func (p *Ini) load(section string, key string, value string) {
 }
 
 //初始化
-func (p *Ini) init() {
+func (p *Ini_t) init() {
 	p.sectionMap = make(section_map)
 }

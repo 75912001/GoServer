@@ -7,7 +7,7 @@ import (
 )
 
 //己方作为客户端
-type Client struct {
+type Client_t struct {
 	Conn           redis.Conn
 	redisIp        string
 	redisPort      uint16
@@ -15,7 +15,7 @@ type Client struct {
 }
 
 //连接
-func (p *Client) Connect(ip string, port uint16, redisDatabases int) (err error) {
+func (p *Client_t) Connect(ip string, port uint16, redisDatabases int) (err error) {
 	p.redisIp = ip
 	p.redisPort = port
 	p.redisDatabases = redisDatabases

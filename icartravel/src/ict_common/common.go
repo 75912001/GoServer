@@ -4,4 +4,4 @@ import (
 	"zzredis"
 )
 
-var GRedisClient zzredis.Client
+var GRedisClient zzredis.Client_t

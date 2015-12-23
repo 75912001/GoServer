@@ -19,5 +19,5 @@ func WeatherHttpHandler(w http.ResponseWriter, req *http.Request) {
 	time.Sleep(10 * time.Second)
 }
 
-type Weather struct {
+type Weather_t struct {
 }

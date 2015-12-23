@@ -1,3 +1,13 @@
+[server]
+ip=127.0.0.1
+port=11000
+
+[common]
+#set cpu max, def:cpu number
+go_process_max=100
+#send/recv max len(byte), def:81920
+packet_length_max=81920
+
 [redis_server]
 ip=127.0.0.1
 port=6379
@@ -52,19 +62,11 @@ redis_key_incr_uid=001_uid
 
 #end
 
-[server]
-ip=127.0.0.1
-port=11000
-
 [http_server]
 ip=127.0.0.1
 port=18000
 
-[common]
-#set cpu max, def:cpu number
-go_process_max=100
-#send/recv max len(byte), def:81920
-packet_length_max=81920
+
 
 
 #登录

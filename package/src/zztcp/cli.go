@@ -8,30 +8,30 @@ import (
 )
 
 //服务端连接建立
-type ON_SER_CONN func(peerConn *zzcommon.PeerConn) int
+type ON_SER_CONN func(peerConn *zzcommon.PeerConn_t) int
 
 //服务端连接关闭
-type ON_SER_CONN_CLOSED func(peerConn *zzcommon.PeerConn) int
+type ON_SER_CONN_CLOSED func(peerConn *zzcommon.PeerConn_t) int
 
 //获取消息的长度,0表示消息还未接受完成,
 //ERROR_DISCONNECT_PEER表示长度有误,服务端断开
-type ON_SER_GET_PACKET_LEN func(peerConn *zzcommon.PeerConn, packetLength int) int
+type ON_SER_GET_PACKET_LEN func(peerConn *zzcommon.PeerConn_t, packetLength int) int
 
 //服务端消息
 //返回ERROR_DISCONNECT_PEER断开服务端
-type ON_SER_PACKET func(peerConn *zzcommon.PeerConn, packetLength int) int
+type ON_SER_PACKET func(peerConn *zzcommon.PeerConn_t, packetLength int) int
 
 //己方作为客户端
-type Client struct {
+type Client_t struct {
 	OnSerConn         ON_SER_CONN
 	OnSerConnClosed   ON_SER_CONN_CLOSED
 	OnSerGetPacketLen ON_SER_GET_PACKET_LEN
 	OnSerPacket       ON_SER_PACKET
-	PeerConn          zzcommon.PeerConn
+	PeerConn          zzcommon.PeerConn_t
 }
 
 //连接
-func (p *Client) Connect(ip string, port uint16, recvBufMax int) (err error) {
+func (p *Client_t) Connect(ip string, port uint16, recvBufMax int) (err error) {
 	var addr = ip + ":" + strconv.Itoa(int(port))
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
 	if nil != err {
@@ -47,8 +47,8 @@ func (p *Client) Connect(ip string, port uint16, recvBufMax int) (err error) {
 	return err
 }
 
-func (p *Client) recv(recvBufMax int) {
-	var peerConn zzcommon.PeerConn
+func (p *Client_t) recv(recvBufMax int) {
+	var peerConn zzcommon.PeerConn_t
 	peerConn.Conn = p.PeerConn.Conn
 	p.OnSerConn(&peerConn)
 	defer p.PeerConn.Conn.Close()

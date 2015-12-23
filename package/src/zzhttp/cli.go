@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type Client struct {
+type Client_t struct {
 	Result []byte
 }
 
@@ -17,7 +17,7 @@ type Client struct {
 //	Price       float32
 //}
 
-func (p *Client) Get(url string) (err error) {
+func (p *Client_t) Get(url string) (err error) {
 	resp, err := http.Get(url)
 	if nil != err {
 		fmt.Println("######HttpClient.Get err:", err, url)

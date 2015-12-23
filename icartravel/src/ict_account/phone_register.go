@@ -11,7 +11,7 @@ import (
 	"zzcommon"
 )
 
-var GphoneRegister phoneRegister
+var GphoneRegister phoneRegister_t
 
 ////////////////////////////////////////////////////////////////////////////////
 //手机注册
@@ -117,17 +117,18 @@ func PhoneRegisterHttpHandler(w http.ResponseWriter, req *http.Request) {
 	{ //删除有短信验证码记录 来自redis
 		GphoneSmsRegister.Del(recNum)
 	}
+
 	w.Write([]byte(strconv.Itoa(zzcommon.SUCC)))
 }
 
-type phoneRegister struct {
+type phoneRegister_t struct {
 	Pattern string
 	//redis
 	redisKeyPerfix string
 }
 
 //初始化
-func (p *phoneRegister) Init() (err error) {
+func (p *phoneRegister_t) Init() (err error) {
 	const benchFileSection string = "ict_account"
 	p.Pattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "PhoneRegisterHttpHandlerPattern", " ")
 	//redis
@@ -136,12 +137,12 @@ func (p *phoneRegister) Init() (err error) {
 }
 
 //生成redis的键值
-func (p *phoneRegister) genRedisKey(key string) (value string) {
+func (p *phoneRegister_t) genRedisKey(key string) (value string) {
 	return p.redisKeyPerfix + key
 }
 
 //手机号是否绑定
-func (p *phoneRegister) IsPhoneNumBind(recNum string) (bind bool, err error) {
+func (p *phoneRegister_t) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	commandName := "get"
 	key := p.genRedisKey(recNum)
 	reply, err := ict_common.GRedisClient.Conn.Do(commandName, key)
@@ -156,7 +157,7 @@ func (p *phoneRegister) IsPhoneNumBind(recNum string) (bind bool, err error) {
 	return true, err
 }
 
-func (p *phoneRegister) Uid(recNum string) (uid string, err error) {
+func (p *phoneRegister_t) Uid(recNum string) (uid string, err error) {
 	commandName := "get"
 	key := p.genRedisKey(recNum)
 	reply, err := ict_common.GRedisClient.Conn.Do(commandName, key)
@@ -169,7 +170,7 @@ func (p *phoneRegister) Uid(recNum string) (uid string, err error) {
 	return uid, err
 }
 
-func (p *phoneRegister) Insert(recNum string, uid string) (err error) {
+func (p *phoneRegister_t) Insert(recNum string, uid string) (err error) {
 	//插入用户数据
 	commandName := "set"
 	key := p.genRedisKey(recNum)

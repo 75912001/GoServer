@@ -7,7 +7,7 @@ import (
 	"zzcommon"
 )
 
-var Gbase base
+var Gbase base_t
 
 const (
 	md5_pwd1_suffix string = "icartravel"
@@ -20,13 +20,13 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 //用户注册信息
 
-type base struct {
+type base_t struct {
 	//redis
 	redisKeyPerfix string
 }
 
 //初始化
-func (p *base) Init() (err error) {
+func (p *base_t) Init() (err error) {
 	const benchFileSection string = "ict_user"
 	//redis
 	p.redisKeyPerfix = ict_cfg.Gbench.FileIni.Get(benchFileSection, "redis_key_perfix_base", " ")
@@ -35,11 +35,11 @@ func (p *base) Init() (err error) {
 }
 
 //生成redis的键值
-func (p *base) genRedisKey(key string) (value string) {
+func (p *base_t) genRedisKey(key string) (value string) {
 	return p.redisKeyPerfix + key
 }
 
-func (p *base) Insert(uid string, recNum string, pwd string) (err error) {
+func (p *base_t) Insert(uid string, recNum string, pwd string) (err error) {
 	fmt.Println(uid, recNum, pwd)
 	{ //注册用户。。。
 		//md5

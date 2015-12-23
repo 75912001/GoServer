@@ -11,7 +11,7 @@ import (
 	"zzcommon"
 )
 
-var GphoneSmsChangePwd phoneSmsChangePwd
+var GphoneSmsChangePwd phoneSmsChangePwd_t
 
 ////////////////////////////////////////////////////////////////////////////////
 //请求改变密码,短信码
@@ -98,13 +98,13 @@ func PhoneSmsChangePwdHttpHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(strconv.Itoa(zzcommon.SUCC)))
 }
 
-type phoneSmsChangePwd struct {
+type phoneSmsChangePwd_t struct {
 	Pattern string
 	//redis
 	redisKeyPerfix string
 }
 
-func (p *phoneSmsChangePwd) IsExist(recNum string) (value bool) {
+func (p *phoneSmsChangePwd_t) IsExist(recNum string) (value bool) {
 	//检查是否有记录
 	commandName := "get"
 	key := p.genRedisKey(recNum)
@@ -120,7 +120,7 @@ func (p *phoneSmsChangePwd) IsExist(recNum string) (value bool) {
 	return true
 }
 
-func (p *phoneSmsChangePwd) InsertSmsCode(recNum string, smsParamCode string) (err error) {
+func (p *phoneSmsChangePwd_t) InsertSmsCode(recNum string, smsParamCode string) (err error) {
 	//设置到redis中
 	commandName := "setex"
 	key := p.genRedisKey(recNum)
@@ -134,7 +134,7 @@ func (p *phoneSmsChangePwd) InsertSmsCode(recNum string, smsParamCode string) (e
 }
 
 //初始化
-func (p *phoneSmsChangePwd) Init() (err error) {
+func (p *phoneSmsChangePwd_t) Init() (err error) {
 	const benchFileSection string = "ict_account"
 	p.Pattern = ict_cfg.Gbench.FileIni.Get(benchFileSection, "PhoneSmsChangePwdHttpHandlerPattern", " ")
 	//redis
@@ -143,11 +143,11 @@ func (p *phoneSmsChangePwd) Init() (err error) {
 }
 
 //生成redis的键值
-func (p *phoneSmsChangePwd) genRedisKey(key string) (value string) {
+func (p *phoneSmsChangePwd_t) genRedisKey(key string) (value string) {
 	return p.redisKeyPerfix + key
 }
 
-func (p *phoneSmsChangePwd) IsExistSmsCode(recNum string, smsCode string) (exist bool, err error) {
+func (p *phoneSmsChangePwd_t) IsExistSmsCode(recNum string, smsCode string) (exist bool, err error) {
 	//检查是否有短信验证码记录
 	commandName := "get"
 	key := p.genRedisKey(recNum)
@@ -167,7 +167,7 @@ func (p *phoneSmsChangePwd) IsExistSmsCode(recNum string, smsCode string) (exist
 	return true, err
 }
 
-func (p *phoneSmsChangePwd) Del(recNum string) {
+func (p *phoneSmsChangePwd_t) Del(recNum string) {
 	//删除有短信验证码记录
 	commandName := "del"
 	key := p.genRedisKey(recNum)

@@ -20,14 +20,14 @@ const (
 	ERROR int = -1
 	//断开对方的连接
 	ERROR_DISCONNECT_PEER int = -2
-	
-	ERROR_SYS int = 1 //系统错误
-	ERROR_PARAM    int = 2 //参数错误
+
+	ERROR_SYS               int = 1     //系统错误
+	ERROR_PARAM             int = 2     //参数错误
 	ERROR_SMS_SENDING       int = 10000 //短信已发出,请收到后重试
 	ERROR_SMS_REGISTER_CODE int = 10001 // 短信注册码失败,请重新请求短信注册
 	ERROR_USER_EXIST        int = 10002 //用户已存在
 	ERROR_PHONE_NUM_BIND    int = 10003 //手机号已绑定
-	ERROR_PHONE_NUM_NO_BIND    int = 10004 //手机号未绑定
+	ERROR_PHONE_NUM_NO_BIND int = 10004 //手机号未绑定
 )
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ type USER_ID uint32
 type RESULT_ID uint32
 
 //消息包头
-type ProtoHead struct {
+type ProtoHead_t struct {
 	PacketLength PACKET_LENGTH //总包长度
 	MessageId    MESSAGE_ID    //消息号
 	SessionId    SESSION_ID    //会话id
@@ -54,20 +54,35 @@ const (
 
 //////////////////////////////////////////////////////////////////////////////
 //对端连接信息
-type PeerConn struct {
-	Conn    *net.TCPConn //连接
-	RecvBuf []byte
+type PeerConn_t struct {
+	Conn          *net.TCPConn //连接
+	RecvBuf       []byte
+	RecvProtoHead ProtoHead_t
 }
 
-func (p *PeerConn) Send(messageId MESSAGE_ID, req proto.Message, sessionId SESSION_ID, userId USER_ID, resultId RESULT_ID) (err error) {
+//解析协议包头
+func (p *PeerConn_t) ParseProtoHead() {
+	buf1 := bytes.NewBuffer(p.RecvBuf[0:4])
+	buf2 := bytes.NewBuffer(p.RecvBuf[4:8])
+	buf3 := bytes.NewBuffer(p.RecvBuf[8:12])
+	buf4 := bytes.NewBuffer(p.RecvBuf[12:16])
+	buf5 := bytes.NewBuffer(p.RecvBuf[16:ProtoHeadLength])
+
+	binary.Read(buf1, binary.LittleEndian, &p.RecvProtoHead.PacketLength)
+	binary.Read(buf2, binary.LittleEndian, &p.RecvProtoHead.MessageId)
+	binary.Read(buf3, binary.LittleEndian, &p.RecvProtoHead.SessionId)
+	binary.Read(buf4, binary.LittleEndian, &p.RecvProtoHead.UserId)
+	binary.Read(buf5, binary.LittleEndian, &p.RecvProtoHead.ResultId)
+}
+
+func (p *PeerConn_t) Send(req proto.Message, messageId MESSAGE_ID, sessionId SESSION_ID, userId USER_ID, resultId RESULT_ID) (err error) {
 	reqBuf, err := proto.Marshal(req)
 	if nil != err {
 		fmt.Printf("######proto.Marshal err:", err)
 		return err
 	}
 	var reqBufLen = uint32(len(reqBuf))
-	var sendBufAllLength uint32
-	sendBufAllLength = reqBufLen + ProtoHeadLength
+	var sendBufAllLength uint32 = reqBufLen + ProtoHeadLength
 
 	headBuf := new(bytes.Buffer)
 	var data = []interface{}{

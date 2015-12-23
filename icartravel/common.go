@@ -7,7 +7,7 @@ import (
 )
 
 var gLock = &sync.Mutex{}
-var gHttpClientWeather zzhttp.Client
-var gHttpServer zzhttp.Server
+var gHttpClientWeather zzhttp.Client_t
+var gHttpServer zzhttp.Server_t
 
-var gTcpServer zztcp.Server
+var gTcpServer zztcp.Server_t

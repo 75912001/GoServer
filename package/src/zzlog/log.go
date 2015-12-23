@@ -1,40 +1,40 @@
 package zzlog
 
-type Log struct {
+type Log_t struct {
 }
 
 //踪迹日志
-func (p *Log) Trace() {
+func (p *Log_t) Trace() {
 
 }
 
 //调试日志
-func (p *Log) Debug() {
+func (p *Log_t) Debug() {
 
 }
 
 //报告日志
-func (p *Log) Info() {
+func (p *Log_t) Info() {
 }
 
 //公告日志
-func (p *Log) Notice() {
+func (p *Log_t) Notice() {
 }
 
 //警告日志
-func (p *Log) Warning() {
+func (p *Log_t) Warning() {
 
 }
 
 //错误日志
-func (p *Log) Error() {
+func (p *Log_t) Error() {
 
 }
 
 //临界日志
-func (p *Log) Crit() {
+func (p *Log_t) Crit() {
 }
 
 //不可用日志
-func (p *Log) Emerg() {
+func (p *Log_t) Emerg() {
 }
