@@ -1,5 +1,5 @@
-package game_msg;
-import "common.proto";
+package pb_square;
+import "pb_common.proto";
 
 message login_msg//1,0x10101#登录
 {
@@ -28,10 +28,9 @@ message load_user_msg//1,0x10103#获取角色登录信息
 
 message load_user_msg_res
 {
-	optional common_msg.user_t user = 1;//用户信息
-	repeated common_msg.event_t events = 2;//事件信息
-	repeated common_msg.item_t items = 6;//道具信息
-	optional common_msg.head_t head = 24;//头像信息
+	optional pb_common.user_t user = 1;//用户信息
+	repeated pb_common.event_t events = 2;//事件信息
+	repeated pb_common.item_t items = 6;//道具信息
 }
 
 message login_msg_end//0,0x101ff#登录消息最大值
@@ -66,7 +65,7 @@ message notify_chat_msg_res//0,0x10302#通知玩家聊天内容
 	////////////////////////////////////////////////
 message update_event_msg//1,0x10601#更新客户端事件
 {
-	optional common_msg.event_t event = 1;
+	optional pb_common.event_t event = 1;
 }
 
 message update_event_msg_res
@@ -82,7 +81,7 @@ message notify_item_msg//0,0x11001#通知道具变化
 
 message notify_item_msg_res
 {
-	optional common_msg.item_t items = 1;//物品变更
+	optional pb_common.item_t items = 1;//物品变更
 }
 
 	////////////////////////////////////////////////
