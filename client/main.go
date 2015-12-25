@@ -106,6 +106,16 @@ func main() {
 				Account:  proto.String("17721027200"),
 				Password: proto.String("7883df2788b1098886f99b0a7563a5a8"),
 			}
+			fmt.Println(111)
+			gzztcpClient.PeerConn.Send(req, 0x100101, 0, 0, 0)
+		}
+		//登录
+		{
+			req := &pb_square.LoginMsg{
+				Account:  proto.String("17721027200"),
+				Password: proto.String("7883df2788b1098886f99b0a7563a5a8"),
+			}
+			fmt.Println(222)
 			gzztcpClient.PeerConn.Send(req, 0x100101, 0, 0, 0)
 		}
 	}

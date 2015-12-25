@@ -2,10 +2,7 @@
 package main
 
 import (
-	//	"encoding/binary"
 	"fmt"
-	//	"github.com/golang/protobuf/proto"
-	//	"bytes"
 	"ict_account"
 	"ict_cfg"
 	"ict_common"
@@ -46,7 +43,7 @@ func onCliConn(peerConn *zzcommon.PeerConn_t) (ret int) {
 
 	var user ict_user.User_t
 	user.PeerConn = peerConn
-	ict_user.GuserMgr.UserMap[user.PeerConn] = user
+	ict_user.GuserMgr.UserMap[user.PeerConn] = &user
 
 	fmt.Println("onCliConn")
 	return 0
@@ -62,42 +59,32 @@ func onCliConnClosed(peerConn *zzcommon.PeerConn_t) (ret int) {
 }
 
 func onCliGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
-	//	fmt.Println("onCliGetPacketLen")
+	//fmt.Println("onCliGetPacketLen")
 	if uint32(packetLength) < zzcommon.ProtoHeadLength { //长度不足一个包头中的长度大小
 		return 0
 	}
-
 	peerConn.ParseProtoHeadPacketLength()
 	if uint32(peerConn.RecvProtoHead.PacketLength) < zzcommon.ProtoHeadLength {
 		return zzcommon.ERROR_DISCONNECT_PEER
 	}
-	//	fmt.Println(peerConn.RecvProtoHead)
 	if gTcpServer.PacketLengthMax <= uint32(peerConn.RecvProtoHead.PacketLength) {
 		return zzcommon.ERROR_DISCONNECT_PEER
 	}
 	if packetLength < int(peerConn.RecvProtoHead.PacketLength) {
 		return 0
 	}
+	fmt.Println("onCliGetPacketLen:", peerConn.RecvProtoHead.PacketLength)
 	return int(peerConn.RecvProtoHead.PacketLength)
 }
 
-func onRecv(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
-	PacketLength := peerConn.RecvProtoHead.PacketLength //总包长度
-	MessageId := peerConn.RecvProtoHead.MessageId       //消息号
-	SessionId := peerConn.RecvProtoHead.SessionId       //会话id
-	UserId := peerConn.RecvProtoHead.UserId             //用户id
-	ResultId := peerConn.RecvProtoHead.ResultId         //结果id
-	return 0
-}
 func onCliPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
 	fmt.Println("onCliPacket")
 	peerConn.ParseProtoHead()
-	fmt.Println(peerConn.RecvProtoHead)
 
-	ret := onRecv(peerConn, packetLength)
+	ret = onRecv(peerConn, packetLength)
 	return ret
 }
 
@@ -142,8 +129,24 @@ func onSerPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	return 0
 }
 
+//////////////////////////////////////////////////////////////////////
+//测试
+
+func OnLoginMsg(user *ict_user.User_t) (ret int) {
+	fmt.Println("OnLoginMsg")
+	fmt.Println(user)
+	user.Account = "abc"
+	return ret
+}
+
 func main() {
 	rand.Seed(time.Now().Unix())
+
+	ret := initPbFun()
+	if zzcommon.SUCC != ret {
+		fmt.Println("######initPbFun")
+		return
+	}
 
 	fmt.Println("server runing...", time.Now())
 

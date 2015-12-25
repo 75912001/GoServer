@@ -125,6 +125,4 @@ func (p *Server_t) handleConnection(conn *net.TCPConn) {
 			break
 		}
 	}
-	peerConn.RecvBuf = nil
-	peerConn.Conn = nil
 }

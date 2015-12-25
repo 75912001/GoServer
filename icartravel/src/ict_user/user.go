@@ -12,7 +12,7 @@ type User_t struct {
 	Uid      zzcommon.USER_ID
 }
 
-type USER_MAP map[*zzcommon.PeerConn_t]User_t
+type USER_MAP map[*zzcommon.PeerConn_t]*User_t
 
 type userMgr_t struct {
 	UserMap USER_MAP

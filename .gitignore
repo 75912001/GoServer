@@ -46,3 +46,4 @@ icartravel/pkg/windows_amd64/ict_user.a
 icartravel/pkg/windows_amd64/ict_common.a
 icartravel/pkg/windows_amd64/ict_phone_sms.a
 client/client.exe
+package/pkg/windows_amd64/zztcp.a
