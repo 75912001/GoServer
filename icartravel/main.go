@@ -2,10 +2,10 @@
 package main
 
 import (
-	"encoding/binary"
+	//	"encoding/binary"
 	"fmt"
 	//	"github.com/golang/protobuf/proto"
-	"bytes"
+	//	"bytes"
 	"ict_account"
 	"ict_cfg"
 	"ict_common"
@@ -63,33 +63,42 @@ func onCliConnClosed(peerConn *zzcommon.PeerConn_t) (ret int) {
 
 func onCliGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	//	fmt.Println("onCliGetPacketLen")
-	if (uint32)(packetLength) < zzcommon.ProtoHeadLength { //长度不足一个包头中的长度大小
+	if uint32(packetLength) < zzcommon.ProtoHeadLength { //长度不足一个包头中的长度大小
 		return 0
 	}
-	peerConn.ParseProtoHead()
-	if (uint32)(peerConn.RecvProtoHead.PacketLength) < zzcommon.ProtoHeadLength {
+
+	peerConn.ParseProtoHeadPacketLength()
+	if uint32(peerConn.RecvProtoHead.PacketLength) < zzcommon.ProtoHeadLength {
 		return zzcommon.ERROR_DISCONNECT_PEER
 	}
-	fmt.Print(peerConn.RecvProtoHead)
-	if gTcpServer.PacketLengthMax <= (uint32)(peerConn.RecvProtoHead.PacketLength) {
+	//	fmt.Println(peerConn.RecvProtoHead)
+	if gTcpServer.PacketLengthMax <= uint32(peerConn.RecvProtoHead.PacketLength) {
 		return zzcommon.ERROR_DISCONNECT_PEER
 	}
 	if packetLength < int(peerConn.RecvProtoHead.PacketLength) {
 		return 0
 	}
-	fmt.Println(peerConn)
 	return int(peerConn.RecvProtoHead.PacketLength)
 }
 
+func onRecv(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
+	PacketLength := peerConn.RecvProtoHead.PacketLength //总包长度
+	MessageId := peerConn.RecvProtoHead.MessageId       //消息号
+	SessionId := peerConn.RecvProtoHead.SessionId       //会话id
+	UserId := peerConn.RecvProtoHead.UserId             //用户id
+	ResultId := peerConn.RecvProtoHead.ResultId         //结果id
+	return 0
+}
 func onCliPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	//fmt.Println("on_cli_conn")
-	//	peer_conn.conn.Write("123")
-	//	peer_conn.Conn.Write([]byte("123"))
+	fmt.Println("onCliPacket")
+	peerConn.ParseProtoHead()
+	fmt.Println(peerConn.RecvProtoHead)
 
-	return 0
+	ret := onRecv(peerConn, packetLength)
+	return ret
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,14 +149,8 @@ func main() {
 
 	///////////////////////////////////////////////////////////////////
 	//测试
-	var protoHead zzcommon.ProtoHead_t
-	//	peerConn.RecvBuf
-	b := []byte{0x00, 0x00, 0x03, 0xe8}
-	b_buf := bytes.NewBuffer(b)
-
-	binary.Read(b_buf, binary.LittleEndian, &protoHead.PacketLength)
-	fmt.Println(protoHead.PacketLength)
 	///////////////////////////////////////////////////////////////////
+
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	{

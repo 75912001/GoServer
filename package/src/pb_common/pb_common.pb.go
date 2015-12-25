@@ -37,14 +37,14 @@ const (
 	E_ERROR_CODE_EEC_ITEM_CNT           E_ERROR_CODE = 3
 	E_ERROR_CODE_EEC_ITEM_INEXISTENT    E_ERROR_CODE = 4
 	E_ERROR_CODE_EEC_USER_INEXISTENT    E_ERROR_CODE = 5
-	E_ERROR_CODE_EEC_ROLE_EXISTENT_ROLE E_ERROR_CODE = 6
+	E_ERROR_CODE_EEC_ROLE_EXISTENT      E_ERROR_CODE = 6
 	E_ERROR_CODE_EEC_ACCOUNT_INEXISTENT E_ERROR_CODE = 7
 	E_ERROR_CODE_EEC_APPROVED_NO        E_ERROR_CODE = 8
 	E_ERROR_CODE_EEC_EVENT_LIMIT        E_ERROR_CODE = 9
 	E_ERROR_CODE_EEC_USER_LEVEL         E_ERROR_CODE = 10
-	E_ERROR_CODE_EEC_PASSWORD_ERROR     E_ERROR_CODE = 14
+	E_ERROR_CODE_EEC_PASSWORD           E_ERROR_CODE = 14
 	E_ERROR_CODE_EEC_CHAT_LEN_MAX       E_ERROR_CODE = 15
-	E_ERROR_CODE_EEC_ERROR_MYSQL        E_ERROR_CODE = 9000
+	E_ERROR_CODE_EEC_MYSQL              E_ERROR_CODE = 9000
 	E_ERROR_CODE_EEC_MAX                E_ERROR_CODE = 10000
 )
 
@@ -55,14 +55,14 @@ var E_ERROR_CODE_name = map[int32]string{
 	3:     "EEC_ITEM_CNT",
 	4:     "EEC_ITEM_INEXISTENT",
 	5:     "EEC_USER_INEXISTENT",
-	6:     "EEC_ROLE_EXISTENT_ROLE",
+	6:     "EEC_ROLE_EXISTENT",
 	7:     "EEC_ACCOUNT_INEXISTENT",
 	8:     "EEC_APPROVED_NO",
 	9:     "EEC_EVENT_LIMIT",
 	10:    "EEC_USER_LEVEL",
-	14:    "EEC_PASSWORD_ERROR",
+	14:    "EEC_PASSWORD",
 	15:    "EEC_CHAT_LEN_MAX",
-	9000:  "EEC_ERROR_MYSQL",
+	9000:  "EEC_MYSQL",
 	10000: "EEC_MAX",
 }
 var E_ERROR_CODE_value = map[string]int32{
@@ -72,14 +72,14 @@ var E_ERROR_CODE_value = map[string]int32{
 	"EEC_ITEM_CNT":           3,
 	"EEC_ITEM_INEXISTENT":    4,
 	"EEC_USER_INEXISTENT":    5,
-	"EEC_ROLE_EXISTENT_ROLE": 6,
+	"EEC_ROLE_EXISTENT":      6,
 	"EEC_ACCOUNT_INEXISTENT": 7,
 	"EEC_APPROVED_NO":        8,
 	"EEC_EVENT_LIMIT":        9,
 	"EEC_USER_LEVEL":         10,
-	"EEC_PASSWORD_ERROR":     14,
+	"EEC_PASSWORD":           14,
 	"EEC_CHAT_LEN_MAX":       15,
-	"EEC_ERROR_MYSQL":        9000,
+	"EEC_MYSQL":              9000,
 	"EEC_MAX":                10000,
 }
 
@@ -167,37 +167,6 @@ func (x *USER_EVENT_TYPE) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// 平台类型
-type E_PLATFORM int32
-
-const (
-	E_PLATFORM_E_PLATFORM_TEST E_PLATFORM = 0
-)
-
-var E_PLATFORM_name = map[int32]string{
-	0: "E_PLATFORM_TEST",
-}
-var E_PLATFORM_value = map[string]int32{
-	"E_PLATFORM_TEST": 0,
-}
-
-func (x E_PLATFORM) Enum() *E_PLATFORM {
-	p := new(E_PLATFORM)
-	*p = x
-	return p
-}
-func (x E_PLATFORM) String() string {
-	return proto.EnumName(E_PLATFORM_name, int32(x))
-}
-func (x *E_PLATFORM) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_PLATFORM_value, data, "E_PLATFORM")
-	if err != nil {
-		return err
-	}
-	*x = E_PLATFORM(value)
-	return nil
-}
-
 // 聊天类型
 type E_CHAT_TYPE int32
 
@@ -270,14 +239,14 @@ func (x *E_MAIL_STATE) UnmarshalJSON(data []byte) error {
 type E_COMMON_VAL int32
 
 const (
-	E_COMMON_VAL_E_COMMON_FRIEND_CNT_MAX E_COMMON_VAL = 100
+	E_COMMON_VAL_E_COMMON_VAL_FRIEND_CNT_MAX E_COMMON_VAL = 100
 )
 
 var E_COMMON_VAL_name = map[int32]string{
-	100: "E_COMMON_FRIEND_CNT_MAX",
+	100: "E_COMMON_VAL_FRIEND_CNT_MAX",
 }
 var E_COMMON_VAL_value = map[string]int32{
-	"E_COMMON_FRIEND_CNT_MAX": 100,
+	"E_COMMON_VAL_FRIEND_CNT_MAX": 100,
 }
 
 func (x E_COMMON_VAL) Enum() *E_COMMON_VAL {
@@ -297,44 +266,10 @@ func (x *E_COMMON_VAL) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type E_USER_ONLINE_STATE int32
-
-const (
-	E_USER_ONLINE_STATE_E_FRIEND_STATE_OFFLINE E_USER_ONLINE_STATE = 0
-	E_USER_ONLINE_STATE_E_FRIEND_STATE_ONLINE  E_USER_ONLINE_STATE = 1
-)
-
-var E_USER_ONLINE_STATE_name = map[int32]string{
-	0: "E_FRIEND_STATE_OFFLINE",
-	1: "E_FRIEND_STATE_ONLINE",
-}
-var E_USER_ONLINE_STATE_value = map[string]int32{
-	"E_FRIEND_STATE_OFFLINE": 0,
-	"E_FRIEND_STATE_ONLINE":  1,
-}
-
-func (x E_USER_ONLINE_STATE) Enum() *E_USER_ONLINE_STATE {
-	p := new(E_USER_ONLINE_STATE)
-	*p = x
-	return p
-}
-func (x E_USER_ONLINE_STATE) String() string {
-	return proto.EnumName(E_USER_ONLINE_STATE_name, int32(x))
-}
-func (x *E_USER_ONLINE_STATE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_USER_ONLINE_STATE_value, data, "E_USER_ONLINE_STATE")
-	if err != nil {
-		return err
-	}
-	*x = E_USER_ONLINE_STATE(value)
-	return nil
-}
-
-// 返回的用户数据
+// 用户数据
 type UserT struct {
 	Uid              *uint32 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
 	Nick             *string `protobuf:"bytes,2,opt,name=nick" json:"nick,omitempty"`
-	LastLogoutTime   *uint32 `protobuf:"varint,3,opt,name=last_logout_time" json:"last_logout_time,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
@@ -354,13 +289,6 @@ func (m *UserT) GetNick() string {
 		return *m.Nick
 	}
 	return ""
-}
-
-func (m *UserT) GetLastLogoutTime() uint32 {
-	if m != nil && m.LastLogoutTime != nil {
-		return *m.LastLogoutTime
-	}
-	return 0
 }
 
 // 事件
@@ -444,9 +372,7 @@ func init() {
 	proto.RegisterType((*ItemT)(nil), "pb_common.item_t")
 	proto.RegisterEnum("pb_common.E_ERROR_CODE", E_ERROR_CODE_name, E_ERROR_CODE_value)
 	proto.RegisterEnum("pb_common.USER_EVENT_TYPE", USER_EVENT_TYPE_name, USER_EVENT_TYPE_value)
-	proto.RegisterEnum("pb_common.E_PLATFORM", E_PLATFORM_name, E_PLATFORM_value)
 	proto.RegisterEnum("pb_common.E_CHAT_TYPE", E_CHAT_TYPE_name, E_CHAT_TYPE_value)
 	proto.RegisterEnum("pb_common.E_MAIL_STATE", E_MAIL_STATE_name, E_MAIL_STATE_value)
 	proto.RegisterEnum("pb_common.E_COMMON_VAL", E_COMMON_VAL_name, E_COMMON_VAL_value)
-	proto.RegisterEnum("pb_common.E_USER_ONLINE_STATE", E_USER_ONLINE_STATE_name, E_USER_ONLINE_STATE_value)
 }

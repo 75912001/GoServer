@@ -11,29 +11,14 @@ It is generated from these files:
 It has these top-level messages:
 	LoginMsg
 	LoginMsgRes
-	CreateRoleMsg
-	CreateRoleMsgRes
-	LoadUserMsg
-	LoadUserMsgRes
-	LoginMsgEnd
-	ChatMsg
-	ChatMsgRes
-	NotifyChatMsgRes
-	UpdateEventMsg
-	UpdateEventMsgRes
-	NotifyItemMsg
-	NotifyItemMsgRes
-	SysInformationMsg
-	SysInformationMsgRes
-	SysNewDayMsg
-	SysNewDayMsgRes
+	SysTimeMsg
+	SysTimeMsgRes
 */
 package pb_square
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import "pb_common"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -41,22 +26,14 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type LoginMsg struct {
-	Platform         *uint32 `protobuf:"varint,1,opt,name=platform" json:"platform,omitempty"`
-	Account          *string `protobuf:"bytes,2,opt,name=account" json:"account,omitempty"`
-	Password         *string `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
+	Account          *string `protobuf:"bytes,2,opt,name=Account" json:"Account,omitempty"`
+	Password         *string `protobuf:"bytes,3,opt,name=Password" json:"Password,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *LoginMsg) Reset()         { *m = LoginMsg{} }
 func (m *LoginMsg) String() string { return proto.CompactTextString(m) }
 func (*LoginMsg) ProtoMessage()    {}
-
-func (m *LoginMsg) GetPlatform() uint32 {
-	if m != nil && m.Platform != nil {
-		return *m.Platform
-	}
-	return 0
-}
 
 func (m *LoginMsg) GetAccount() string {
 	if m != nil && m.Account != nil {
@@ -73,266 +50,43 @@ func (m *LoginMsg) GetPassword() string {
 }
 
 type LoginMsgRes struct {
-	HasRole          *uint32 `protobuf:"varint,1,opt,name=has_role" json:"has_role,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *LoginMsgRes) Reset()         { *m = LoginMsgRes{} }
 func (m *LoginMsgRes) String() string { return proto.CompactTextString(m) }
 func (*LoginMsgRes) ProtoMessage()    {}
 
-func (m *LoginMsgRes) GetHasRole() uint32 {
-	if m != nil && m.HasRole != nil {
-		return *m.HasRole
-	}
-	return 0
-}
-
-type CreateRoleMsg struct {
-	Nick             *string `protobuf:"bytes,1,opt,name=nick" json:"nick,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *CreateRoleMsg) Reset()         { *m = CreateRoleMsg{} }
-func (m *CreateRoleMsg) String() string { return proto.CompactTextString(m) }
-func (*CreateRoleMsg) ProtoMessage()    {}
-
-func (m *CreateRoleMsg) GetNick() string {
-	if m != nil && m.Nick != nil {
-		return *m.Nick
-	}
-	return ""
-}
-
-type CreateRoleMsgRes struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *CreateRoleMsgRes) Reset()         { *m = CreateRoleMsgRes{} }
-func (m *CreateRoleMsgRes) String() string { return proto.CompactTextString(m) }
-func (*CreateRoleMsgRes) ProtoMessage()    {}
-
-type LoadUserMsg struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *LoadUserMsg) Reset()         { *m = LoadUserMsg{} }
-func (m *LoadUserMsg) String() string { return proto.CompactTextString(m) }
-func (*LoadUserMsg) ProtoMessage()    {}
-
-type LoadUserMsgRes struct {
-	User             *pb_common.UserT    `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
-	Events           []*pb_common.EventT `protobuf:"bytes,2,rep,name=events" json:"events,omitempty"`
-	Items            []*pb_common.ItemT  `protobuf:"bytes,6,rep,name=items" json:"items,omitempty"`
-	XXX_unrecognized []byte              `json:"-"`
-}
-
-func (m *LoadUserMsgRes) Reset()         { *m = LoadUserMsgRes{} }
-func (m *LoadUserMsgRes) String() string { return proto.CompactTextString(m) }
-func (*LoadUserMsgRes) ProtoMessage()    {}
-
-func (m *LoadUserMsgRes) GetUser() *pb_common.UserT {
-	if m != nil {
-		return m.User
-	}
-	return nil
-}
-
-func (m *LoadUserMsgRes) GetEvents() []*pb_common.EventT {
-	if m != nil {
-		return m.Events
-	}
-	return nil
-}
-
-func (m *LoadUserMsgRes) GetItems() []*pb_common.ItemT {
-	if m != nil {
-		return m.Items
-	}
-	return nil
-}
-
-type LoginMsgEnd struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *LoginMsgEnd) Reset()         { *m = LoginMsgEnd{} }
-func (m *LoginMsgEnd) String() string { return proto.CompactTextString(m) }
-func (*LoginMsgEnd) ProtoMessage()    {}
-
-// //////////////////////////////////////////////
-// 聊天
-// //////////////////////////////////////////////
-type ChatMsg struct {
-	Uid              *uint32 `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	Msg              *string `protobuf:"bytes,3,opt,name=msg" json:"msg,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *ChatMsg) Reset()         { *m = ChatMsg{} }
-func (m *ChatMsg) String() string { return proto.CompactTextString(m) }
-func (*ChatMsg) ProtoMessage()    {}
-
-func (m *ChatMsg) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *ChatMsg) GetMsg() string {
-	if m != nil && m.Msg != nil {
-		return *m.Msg
-	}
-	return ""
-}
-
-type ChatMsgRes struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *ChatMsgRes) Reset()         { *m = ChatMsgRes{} }
-func (m *ChatMsgRes) String() string { return proto.CompactTextString(m) }
-func (*ChatMsgRes) ProtoMessage()    {}
-
-type NotifyChatMsgRes struct {
-	Uid              *uint32 `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	Msg              *string `protobuf:"bytes,4,opt,name=msg" json:"msg,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *NotifyChatMsgRes) Reset()         { *m = NotifyChatMsgRes{} }
-func (m *NotifyChatMsgRes) String() string { return proto.CompactTextString(m) }
-func (*NotifyChatMsgRes) ProtoMessage()    {}
-
-func (m *NotifyChatMsgRes) GetUid() uint32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *NotifyChatMsgRes) GetMsg() string {
-	if m != nil && m.Msg != nil {
-		return *m.Msg
-	}
-	return ""
-}
-
-// //////////////////////////////////////////////
-// 事件
-// //////////////////////////////////////////////
-type UpdateEventMsg struct {
-	Event            *pb_common.EventT `protobuf:"bytes,1,opt,name=event" json:"event,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *UpdateEventMsg) Reset()         { *m = UpdateEventMsg{} }
-func (m *UpdateEventMsg) String() string { return proto.CompactTextString(m) }
-func (*UpdateEventMsg) ProtoMessage()    {}
-
-func (m *UpdateEventMsg) GetEvent() *pb_common.EventT {
-	if m != nil {
-		return m.Event
-	}
-	return nil
-}
-
-type UpdateEventMsgRes struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *UpdateEventMsgRes) Reset()         { *m = UpdateEventMsgRes{} }
-func (m *UpdateEventMsgRes) String() string { return proto.CompactTextString(m) }
-func (*UpdateEventMsgRes) ProtoMessage()    {}
-
-// //////////////////////////////////////////////
-// 道具
-// //////////////////////////////////////////////
-type NotifyItemMsg struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *NotifyItemMsg) Reset()         { *m = NotifyItemMsg{} }
-func (m *NotifyItemMsg) String() string { return proto.CompactTextString(m) }
-func (*NotifyItemMsg) ProtoMessage()    {}
-
-type NotifyItemMsgRes struct {
-	Items            *pb_common.ItemT `protobuf:"bytes,1,opt,name=items" json:"items,omitempty"`
-	XXX_unrecognized []byte           `json:"-"`
-}
-
-func (m *NotifyItemMsgRes) Reset()         { *m = NotifyItemMsgRes{} }
-func (m *NotifyItemMsgRes) String() string { return proto.CompactTextString(m) }
-func (*NotifyItemMsgRes) ProtoMessage()    {}
-
-func (m *NotifyItemMsgRes) GetItems() *pb_common.ItemT {
-	if m != nil {
-		return m.Items
-	}
-	return nil
-}
-
 // //////////////////////////////////////////////
 // 系统
 // //////////////////////////////////////////////
-type SysInformationMsg struct {
+type SysTimeMsg struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *SysInformationMsg) Reset()         { *m = SysInformationMsg{} }
-func (m *SysInformationMsg) String() string { return proto.CompactTextString(m) }
-func (*SysInformationMsg) ProtoMessage()    {}
+func (m *SysTimeMsg) Reset()         { *m = SysTimeMsg{} }
+func (m *SysTimeMsg) String() string { return proto.CompactTextString(m) }
+func (*SysTimeMsg) ProtoMessage()    {}
 
-type SysInformationMsgRes struct {
-	TimeSecond       *uint32 `protobuf:"varint,1,opt,name=time_second" json:"time_second,omitempty"`
+type SysTimeMsgRes struct {
+	TimeSecond       *uint32 `protobuf:"varint,1,opt,name=TimeSecond" json:"TimeSecond,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *SysInformationMsgRes) Reset()         { *m = SysInformationMsgRes{} }
-func (m *SysInformationMsgRes) String() string { return proto.CompactTextString(m) }
-func (*SysInformationMsgRes) ProtoMessage()    {}
+func (m *SysTimeMsgRes) Reset()         { *m = SysTimeMsgRes{} }
+func (m *SysTimeMsgRes) String() string { return proto.CompactTextString(m) }
+func (*SysTimeMsgRes) ProtoMessage()    {}
 
-func (m *SysInformationMsgRes) GetTimeSecond() uint32 {
+func (m *SysTimeMsgRes) GetTimeSecond() uint32 {
 	if m != nil && m.TimeSecond != nil {
 		return *m.TimeSecond
 	}
 	return 0
 }
 
-type SysNewDayMsg struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *SysNewDayMsg) Reset()         { *m = SysNewDayMsg{} }
-func (m *SysNewDayMsg) String() string { return proto.CompactTextString(m) }
-func (*SysNewDayMsg) ProtoMessage()    {}
-
-type SysNewDayMsgRes struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *SysNewDayMsgRes) Reset()         { *m = SysNewDayMsgRes{} }
-func (m *SysNewDayMsgRes) String() string { return proto.CompactTextString(m) }
-func (*SysNewDayMsgRes) ProtoMessage()    {}
-
 func init() {
-	proto.RegisterType((*LoginMsg)(nil), "pb_square.login_msg")
-	proto.RegisterType((*LoginMsgRes)(nil), "pb_square.login_msg_res")
-	proto.RegisterType((*CreateRoleMsg)(nil), "pb_square.create_role_msg")
-	proto.RegisterType((*CreateRoleMsgRes)(nil), "pb_square.create_role_msg_res")
-	proto.RegisterType((*LoadUserMsg)(nil), "pb_square.load_user_msg")
-	proto.RegisterType((*LoadUserMsgRes)(nil), "pb_square.load_user_msg_res")
-	proto.RegisterType((*LoginMsgEnd)(nil), "pb_square.login_msg_end")
-	proto.RegisterType((*ChatMsg)(nil), "pb_square.chat_msg")
-	proto.RegisterType((*ChatMsgRes)(nil), "pb_square.chat_msg_res")
-	proto.RegisterType((*NotifyChatMsgRes)(nil), "pb_square.notify_chat_msg_res")
-	proto.RegisterType((*UpdateEventMsg)(nil), "pb_square.update_event_msg")
-	proto.RegisterType((*UpdateEventMsgRes)(nil), "pb_square.update_event_msg_res")
-	proto.RegisterType((*NotifyItemMsg)(nil), "pb_square.notify_item_msg")
-	proto.RegisterType((*NotifyItemMsgRes)(nil), "pb_square.notify_item_msg_res")
-	proto.RegisterType((*SysInformationMsg)(nil), "pb_square.sys_information_msg")
-	proto.RegisterType((*SysInformationMsgRes)(nil), "pb_square.sys_information_msg_res")
-	proto.RegisterType((*SysNewDayMsg)(nil), "pb_square.sys_new_day_msg")
-	proto.RegisterType((*SysNewDayMsgRes)(nil), "pb_square.sys_new_day_msg_res")
+	proto.RegisterType((*LoginMsg)(nil), "pb_square.LoginMsg")
+	proto.RegisterType((*LoginMsgRes)(nil), "pb_square.LoginMsgRes")
+	proto.RegisterType((*SysTimeMsg)(nil), "pb_square.SysTimeMsg")
+	proto.RegisterType((*SysTimeMsgRes)(nil), "pb_square.SysTimeMsgRes")
 }

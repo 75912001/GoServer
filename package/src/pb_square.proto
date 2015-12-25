@@ -1,107 +1,25 @@
 package pb_square;
+
 import "pb_common.proto";
 
-message login_msg//1,0x10101#登录
+message LoginMsg//1,0x100101#登录
 {
-	optional uint32 platform = 1;//登录类型
-	optional string account = 2; //账号
-	optional string password = 3; //密码
+	optional string Account = 2; //账号
+	optional string Password = 3; //登录使用的密码2
 }
 
-message login_msg_res
+message LoginMsgRes
 {
-	optional uint32 has_role = 1;//0:目前没有角色,1:当前已经有角色
-}
-
-message create_role_msg//1,0x10102#创建角色
-{
-	optional string nick = 1;//昵称
-}
-
-message create_role_msg_res
-{
-}
-
-message load_user_msg//1,0x10103#获取角色登录信息
-{
-}
-
-message load_user_msg_res
-{
-	optional pb_common.user_t user = 1;//用户信息
-	repeated pb_common.event_t events = 2;//事件信息
-	repeated pb_common.item_t items = 6;//道具信息
-}
-
-message login_msg_end//0,0x101ff#登录消息最大值
-{
-}
-
-////////////////////////////////////////////////
-//登录之后的消息,消息ID必须比登录消息大 (大于 login_msg_end)
-////////////////////////////////////////////////
-
-	////////////////////////////////////////////////
-	//聊天
-	////////////////////////////////////////////////
-message chat_msg//1,0x10301#聊天
-{
-	optional uint32 uid = 2;//私聊时接收消息的用户ID
-	optional string msg= 3;//内容
-}
-
-message chat_msg_res
-{
-}
-
-message notify_chat_msg_res//0,0x10302#通知玩家聊天内容
-{
-	optional uint32 uid = 2;//发送消息的用户ID
-	optional string msg= 4;//内容
-}
-
-	////////////////////////////////////////////////
-	//事件
-	////////////////////////////////////////////////
-message update_event_msg//1,0x10601#更新客户端事件
-{
-	optional pb_common.event_t event = 1;
-}
-
-message update_event_msg_res
-{
-}
-
-	////////////////////////////////////////////////
-	//道具
-	////////////////////////////////////////////////
-message notify_item_msg//0,0x11001#通知道具变化
-{
-}
-
-message notify_item_msg_res
-{
-	optional pb_common.item_t items = 1;//物品变更
 }
 
 	////////////////////////////////////////////////
 	//系统
 	////////////////////////////////////////////////
-message sys_information_msg//1,0x11501#或取系统当前时间
+message SysTimeMsg//1,0x200101#或取系统当前时间
 {
 }
 
-message sys_information_msg_res
+message SysTimeMsgRes
 {
-	optional uint32 time_second = 1;//当前时间
+	optional uint32 TimeSecond = 1;//当前时间
 }
-
-message sys_new_day_msg//0,0x11502#新的一天通知包
-{
-}
-
-message sys_new_day_msg_res
-{
-}
-
-

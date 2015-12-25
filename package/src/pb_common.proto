@@ -9,18 +9,18 @@ enum E_ERROR_CODE
 	EEC_SUCCESS = 0;//成功
 	EEC_ERROR = 1;//错误
 	EEC_VALUE_INVALID = 2;//数值,无效
-	EEC_ITEM_CNT = 3; //道具,不足
+	EEC_ITEM_CNT = 3; //道具,数量
 	EEC_ITEM_INEXISTENT = 4;//道具,不存在
 	EEC_USER_INEXISTENT = 5;//用户,不存在
-	EEC_ROLE_EXISTENT_ROLE = 6;//角色,存在
+	EEC_ROLE_EXISTENT = 6;//角色,存在
 	EEC_ACCOUNT_INEXISTENT = 7;//帐号,不存在
 	EEC_APPROVED_NO = 8;//身份校验,尚未通过
 	EEC_EVENT_LIMIT = 9;//事件,上限
 	EEC_USER_LEVEL = 10;//用户等级,不满足条件
-	EEC_PASSWORD_ERROR = 14; //密码,错误
+	EEC_PASSWORD = 14; //密码,错误
 	EEC_CHAT_LEN_MAX = 15; //聊天长度,上限
 
-	EEC_ERROR_MYSQL = 9000;//数据库错误
+	EEC_MYSQL = 9000;//MYSQL数据库错误
 	EEC_MAX = 10000;//错误最大值
 }
 
@@ -61,12 +61,6 @@ enum USER_EVENT_TYPE
 	//---------------------------------------------------------------------------- 
 }
 
-//平台类型
-enum E_PLATFORM
-{
-	E_PLATFORM_TEST = 0;//内网测试
-}
-
 //聊天类型
 enum E_CHAT_TYPE
 {
@@ -85,42 +79,35 @@ enum E_MAIL_STATE
 enum E_COMMON_VAL
 {
 	option allow_alias = true;
-	E_COMMON_FRIEND_CNT_MAX = 100;//100;//好友上限数量
-}
-
-enum E_USER_ONLINE_STATE
-{
-	E_FRIEND_STATE_OFFLINE = 0;//离线
-	E_FRIEND_STATE_ONLINE = 1;//在线
+	E_COMMON_VAL_FRIEND_CNT_MAX = 100;//好友上限数量
 }
 
 ////////////////////////////////////////////////////
 //结构体
 ////////////////////////////////////////////////////
 
-//返回的用户数据
-message user_t
+//用户数据
+message User_t
 {
-	optional uint32 uid = 1;//用户ID
-	optional string nick = 2;//昵称
-	optional uint32 last_logout_time = 3;//下线时间
+	optional uint32 Uid = 1;//用户ID
+	optional string Nick = 2;//昵称
 }
 
 //事件
-message event_t
+message Event_t
 {
-	optional uint32 type = 1;//类型
-	optional uint32 id = 2;//ID
-	optional uint32 data = 3;//数据
-	optional uint32 time = 4;//时间
-	optional string str_data = 5;//字符串数据
+	optional uint32 Type = 1;//类型
+	optional uint32 Id = 2;//ID
+	optional uint32 Data = 3;//数据
+	optional uint32 Time = 4;//时间
+	optional string StrData = 5;//字符串数据
 }
 
 ////////////////////////////////////////////////////
 //道具
-message item_t
+message Item_t
 {
-	optional uint32 id = 1;//ID
-	optional uint32 cnt = 3;//数量
+	optional uint32 Id = 1;//ID
+	optional uint32 Cnt = 3;//数量
 }
 

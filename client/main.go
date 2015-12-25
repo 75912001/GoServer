@@ -2,67 +2,40 @@
 package main
 
 import (
-	"encoding/binary"
 	"fmt"
-	//	"github.com/golang/protobuf/proto"
-	"bytes"
-	"ict_account"
+	"github.com/golang/protobuf/proto"
 	"ict_cfg"
-	"ict_common"
-	"ict_login"
-	"ict_phone_sms"
-	"ict_user"
-	"math/rand"
-	"runtime"
-	"strconv"
+	"pb_square"
 	"time"
 	"zzcommon"
 	"zztcp"
 	"zztimer"
 )
 
-func onInit() (ret int) {
-	gLock.Lock()
-	defer gLock.Unlock()
-
-	ict_user.GuserMgr.Init()
-	fmt.Println("onInit")
-	return 0
-}
-
-func onFini() (ret int) {
-	gLock.Lock()
-	defer gLock.Unlock()
-
-	fmt.Println("onFini")
-	return 0
-}
-
 ////////////////////////////////////////////////////////////////////////////////
-//客户端相关的回调函数
-func onCliConn(peerConn *zzcommon.PeerConn_t) (ret int) {
+//服务器相关回调函数
+
+//服务器连接成功
+func onSerConn(peerConn *zzcommon.PeerConn_t) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	var user ict_user.User_t
-	user.PeerConn = peerConn
-	ict_user.GuserMgr.UserMap[user.PeerConn] = user
-
-	fmt.Println("onCliConn")
+	fmt.Println("onSerConn")
 	return 0
 }
 
-func onCliConnClosed(peerConn *zzcommon.PeerConn_t) (ret int) {
+//服务端连接关闭
+func onSerConnClosed(peerConn *zzcommon.PeerConn_t) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
-	delete(ict_user.GuserMgr.UserMap, peerConn)
-	fmt.Println("onCliConnClosed")
+	fmt.Println("onSerConnClosed")
 	return 0
 }
 
-func onCliGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
-	//	fmt.Println("onCliGetPacketLen")
+//获取消息的长度,0表示消息还未接受完成,
+//ERROR_DISCONNECT_PEER表示长度有误,服务端断开
+func onSerGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 	if (uint32)(packetLength) < zzcommon.ProtoHeadLength { //长度不足一个包头中的长度大小
 		return 0
 	}
@@ -81,48 +54,6 @@ func onCliGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int
 	return int(peerConn.RecvProtoHead.PacketLength)
 }
 
-func onCliPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
-	gLock.Lock()
-	defer gLock.Unlock()
-
-	//fmt.Println("on_cli_conn")
-	//	peer_conn.conn.Write("123")
-	//	peer_conn.Conn.Write([]byte("123"))
-
-	return 0
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//服务器相关回调函数
-
-//服务器连接成功
-func onSerConn(peerConn *zzcommon.PeerConn_t) (ret int) {
-	gLock.Lock()
-	defer gLock.Unlock()
-
-	//	fmt.Println("onSerConn")
-	return 0
-}
-
-//服务端连接关闭
-func onSerConnClosed(peerConn *zzcommon.PeerConn_t) (ret int) {
-	gLock.Lock()
-	defer gLock.Unlock()
-
-	fmt.Println("onSerConnClosed")
-	return 0
-}
-
-//获取消息的长度,0表示消息还未接受完成,
-//ERROR_DISCONNECT_PEER表示长度有误,服务端断开
-func onSerGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
-	//	gLock.Lock()
-	//	defer gLock.Unlock()
-
-	fmt.Println("onSerGetPacketLen packetLength:", packetLength)
-	return 0
-}
-
 //服务端消息
 //返回ERROR_DISCONNECT_PEER断开服务端
 func onSerPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
@@ -134,20 +65,12 @@ func onSerPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 }
 
 func main() {
-	rand.Seed(time.Now().Unix())
-
-	fmt.Println("server runing...", time.Now())
+	fmt.Println("client runing...", time.Now())
 
 	///////////////////////////////////////////////////////////////////
 	//测试
-	var protoHead zzcommon.ProtoHead_t
-	//	peerConn.RecvBuf
-	b := []byte{0x00, 0x00, 0x03, 0xe8}
-	b_buf := bytes.NewBuffer(b)
-
-	binary.Read(b_buf, binary.LittleEndian, &protoHead.PacketLength)
-	fmt.Println(protoHead.PacketLength)
 	///////////////////////////////////////////////////////////////////
+
 	///////////////////////////////////////////////////////////////////
 	//加载配置文件bench.ini
 	{
@@ -159,110 +82,32 @@ func main() {
 	}
 
 	//////////////////////////////////////////////////////////////////
-	//redis
+	//做为客户端
 	{
-		const benchFileSection string = "redis_server"
-		ip := ict_cfg.Gbench.FileIni.Get(benchFileSection, "ip", " ")
-		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get(benchFileSection, "port", " "))
-		redisDatabases := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get(benchFileSection, "databases", " "))
+		var gzztcpClient zztcp.Client_t
+		gzztcpClient.OnSerConn = onSerConn
+		gzztcpClient.OnSerConnClosed = onSerConnClosed
+		gzztcpClient.OnSerGetPacketLen = onSerGetPacketLen
+		gzztcpClient.OnSerPacket = onSerPacket
 
-		//链接redis
-		err := ict_common.GRedisClient.Connect(ip, port, redisDatabases)
+		ip := ict_cfg.Gbench.FileIni.Get("square_server", "ip", "999")
+		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("square_server", "port", "0"))
+		packetLengthMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("square_server", "packet_length_max", "81920"))
+		err := gzztcpClient.Connect(ip, port, packetLengthMax)
 		if nil != err {
-			fmt.Println("######ict_common.GRedisClient.Connect(ip, port, redisDatabases) err:", err)
+			fmt.Println("######zzcliClient.Connect err:", err)
 			return
 		}
-	}
 
-	//////////////////////////////////////////////////////////////////
-	//作为HTTP SERVER
-	{
-		//phome sms
+		//发送pb测试包
+		//登录
 		{
-			err := ict_phone_sms.GphoneSms.Init()
-			if nil != err {
-				fmt.Println("######ict_phone_sms.GphoneSms.Init()")
-				return
+			req := &pb_square.LoginMsg{
+				Account:  proto.String("17721027200"),
+				Password: proto.String("7883df2788b1098886f99b0a7563a5a8"),
 			}
+			gzztcpClient.PeerConn.Send(req, 0x100101, 0, 0, 0)
 		}
-
-		gHttpServer.AddHandler(weatherPattern, WeatherHttpHandler)
-		gHttpServer.AddHandler(ict_login.LoginPattern, ict_login.LoginHttpHandler)
-
-		//启动手机注册功能
-		{
-			err := ict_account.GphoneSmsRegister.Init()
-			if nil != err {
-				fmt.Println("错误ict_account.GphoneSmsRegister.Init()")
-				return
-			}
-			gHttpServer.AddHandler(ict_account.GphoneSmsRegister.Pattern, ict_account.PhoneSmsRegisterHttpHandler)
-
-			err = ict_account.GphoneSmsChangePwd.Init()
-			if nil != err {
-				fmt.Println("错误ict_account.GphoneSmsChangePwd.Init()")
-				return
-			}
-			gHttpServer.AddHandler(ict_account.GphoneSmsChangePwd.Pattern, ict_account.PhoneSmsChangePwdHttpHandler)
-
-			err = ict_account.GphoneChangePwd.Init()
-			if nil != err {
-				fmt.Println("错误ict_account.GphoneChangePwd.Init()")
-				return
-			}
-			gHttpServer.AddHandler(ict_account.GphoneChangePwd.Pattern, ict_account.PhoneChangePwdHttpHandler)
-
-			err = ict_account.GphoneRegister.Init()
-			if nil != err {
-				fmt.Println("错误ict_account.GphoneRegister.Init()")
-				return
-			}
-			gHttpServer.AddHandler(ict_account.GphoneRegister.Pattern, ict_account.PhoneRegisterHttpHandler)
-
-			err = ict_user.Gbase.Init()
-			if nil != err {
-				fmt.Println("错误ict_user.Gbase.Init()")
-				return
-			}
-
-			err = ict_user.GuidMgr.Init()
-			if nil != err {
-				fmt.Println("错误ict_user.GuidMgr.Init()")
-				return
-			}
-
-			err = ict_login.Glogin.Init()
-			if nil != err {
-				fmt.Println("错误ict_login.Glogin.Init()")
-				return
-			}
-		}
-
-		ip := ict_cfg.Gbench.FileIni.Get("http_server", "ip", "999")
-		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("http_server", "port", "0"))
-
-		go gHttpServer.Run(ip, port)
-	}
-
-	//////////////////////////////////////////////////////////////////
-	//做为服务端
-	{ //设置回调函数
-		gTcpServer.OnInit = onInit
-		gTcpServer.OnFini = onFini
-		gTcpServer.OnCliConnClosed = onCliConnClosed
-		gTcpServer.OnCliConn = onCliConn
-		gTcpServer.OnCliGetPacketLength = onCliGetPacketLen
-		gTcpServer.OnCliPacket = onCliPacket
-
-		//运行
-		delay := true
-		ip := ict_cfg.Gbench.FileIni.Get("server", "ip", "")
-		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("server", "port", "0"))
-		gTcpServer.PacketLengthMax = zzcommon.StringToUint32(ict_cfg.Gbench.FileIni.Get("common", "packet_length_max", "81920"))
-		str_num_cpu := strconv.Itoa(runtime.NumCPU())
-		goProcessMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("common", "go_process_max", str_num_cpu))
-		runtime.GOMAXPROCS(goProcessMax)
-		go gTcpServer.Run(ip, port, delay)
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -273,30 +118,6 @@ func main() {
 		time.Sleep(10 * time.Second)
 		gLock.Lock()
 		gLock.Unlock()
-	}
-
-	//////////////////////////////////////////////////////////////////
-	//作为HTTP CLIENT Weather
-	//	gHttpClientWeather.Url = ict_bench_file.GbenchFile.FileIni.Get("weather", "url", " ")
-	//	gHttpClientWeather.Get()
-
-	//////////////////////////////////////////////////////////////////
-	//做为客户端
-	{
-		var gzztcpClient zztcp.Client_t
-		gzztcpClient.OnSerConn = onSerConn
-		gzztcpClient.OnSerConnClosed = onSerConnClosed
-		gzztcpClient.OnSerGetPacketLen = onSerGetPacketLen
-		gzztcpClient.OnSerPacket = onSerPacket
-
-		ip := ict_cfg.Gbench.FileIni.Get("game_server", "ip", "999")
-		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("game_server", "port", "0"))
-		packetLengthMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("game_server", "packet_length_max", "81920"))
-		err := gzztcpClient.Connect(ip, port, packetLengthMax)
-		if nil != err {
-			fmt.Println("######zzcliClient.Connect err:", err)
-		} else {
-		}
 	}
 
 	///////////////////////////////////////////////////////////////////

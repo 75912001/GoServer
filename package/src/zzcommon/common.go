@@ -49,6 +49,7 @@ type ProtoHead_t struct {
 
 const (
 	//消息包头长度
+	//	ProtoHeadPacketLength uint32 = 4
 	ProtoHeadLength uint32 = 20
 )
 
@@ -58,6 +59,13 @@ type PeerConn_t struct {
 	Conn          *net.TCPConn //连接
 	RecvBuf       []byte
 	RecvProtoHead ProtoHead_t
+}
+
+//解析协议包头长度
+func (p *PeerConn_t) ParseProtoHeadPacketLength() {
+	buf1 := bytes.NewBuffer(p.RecvBuf[0:4])
+
+	binary.Read(buf1, binary.LittleEndian, &p.RecvProtoHead.PacketLength)
 }
 
 //解析协议包头
