@@ -3,16 +3,18 @@ package main
 
 import (
 	"fmt"
-	//	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"ict_user"
+	"pb_square"
 	"zzcommon"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 //protobuf func
-
+type pbmessage interface{}
 type PbFunHandle struct {
-	pbFun func(user *ict_user.User_t) (ret int)
+	pbFun        func(user *ict_user.User_t) (ret int)
+	protoMessage pbmessage
 }
 
 var pbFunMap map[zzcommon.MESSAGE_ID]PbFunHandle
@@ -24,6 +26,7 @@ func initPbFun() (ret int) {
 	{
 		var pbFunHandle PbFunHandle
 		pbFunHandle.pbFun = OnLoginMsg
+		pbFunHandle.protoMessage = &pb_square.LoginMsg{}
 		pbFunMap[0x100101] = pbFunHandle
 	}
 
@@ -48,7 +51,8 @@ func onRecv(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 		fmt.Println("######ict_user.GuserMgr.UserMap[peerConn]", peerConn)
 		return zzcommon.ERROR_DISCONNECT_PEER
 	}
-	//	proto.Unmarshal(peerConn.RecvBuf[20:packetLength], pb_square.LoginMsg)
+
+	proto.Unmarshal(peerConn.RecvBuf[20:packetLength], pbFunHandle.protoMessage)
 	ret = pbFunHandle.pbFun(user)
 
 	return ret
