@@ -8,25 +8,24 @@ import (
 
 //己方作为客户端
 type Client_t struct {
-	Conn           redis.Conn
-	redisIp        string
-	redisPort      uint16
-	redisDatabases int
+	Conn      redis.Conn
+	ip        string
+	port      uint16
+	dataBases int
 }
 
 //连接
-func (p *Client_t) Connect(ip string, port uint16, redisDatabases int) (err error) {
-	p.redisIp = ip
-	p.redisPort = port
-	p.redisDatabases = redisDatabases
+func (p *Client_t) Connect(ip string, port uint16, dataBases int) (err error) {
+	p.ip = ip
+	p.port = port
+	p.dataBases = dataBases
 
 	var addr = ip + ":" + strconv.Itoa(int(port))
-	dialOption := redis.DialDatabase(redisDatabases)
+	dialOption := redis.DialDatabase(dataBases)
 
 	p.Conn, err = redis.Dial("tcp", addr, dialOption)
 	if nil != err {
-		// handle error
-		fmt.Println("######redis.Dial err:", err, ip, port, redisDatabases)
+		fmt.Println("######redis.Dial err:", err, ip, port, dataBases)
 		return err
 	}
 	//	defer conn.Close()

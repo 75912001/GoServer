@@ -162,6 +162,15 @@ func main() {
 	fn1(&s1)
 	fmt.Println(s1)
 	//fmt.Println(s2)
+	fmt.Println("OK")
+	var ss []byte
+	for {
+		time.Sleep(1 * time.Second)
+		fmt.Println("OK")
+		ss = make([]byte, 1024*1024*100)
+		fmt.Println(ss[0:1])
+	}
+
 	////////////////////////////////////////////////////////////////////
 	rand.Seed(time.Now().Unix())
 
@@ -280,18 +289,18 @@ func main() {
 		gTcpServer.OnFini = onFini
 		gTcpServer.OnCliConnClosed = onCliConnClosed
 		gTcpServer.OnCliConn = onCliConn
-		gTcpServer.OnCliGetPacketLength = onCliGetPacketLen
+		gTcpServer.OnCliGetPacketLen = onCliGetPacketLen
 		gTcpServer.OnCliPacket = onCliPacket
 
 		//运行
-		delay := true
+		noDelay := true
 		ip := ict_cfg.Gbench.FileIni.Get("server", "ip", "")
 		port := zzcommon.StringToUint16(ict_cfg.Gbench.FileIni.Get("server", "port", "0"))
 		gTcpServer.PacketLengthMax = zzcommon.StringToUint32(ict_cfg.Gbench.FileIni.Get("common", "packet_length_max", "81920"))
 		str_num_cpu := strconv.Itoa(runtime.NumCPU())
 		goProcessMax := zzcommon.StringToInt(ict_cfg.Gbench.FileIni.Get("common", "go_process_max", str_num_cpu))
 		runtime.GOMAXPROCS(goProcessMax)
-		go gTcpServer.Run(ip, port, delay)
+		go gTcpServer.Run(ip, port, noDelay)
 	}
 
 	//////////////////////////////////////////////////////////////////
