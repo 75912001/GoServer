@@ -15,9 +15,10 @@ max_fd_num=1000
 
 //使用方法
 /*
+
 var ini ZZIni
 ini.Path = "xxx.ini"
-ini.Load()
+ict_cfg.Gbench.Load("./bench.ini.bak")
 ip := ini.Get_val_def("server", "ip", "")
 */
 

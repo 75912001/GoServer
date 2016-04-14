@@ -163,13 +163,13 @@ func main() {
 	fmt.Println(s1)
 	//fmt.Println(s2)
 	fmt.Println("OK")
-	var ss []byte
-	for {
-		time.Sleep(1 * time.Second)
-		fmt.Println("OK")
-		ss = make([]byte, 1024*1024*100)
-		fmt.Println(ss[0:1])
-	}
+	//	var ss []byte
+	//	for {
+	//		time.Sleep(1 * time.Second)
+	//		fmt.Println("OK")
+	//		ss = make([]byte, 1024*1024*100)
+	//		fmt.Println(ss[0:1])
+	//	}
 
 	////////////////////////////////////////////////////////////////////
 	rand.Seed(time.Now().Unix())
