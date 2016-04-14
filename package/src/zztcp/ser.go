@@ -26,7 +26,7 @@ type ON_CLI_GET_PACKET_LEN func(peerConn *zzcommon.PeerConn_t, packetLength int)
 
 //客户端消息
 //返回ERROR_DISCONNECT_PEER断开客户端
-type ON_CLI_PACKET func(peerConn *zzcommon.PeerConn_t, packetLength int) int
+type ON_CLI_PACKET func(peerConn *zzcommon.PeerConn_t) int
 
 //己方作为服务
 type Server_t struct {
@@ -115,7 +115,7 @@ func (p *Server_t) handleConnection(conn *net.TCPConn) {
 		readIndex = readIndex + readNum
 		packetLength := p.OnCliGetPacketLength(&peerConn, readIndex)
 		if packetLength > 0 { //有完整的包
-			ret := p.OnCliPacket(&peerConn, packetLength)
+			ret := p.OnCliPacket(&peerConn)
 			if zzcommon.ERROR_DISCONNECT_PEER == ret {
 				break
 			}

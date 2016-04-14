@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"ict_account"
 	"ict_cfg"
 	"ict_common"
@@ -10,6 +11,7 @@ import (
 	"ict_phone_sms"
 	"ict_user"
 	"math/rand"
+	"pb_square"
 	"runtime"
 	"strconv"
 	"time"
@@ -77,14 +79,14 @@ func onCliGetPacketLen(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int
 	return int(peerConn.RecvProtoHead.PacketLength)
 }
 
-func onCliPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
+func onCliPacket(peerConn *zzcommon.PeerConn_t) (ret int) {
 	gLock.Lock()
 	defer gLock.Unlock()
 
 	fmt.Println("onCliPacket")
 	peerConn.ParseProtoHead()
 
-	ret = onRecv(peerConn, packetLength)
+	ret = onRecv(peerConn)
 	return ret
 }
 
@@ -132,14 +134,35 @@ func onSerPacket(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 //////////////////////////////////////////////////////////////////////
 //测试
 
-func OnLoginMsg(user *ict_user.User_t) (ret int) {
+func OnLoginMsg(user *ict_user.User_t, protoMessage proto.Message) (ret int) {
 	fmt.Println("OnLoginMsg")
 	fmt.Println(user)
-	user.Account = "abc"
+	fmt.Println(protoMessage)
+	var ss *pb_square.LoginMsg = protoMessage.(*pb_square.LoginMsg)
+	fmt.Println(ss.GetAccount())
 	return ret
 }
 
+func fn1(ss *[]int) {
+	*ss = append(*ss, 1, 2, 3, 4, 5)
+
+	(*ss)[2] = 555
+	fmt.Println(*ss)
+	//	fmt.Println(st)
+}
+
+func init() {
+	fmt.Println("init")
+}
 func main() {
+	fmt.Println("main")
+	var s1 = []int{1, 2, 3, 4, 5}
+	//var s2 = s1
+
+	fn1(&s1)
+	fmt.Println(s1)
+	//fmt.Println(s2)
+	////////////////////////////////////////////////////////////////////
 	rand.Seed(time.Now().Unix())
 
 	ret := initPbFun()

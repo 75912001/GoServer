@@ -11,10 +11,9 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 //protobuf func
-type pbmessage interface{}
 type PbFunHandle struct {
-	pbFun        func(user *ict_user.User_t) (ret int)
-	protoMessage pbmessage
+	pbFun        func(user *ict_user.User_t, protoMessage proto.Message) (ret int)
+	protoMessage proto.Message
 }
 
 var pbFunMap map[zzcommon.MESSAGE_ID]PbFunHandle
@@ -24,16 +23,18 @@ func initPbFun() (ret int) {
 	//pb message
 	pbFunMap = make(map[zzcommon.MESSAGE_ID]PbFunHandle)
 	{
+		var cmd_id zzcommon.MESSAGE_ID = 0x100101
 		var pbFunHandle PbFunHandle
 		pbFunHandle.pbFun = OnLoginMsg
-		pbFunHandle.protoMessage = &pb_square.LoginMsg{}
-		pbFunMap[0x100101] = pbFunHandle
+		pbFunHandle.protoMessage = new(pb_square.LoginMsg)
+		pbFunMap[cmd_id] = pbFunHandle
 	}
 
+	//注册新的消息
 	return 0
 }
 
-func onRecv(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
+func onRecv(peerConn *zzcommon.PeerConn_t) (ret int) {
 	PacketLength := peerConn.RecvProtoHead.PacketLength //总包长度
 	MessageId := peerConn.RecvProtoHead.MessageId       //消息号
 	SessionId := peerConn.RecvProtoHead.SessionId       //会话id
@@ -52,8 +53,12 @@ func onRecv(peerConn *zzcommon.PeerConn_t, packetLength int) (ret int) {
 		return zzcommon.ERROR_DISCONNECT_PEER
 	}
 
-	proto.Unmarshal(peerConn.RecvBuf[20:packetLength], pbFunHandle.protoMessage)
-	ret = pbFunHandle.pbFun(user)
+	err := proto.Unmarshal(peerConn.RecvBuf[20:PacketLength], pbFunHandle.protoMessage)
+	if nil != err {
+		fmt.Println("######proto.Unmarshal", MessageId)
+		return zzcommon.ERROR_DISCONNECT_PEER
+	}
+	ret = pbFunHandle.pbFun(user, pbFunHandle.protoMessage)
 
 	return ret
 }
