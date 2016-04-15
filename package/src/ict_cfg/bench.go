@@ -15,6 +15,7 @@ type bench_t struct {
 func (p *bench_t) Load(path string) (err error) {
 	err = p.FileIni.Load(path)
 	if nil != err {
+		fmt.Println("######FileIni.Load err:", err, path)
 		return err
 	}
 	return err

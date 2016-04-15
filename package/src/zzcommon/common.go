@@ -14,13 +14,9 @@ import (
 
 //////////////////////////////////////////////////////////////////////////////
 const (
-	//成功
-	SUCC int = 0
-	//错误
-	ERROR int = -1
-	//断开对方的连接
-	ERROR_DISCONNECT_PEER int = -2
-
+	SUCC                    int = 0     //成功
+	ERROR                   int = -1    //错误
+	ERROR_DISCONNECT_PEER   int = -2    //断开对方的连接
 	ERROR_SYS               int = 1     //系统错误
 	ERROR_PARAM             int = 2     //参数错误
 	ERROR_SMS_SENDING       int = 10000 //短信已发出,请收到后重试
@@ -83,8 +79,8 @@ func (p *PeerConn_t) ParseProtoHead() {
 	binary.Read(buf5, binary.LittleEndian, &p.RecvProtoHead.ResultId)
 }
 
-func (p *PeerConn_t) Send(req proto.Message, messageId MESSAGE_ID, sessionId SESSION_ID, userId USER_ID, resultId RESULT_ID) (err error) {
-	reqBuf, err := proto.Marshal(req)
+func (p *PeerConn_t) Send(req *proto.Message, messageId MESSAGE_ID, sessionId SESSION_ID, userId USER_ID, resultId RESULT_ID) (err error) {
+	reqBuf, err := proto.Marshal(*req)
 	if nil != err {
 		fmt.Printf("######proto.Marshal err:", err)
 		return err
@@ -115,47 +111,47 @@ func (p *PeerConn_t) Send(req proto.Message, messageId MESSAGE_ID, sessionId SES
 		fmt.Printf("######PeerConn.Conn.Write err:", err)
 		return err
 	}
-	fmt.Println("Send body len:", reqBufLen, sendBufAllLength)
+	fmt.Println("Send len:", sendBufAllLength)
 	headBuf = nil
 	return err
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //字符串转
-func StringToUint32(s string) (value uint32) {
-	vaule, err := strconv.ParseUint(s, 10, 32)
+func StringToUint32(s *string) (value uint32) {
+	vaule, err := strconv.ParseUint(*s, 10, 32)
 	if nil != err {
 		return 0
 	}
 	return uint32(vaule)
 }
 
-func StringToInt(s string) (value int) {
-	vaule, err := strconv.ParseInt(s, 10, 0)
+func StringToInt(s *string) (value int) {
+	vaule, err := strconv.ParseInt(*s, 10, 0)
 	if nil != err {
 		return 0
 	}
 	return int(vaule)
 }
 
-func StringToUint16(s string) (value uint16) {
-	vaule, err := strconv.ParseUint(s, 10, 16)
+func StringToUint16(s *string) (value uint16) {
+	vaule, err := strconv.ParseUint(*s, 10, 16)
 	if nil != err {
 		return 0
 	}
 	return uint16(vaule)
 }
 
-func StringSubstr(s string, length int) (value string) {
-	r := []rune(s)
+func StringSubstr(s *string, length int) (value string) {
+	r := []rune(*s)
 	return string(r[0:length])
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //md5
-func GenMd5(s string) (value string) {
+func GenMd5(s *string) (value string) {
 	md5Ctx := md5.New()
-	md5Ctx.Write([]byte(s))
+	md5Ctx.Write([]byte(*s))
 	cipherStr := md5Ctx.Sum(nil)
 	value = hex.EncodeToString(cipherStr)
 	return value

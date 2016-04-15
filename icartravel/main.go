@@ -155,22 +155,6 @@ func init() {
 	fmt.Println("init")
 }
 func main() {
-	fmt.Println("main")
-	var s1 = []int{1, 2, 3, 4, 5}
-	//var s2 = s1
-
-	fn1(&s1)
-	fmt.Println(s1)
-	//fmt.Println(s2)
-	fmt.Println("OK")
-	//	var ss []byte
-	//	for {
-	//		time.Sleep(1 * time.Second)
-	//		fmt.Println("OK")
-	//		ss = make([]byte, 1024*1024*100)
-	//		fmt.Println(ss[0:1])
-	//	}
-
 	////////////////////////////////////////////////////////////////////
 	rand.Seed(time.Now().Unix())
 

@@ -2,14 +2,38 @@ package pb_square;
 
 import "pb_common.proto";
 
-message LoginMsg//1,0x100101#登录
+message login_msg//1,0x10101#登录
 {
-	optional string Account = 2; //账号
-	optional string Password = 3; //登录使用的密码2
+	optional uint32 platform = 1;//登录类型common_msg.E_PLATFORM
+	optional string account = 2; //账号
+	optional string password = 3; //密码
+	
+	optional string wechat_access_token = 100;//调用接口凭证
+	optional string wechat_openid = 101;//普通用户标识，对该公众帐号唯一
 }
 
-message LoginMsgRes
+message login_msg_res
 {
+	optional uint32 has_role = 1;//0:目前没有角色,1:当前已经有角色
+}
+
+message create_role_msg//1,0x10102#创建角色
+{
+	optional string nick = 1;//昵称
+}
+
+message create_role_msg_res
+{
+}
+
+message load_user_msg//1,0x10103#获取角色登录信息
+{
+}
+
+message load_user_msg_res
+{
+	optional pb_common.user_t user = 1;//用户信息
+	repeated pb_common.event_t events = 2;//事件信息
 }
 
 	////////////////////////////////////////////////
@@ -17,6 +41,7 @@ message LoginMsgRes
 	////////////////////////////////////////////////
 message SysTimeMsg//1,0x200101#或取系统当前时间
 {
+
 }
 
 message SysTimeMsgRes
