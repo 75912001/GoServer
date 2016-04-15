@@ -194,6 +194,8 @@ func main() {
 		} else {
 			ict_cfg.Gbench.Load("/Users/mlc/Desktop/GoServer/icartravel/bench.ini.bak")
 		}
+		//		fmt.Println("######~~~~~~")
+		//		fmt.Println(ict_cfg.Gbench.FileIni)
 	}
 
 	//////////////////////////////////////////////////////////////////
