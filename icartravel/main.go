@@ -163,13 +163,13 @@ func main() {
 	fmt.Println(s1)
 	//fmt.Println(s2)
 	fmt.Println("OK")
-	var ss []byte
-	for {
-		time.Sleep(1 * time.Second)
-		fmt.Println("OK")
-		ss = make([]byte, 1024*1024*100)
-		fmt.Println(ss[0:1])
-	}
+	//	var ss []byte
+	//	for {
+	//		time.Sleep(1 * time.Second)
+	//		fmt.Println("OK")
+	//		ss = make([]byte, 1024*1024*100)
+	//		fmt.Println(ss[0:1])
+	//	}
 
 	////////////////////////////////////////////////////////////////////
 	rand.Seed(time.Now().Unix())
@@ -304,6 +304,11 @@ func main() {
 	}
 
 	//////////////////////////////////////////////////////////////////
+	//作为HTTP CLIENT Weather
+	url := ict_cfg.Gbench.FileIni.Get("weather", "url", " ")
+	gHttpClientWeather.Get(url)
+
+	//////////////////////////////////////////////////////////////////
 	//定时器
 	zztimer.Second(1, timerSecondTest)
 	fmt.Println("OK")
@@ -312,12 +317,6 @@ func main() {
 		gLock.Lock()
 		gLock.Unlock()
 	}
-
-	//////////////////////////////////////////////////////////////////
-	//作为HTTP CLIENT Weather
-	//	gHttpClientWeather.Url = ict_bench_file.GbenchFile.FileIni.Get("weather", "url", " ")
-	//	gHttpClientWeather.Get()
-
 	//////////////////////////////////////////////////////////////////
 	//做为客户端
 	{
