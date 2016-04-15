@@ -30,57 +30,26 @@ var _ = math.Inf
 type E_ERROR_CODE int32
 
 const (
-	// 通用错误
-	E_ERROR_CODE_EEC_SUCCESS            E_ERROR_CODE = 0
-	E_ERROR_CODE_EEC_ERROR              E_ERROR_CODE = 1
-	E_ERROR_CODE_EEC_VALUE_INVALID      E_ERROR_CODE = 2
-	E_ERROR_CODE_EEC_ITEM_CNT           E_ERROR_CODE = 3
-	E_ERROR_CODE_EEC_ITEM_INEXISTENT    E_ERROR_CODE = 4
-	E_ERROR_CODE_EEC_USER_INEXISTENT    E_ERROR_CODE = 5
-	E_ERROR_CODE_EEC_ROLE_EXISTENT      E_ERROR_CODE = 6
-	E_ERROR_CODE_EEC_ACCOUNT_INEXISTENT E_ERROR_CODE = 7
-	E_ERROR_CODE_EEC_APPROVED_NO        E_ERROR_CODE = 8
-	E_ERROR_CODE_EEC_EVENT_LIMIT        E_ERROR_CODE = 9
-	E_ERROR_CODE_EEC_USER_LEVEL         E_ERROR_CODE = 10
-	E_ERROR_CODE_EEC_PASSWORD           E_ERROR_CODE = 14
-	E_ERROR_CODE_EEC_CHAT_LEN_MAX       E_ERROR_CODE = 15
-	E_ERROR_CODE_EEC_MYSQL              E_ERROR_CODE = 9000
-	E_ERROR_CODE_EEC_MAX                E_ERROR_CODE = 10000
+	E_ERROR_CODE_ERROR_SMS_SENDING       E_ERROR_CODE = 10000
+	E_ERROR_CODE_ERROR_SMS_REGISTER_CODE E_ERROR_CODE = 10001
+	E_ERROR_CODE_ERROR_USER_EXIST        E_ERROR_CODE = 10002
+	E_ERROR_CODE_ERROR_PHONE_NUM_BIND    E_ERROR_CODE = 10003
+	E_ERROR_CODE_ERROR_PHONE_NUM_NO_BIND E_ERROR_CODE = 10004
 )
 
 var E_ERROR_CODE_name = map[int32]string{
-	0:     "EEC_SUCCESS",
-	1:     "EEC_ERROR",
-	2:     "EEC_VALUE_INVALID",
-	3:     "EEC_ITEM_CNT",
-	4:     "EEC_ITEM_INEXISTENT",
-	5:     "EEC_USER_INEXISTENT",
-	6:     "EEC_ROLE_EXISTENT",
-	7:     "EEC_ACCOUNT_INEXISTENT",
-	8:     "EEC_APPROVED_NO",
-	9:     "EEC_EVENT_LIMIT",
-	10:    "EEC_USER_LEVEL",
-	14:    "EEC_PASSWORD",
-	15:    "EEC_CHAT_LEN_MAX",
-	9000:  "EEC_MYSQL",
-	10000: "EEC_MAX",
+	10000: "ERROR_SMS_SENDING",
+	10001: "ERROR_SMS_REGISTER_CODE",
+	10002: "ERROR_USER_EXIST",
+	10003: "ERROR_PHONE_NUM_BIND",
+	10004: "ERROR_PHONE_NUM_NO_BIND",
 }
 var E_ERROR_CODE_value = map[string]int32{
-	"EEC_SUCCESS":            0,
-	"EEC_ERROR":              1,
-	"EEC_VALUE_INVALID":      2,
-	"EEC_ITEM_CNT":           3,
-	"EEC_ITEM_INEXISTENT":    4,
-	"EEC_USER_INEXISTENT":    5,
-	"EEC_ROLE_EXISTENT":      6,
-	"EEC_ACCOUNT_INEXISTENT": 7,
-	"EEC_APPROVED_NO":        8,
-	"EEC_EVENT_LIMIT":        9,
-	"EEC_USER_LEVEL":         10,
-	"EEC_PASSWORD":           14,
-	"EEC_CHAT_LEN_MAX":       15,
-	"EEC_MYSQL":              9000,
-	"EEC_MAX":                10000,
+	"ERROR_SMS_SENDING":       10000,
+	"ERROR_SMS_REGISTER_CODE": 10001,
+	"ERROR_USER_EXIST":        10002,
+	"ERROR_PHONE_NUM_BIND":    10003,
+	"ERROR_PHONE_NUM_NO_BIND": 10004,
 }
 
 func (x E_ERROR_CODE) Enum() *E_ERROR_CODE {
@@ -100,6 +69,7 @@ func (x *E_ERROR_CODE) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// 用户事件
 type USER_EVENT_TYPE int32
 
 const (
@@ -167,105 +137,9 @@ func (x *USER_EVENT_TYPE) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// 聊天类型
-type E_CHAT_TYPE int32
-
-const (
-	E_CHAT_TYPE_E_CHAT_TYPE_PRIVATE E_CHAT_TYPE = 0
-	E_CHAT_TYPE_E_CHAT_TYPE_ALL     E_CHAT_TYPE = 2
-)
-
-var E_CHAT_TYPE_name = map[int32]string{
-	0: "E_CHAT_TYPE_PRIVATE",
-	2: "E_CHAT_TYPE_ALL",
-}
-var E_CHAT_TYPE_value = map[string]int32{
-	"E_CHAT_TYPE_PRIVATE": 0,
-	"E_CHAT_TYPE_ALL":     2,
-}
-
-func (x E_CHAT_TYPE) Enum() *E_CHAT_TYPE {
-	p := new(E_CHAT_TYPE)
-	*p = x
-	return p
-}
-func (x E_CHAT_TYPE) String() string {
-	return proto.EnumName(E_CHAT_TYPE_name, int32(x))
-}
-func (x *E_CHAT_TYPE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_CHAT_TYPE_value, data, "E_CHAT_TYPE")
-	if err != nil {
-		return err
-	}
-	*x = E_CHAT_TYPE(value)
-	return nil
-}
-
-// 邮件状态
-type E_MAIL_STATE int32
-
-const (
-	E_MAIL_STATE_E_MAIL_STATE_UNREAD E_MAIL_STATE = 0
-	E_MAIL_STATE_E_MAIL_STATE_READ   E_MAIL_STATE = 1
-)
-
-var E_MAIL_STATE_name = map[int32]string{
-	0: "E_MAIL_STATE_UNREAD",
-	1: "E_MAIL_STATE_READ",
-}
-var E_MAIL_STATE_value = map[string]int32{
-	"E_MAIL_STATE_UNREAD": 0,
-	"E_MAIL_STATE_READ":   1,
-}
-
-func (x E_MAIL_STATE) Enum() *E_MAIL_STATE {
-	p := new(E_MAIL_STATE)
-	*p = x
-	return p
-}
-func (x E_MAIL_STATE) String() string {
-	return proto.EnumName(E_MAIL_STATE_name, int32(x))
-}
-func (x *E_MAIL_STATE) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_MAIL_STATE_value, data, "E_MAIL_STATE")
-	if err != nil {
-		return err
-	}
-	*x = E_MAIL_STATE(value)
-	return nil
-}
-
-// 通用值
-type E_COMMON_VAL int32
-
-const (
-	E_COMMON_VAL_E_COMMON_VAL_FRIEND_CNT_MAX E_COMMON_VAL = 100
-)
-
-var E_COMMON_VAL_name = map[int32]string{
-	100: "E_COMMON_VAL_FRIEND_CNT_MAX",
-}
-var E_COMMON_VAL_value = map[string]int32{
-	"E_COMMON_VAL_FRIEND_CNT_MAX": 100,
-}
-
-func (x E_COMMON_VAL) Enum() *E_COMMON_VAL {
-	p := new(E_COMMON_VAL)
-	*p = x
-	return p
-}
-func (x E_COMMON_VAL) String() string {
-	return proto.EnumName(E_COMMON_VAL_name, int32(x))
-}
-func (x *E_COMMON_VAL) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(E_COMMON_VAL_value, data, "E_COMMON_VAL")
-	if err != nil {
-		return err
-	}
-	*x = E_COMMON_VAL(value)
-	return nil
-}
-
+// //////////////////////////////////////////////////
+// 结构体
+// //////////////////////////////////////////////////
 // 用户数据
 type UserT struct {
 	Uid              *uint32 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
@@ -297,7 +171,7 @@ type EventT struct {
 	Id               *uint32 `protobuf:"varint,2,opt,name=id" json:"id,omitempty"`
 	Data             *uint32 `protobuf:"varint,3,opt,name=data" json:"data,omitempty"`
 	Time             *uint32 `protobuf:"varint,4,opt,name=time" json:"time,omitempty"`
-	StrData          *string `protobuf:"bytes,5,opt,name=str_data" json:"str_data,omitempty"`
+	StrData          *string `protobuf:"bytes,5,opt,name=strData" json:"strData,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
@@ -342,6 +216,7 @@ func (m *EventT) GetStrData() string {
 
 // //////////////////////////////////////////////////
 // 道具
+// //////////////////////////////////////////////////
 type ItemT struct {
 	Id               *uint32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	Cnt              *uint32 `protobuf:"varint,3,opt,name=cnt" json:"cnt,omitempty"`
@@ -372,7 +247,4 @@ func init() {
 	proto.RegisterType((*ItemT)(nil), "pb_common.item_t")
 	proto.RegisterEnum("pb_common.E_ERROR_CODE", E_ERROR_CODE_name, E_ERROR_CODE_value)
 	proto.RegisterEnum("pb_common.USER_EVENT_TYPE", USER_EVENT_TYPE_name, USER_EVENT_TYPE_value)
-	proto.RegisterEnum("pb_common.E_CHAT_TYPE", E_CHAT_TYPE_name, E_CHAT_TYPE_value)
-	proto.RegisterEnum("pb_common.E_MAIL_STATE", E_MAIL_STATE_name, E_MAIL_STATE_value)
-	proto.RegisterEnum("pb_common.E_COMMON_VAL", E_COMMON_VAL_name, E_COMMON_VAL_value)
 }

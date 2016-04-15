@@ -11,6 +11,10 @@ It is generated from these files:
 It has these top-level messages:
 	LoginMsg
 	LoginMsgRes
+	CreateRoleMsg
+	CreateRoleMsgRes
+	LoadUserMsg
+	LoadUserMsgRes
 	SysTimeMsg
 	SysTimeMsgRes
 */
@@ -19,6 +23,7 @@ package pb_square
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
+import pb_common "pb_common"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -26,14 +31,24 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type LoginMsg struct {
-	Account          *string `protobuf:"bytes,2,opt,name=Account" json:"Account,omitempty"`
-	Password         *string `protobuf:"bytes,3,opt,name=Password" json:"Password,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	Platform          *uint32 `protobuf:"varint,1,opt,name=platform" json:"platform,omitempty"`
+	Account           *string `protobuf:"bytes,2,opt,name=account" json:"account,omitempty"`
+	Password          *string `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
+	WechatAccessToken *string `protobuf:"bytes,100,opt,name=wechat_access_token" json:"wechat_access_token,omitempty"`
+	WechatOpenid      *string `protobuf:"bytes,101,opt,name=wechat_openid" json:"wechat_openid,omitempty"`
+	XXX_unrecognized  []byte  `json:"-"`
 }
 
 func (m *LoginMsg) Reset()         { *m = LoginMsg{} }
 func (m *LoginMsg) String() string { return proto.CompactTextString(m) }
 func (*LoginMsg) ProtoMessage()    {}
+
+func (m *LoginMsg) GetPlatform() uint32 {
+	if m != nil && m.Platform != nil {
+		return *m.Platform
+	}
+	return 0
+}
 
 func (m *LoginMsg) GetAccount() string {
 	if m != nil && m.Account != nil {
@@ -49,13 +64,91 @@ func (m *LoginMsg) GetPassword() string {
 	return ""
 }
 
+func (m *LoginMsg) GetWechatAccessToken() string {
+	if m != nil && m.WechatAccessToken != nil {
+		return *m.WechatAccessToken
+	}
+	return ""
+}
+
+func (m *LoginMsg) GetWechatOpenid() string {
+	if m != nil && m.WechatOpenid != nil {
+		return *m.WechatOpenid
+	}
+	return ""
+}
+
 type LoginMsgRes struct {
-	XXX_unrecognized []byte `json:"-"`
+	HasRole          *uint32 `protobuf:"varint,1,opt,name=has_role" json:"has_role,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *LoginMsgRes) Reset()         { *m = LoginMsgRes{} }
 func (m *LoginMsgRes) String() string { return proto.CompactTextString(m) }
 func (*LoginMsgRes) ProtoMessage()    {}
+
+func (m *LoginMsgRes) GetHasRole() uint32 {
+	if m != nil && m.HasRole != nil {
+		return *m.HasRole
+	}
+	return 0
+}
+
+type CreateRoleMsg struct {
+	Nick             *string `protobuf:"bytes,1,opt,name=nick" json:"nick,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *CreateRoleMsg) Reset()         { *m = CreateRoleMsg{} }
+func (m *CreateRoleMsg) String() string { return proto.CompactTextString(m) }
+func (*CreateRoleMsg) ProtoMessage()    {}
+
+func (m *CreateRoleMsg) GetNick() string {
+	if m != nil && m.Nick != nil {
+		return *m.Nick
+	}
+	return ""
+}
+
+type CreateRoleMsgRes struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *CreateRoleMsgRes) Reset()         { *m = CreateRoleMsgRes{} }
+func (m *CreateRoleMsgRes) String() string { return proto.CompactTextString(m) }
+func (*CreateRoleMsgRes) ProtoMessage()    {}
+
+type LoadUserMsg struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *LoadUserMsg) Reset()         { *m = LoadUserMsg{} }
+func (m *LoadUserMsg) String() string { return proto.CompactTextString(m) }
+func (*LoadUserMsg) ProtoMessage()    {}
+
+type LoadUserMsgRes struct {
+	User             *pb_common.UserT    `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
+	Events           []*pb_common.EventT `protobuf:"bytes,2,rep,name=events" json:"events,omitempty"`
+	XXX_unrecognized []byte              `json:"-"`
+}
+
+func (m *LoadUserMsgRes) Reset()         { *m = LoadUserMsgRes{} }
+func (m *LoadUserMsgRes) String() string { return proto.CompactTextString(m) }
+func (*LoadUserMsgRes) ProtoMessage()    {}
+
+func (m *LoadUserMsgRes) GetUser() *pb_common.UserT {
+	if m != nil {
+		return m.User
+	}
+	return nil
+}
+
+func (m *LoadUserMsgRes) GetEvents() []*pb_common.EventT {
+	if m != nil {
+		return m.Events
+	}
+	return nil
+}
 
 // //////////////////////////////////////////////
 // 系统
@@ -85,8 +178,12 @@ func (m *SysTimeMsgRes) GetTimeSecond() uint32 {
 }
 
 func init() {
-	proto.RegisterType((*LoginMsg)(nil), "pb_square.LoginMsg")
-	proto.RegisterType((*LoginMsgRes)(nil), "pb_square.LoginMsgRes")
+	proto.RegisterType((*LoginMsg)(nil), "pb_square.login_msg")
+	proto.RegisterType((*LoginMsgRes)(nil), "pb_square.login_msg_res")
+	proto.RegisterType((*CreateRoleMsg)(nil), "pb_square.create_role_msg")
+	proto.RegisterType((*CreateRoleMsgRes)(nil), "pb_square.create_role_msg_res")
+	proto.RegisterType((*LoadUserMsg)(nil), "pb_square.load_user_msg")
+	proto.RegisterType((*LoadUserMsgRes)(nil), "pb_square.load_user_msg_res")
 	proto.RegisterType((*SysTimeMsg)(nil), "pb_square.SysTimeMsg")
 	proto.RegisterType((*SysTimeMsgRes)(nil), "pb_square.SysTimeMsgRes")
 }

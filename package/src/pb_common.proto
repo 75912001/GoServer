@@ -5,25 +5,14 @@ package pb_common;
 //////////////////////////////////////////////
 enum E_ERROR_CODE
 {
-//通用错误
-	EEC_SUCCESS = 0;//成功
-	EEC_ERROR = 1;//错误
-	EEC_VALUE_INVALID = 2;//数值,无效
-	EEC_ITEM_CNT = 3; //道具,数量
-	EEC_ITEM_INEXISTENT = 4;//道具,不存在
-	EEC_USER_INEXISTENT = 5;//用户,不存在
-	EEC_ROLE_EXISTENT = 6;//角色,存在
-	EEC_ACCOUNT_INEXISTENT = 7;//帐号,不存在
-	EEC_APPROVED_NO = 8;//身份校验,尚未通过
-	EEC_EVENT_LIMIT = 9;//事件,上限
-	EEC_USER_LEVEL = 10;//用户等级,不满足条件
-	EEC_PASSWORD = 14; //密码,错误
-	EEC_CHAT_LEN_MAX = 15; //聊天长度,上限
-
-	EEC_MYSQL = 9000;//MYSQL数据库错误
-	EEC_MAX = 10000;//错误最大值
+	ERROR_SMS_SENDING       = 10000; //短信已发出,请收到后重试
+	ERROR_SMS_REGISTER_CODE = 10001; // 短信注册码失败,请重新请求短信注册
+	ERROR_USER_EXIST        = 10002; //用户已存在
+	ERROR_PHONE_NUM_BIND    = 10003; //手机号已绑定
+	ERROR_PHONE_NUM_NO_BIND = 10004; //手机号未绑定
 }
 
+//用户事件
 enum USER_EVENT_TYPE
 {
 	//---------------------------------------------------------------------------- 
@@ -39,13 +28,11 @@ enum USER_EVENT_TYPE
 	WEEKLY_EVENT_END                    = 299999;
 	//---------------------------------------------------------------------------- 
 
-
 	//---------------------------------------------------------------------------- 
 	//每月事件 MONTHLY_EVENT_XX
 	MONTHLY_EVENT_BEGIN                 = 300000;
 	MONTHLY_EVENT_END                   = 399999;
 	//---------------------------------------------------------------------------- 
-
 
 	//---------------------------------------------------------------------------- 
 	//永久事件 FOREVER_EVENT_XX
@@ -61,53 +48,32 @@ enum USER_EVENT_TYPE
 	//---------------------------------------------------------------------------- 
 }
 
-//聊天类型
-enum E_CHAT_TYPE
-{
-	E_CHAT_TYPE_PRIVATE = 0;//私聊
-	E_CHAT_TYPE_ALL = 2;//全服聊天
-}
-
-//邮件状态
-enum E_MAIL_STATE
-{
-	E_MAIL_STATE_UNREAD = 0;//邮件未读
-	E_MAIL_STATE_READ = 1;//邮件已读
-}
-
-//通用值
-enum E_COMMON_VAL
-{
-	option allow_alias = true;
-	E_COMMON_VAL_FRIEND_CNT_MAX = 100;//好友上限数量
-}
-
 ////////////////////////////////////////////////////
 //结构体
 ////////////////////////////////////////////////////
-
 //用户数据
-message User_t
+message user_t
 {
-	optional uint32 Uid = 1;//用户ID
-	optional string Nick = 2;//昵称
+	optional uint32 uid = 1;//用户ID
+	optional string nick = 2;//昵称
 }
 
 //事件
-message Event_t
+message event_t
 {
-	optional uint32 Type = 1;//类型
-	optional uint32 Id = 2;//ID
-	optional uint32 Data = 3;//数据
-	optional uint32 Time = 4;//时间
-	optional string StrData = 5;//字符串数据
+	optional uint32 type = 1;//类型
+	optional uint32 id = 2;//ID
+	optional uint32 data = 3;//数据
+	optional uint32 time = 4;//时间
+	optional string strData = 5;//字符串数据
 }
 
 ////////////////////////////////////////////////////
 //道具
-message Item_t
+////////////////////////////////////////////////////
+message item_t
 {
-	optional uint32 Id = 1;//ID
-	optional uint32 Cnt = 3;//数量
+	optional uint32 id = 1;//ID
+	optional uint32 cnt = 3;//数量
 }
 
