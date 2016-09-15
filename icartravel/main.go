@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/golang/protobuf/proto"
 	"ict_account"
 	"ict_cfg"
 	"ict_common"
@@ -18,6 +17,8 @@ import (
 	"zzcommon"
 	"zztcp"
 	"zztimer"
+
+	"github.com/golang/protobuf/proto"
 )
 
 func onInit() (ret int) {
@@ -28,8 +29,11 @@ func onInit() (ret int) {
 	fmt.Println("onInit")
 	return 0
 }
-
+func ooCC()(ret int){
+	return 0
+}
 func onFini() (ret int) {
+	ooCC()
 	gLock.Lock()
 	defer gLock.Unlock()
 
@@ -155,7 +159,7 @@ func init() {
 	fmt.Println("init")
 }
 func main() {
-<<<<<<< HEAD
+
 	fmt.Println("main")
 	var s1 = []int{1, 2, 3, 4, 5}
 	//var s2 = s1
@@ -172,8 +176,6 @@ func main() {
 	//		fmt.Println(ss[0:1])
 	//	}
 
-=======
->>>>>>> origin/master
 	////////////////////////////////////////////////////////////////////
 	rand.Seed(time.Now().Unix())
 
